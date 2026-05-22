@@ -2,7 +2,7 @@
 import { usePage } from "@inertiajs/vue3";
 import { AuthenticatedLayout } from "@layouts";
 import { DivisionTab } from "@includes";
-import { Table, GoToButton } from "@components";
+import { Table, GoToButton, AddButton } from "@components";
 
 export default {
     components: {
@@ -10,6 +10,7 @@ export default {
         DivisionTab,
         Table,
         GoToButton,
+        AddButton
     },
 
     data() {
@@ -83,6 +84,9 @@ export default {
                 :columns="columns"
                 header="Список обращений"
             >
+                <template #toolbar-right>
+                    <AddButton :href="route('subscribes.create', {division: division.id})" />
+                </template>
                 <template #actions="{ row }">
                     <GoToButton
                         :href="

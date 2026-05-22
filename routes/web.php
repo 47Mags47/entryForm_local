@@ -51,7 +51,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('/divisions', DivisionController::class);
 
     Route::resource('/division/{division}/subscribes', SubscribeController::class)
-        ->only(['index', 'show']);
+        ->only(['index', 'create', 'store', 'show']);
 
     Route::resource('/statistic', StatisticController::class)
         ->only(['index']);

@@ -13,8 +13,19 @@ class Subscribe extends Model
 
     ### Настройки
     ##################################################
-    protected
-    $table = 'main__subscribes';
+    protected $table = 'main__subscribes';
+    protected $fillable = [
+        'first_name',
+        'last_name',
+        'middle_name',
+        'phone',
+        'email',
+        'comment',
+        'division_id',
+        'service_id',
+        'worker_id',
+        'start_at',
+    ];
 
     protected function casts(): array
     {

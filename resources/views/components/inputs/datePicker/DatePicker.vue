@@ -2,16 +2,22 @@
 import dayjs from "dayjs";
 import DateInput from "./DateInput.vue";
 import DatePickerPopup from "./DatePickerPopup.vue";
+import Label from "../../Label.vue";
 
 export default {
     components: {
         DateInput,
         DatePickerPopup,
+        Label
     },
 
     props: {
         modelValue: [String, Date, null],
         disabled: Boolean,
+        label: {
+            type: String,
+            default: null
+        }
     },
 
     emits: ["update:modelValue"],
@@ -122,6 +128,7 @@ export default {
 
 <template>
     <div class="datepicker-wrapper" ref="wrapperRef">
+        <Label :labelText="label" />
         <DateInput
             ref="dateInput"
             :modelValue="internalValue"

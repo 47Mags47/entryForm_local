@@ -3,11 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreSubscribeRequest;
-use App\Http\Requests\UpdateSubscribeRequest;
-use App\Http\Resources\SubscribeResource;
+use App\Http\Resources\ServiceResource;
 use App\Models\Division;
+use App\Models\Service;
 use App\Models\Subscribe;
 use Inertia\Inertia;
+use Request;
 
 class SubscribeController
 {
@@ -20,6 +21,21 @@ class SubscribeController
             'subscribes' => fn() => getResource($division->subscribes()->whereHasAccess()),
             'division' => fn() => getResource($division),
         ]);
+    }
+
+    public function create(Division $division)
+    {
+        return Inertia::render('pages/subscribes/create', [
+            'division' => getResource($division),
+            'services' => Service::all()->toResourceCollection(),
+            'workers' => $division->workers->toResourceCollection(),
+        ]);
+    }
+
+    public function store(StoreSubscribeRequest $request, Division $division){
+        Subscribe::create(array_merge($request->validated(), ['division_id' => $division->id]));
+
+        return redirect()->route('subscribes.index', ['division' => $division->id]);
     }
 
     /**
