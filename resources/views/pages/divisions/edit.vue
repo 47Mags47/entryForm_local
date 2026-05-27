@@ -70,6 +70,9 @@ export default {
 
 <template>
     <AuthenticatedLayout>
+        <!-- <template v-for="key in Object.keys(form.shedules)">
+            <div> {{ key }} {{ form.shedules[key] }} </div>
+        </template> -->
         <HorizontalForm
             header="Организации"
             sbm="Сохранить"
@@ -81,7 +84,7 @@ export default {
                     name="name"
                     :value="form.name"
                     @update:value="(val) => (form.name = val)"
-                    :rows="4"
+                    :rows="5"
                 />
                 <TextArea
                     label="Адрес"
@@ -89,7 +92,7 @@ export default {
                     :value="form.address"
                     @update:value="(val) => (form.address = val)"
                     autocomplete="current-adres"
-                    :rows="6"
+                    :rows="3"
                 />
                 <Select
                     label="Город"

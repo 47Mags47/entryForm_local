@@ -87,7 +87,7 @@ export default {
                         name="name"
                         :value="form.name"
                         @update:value="(val) => (form.name = val)"
-                        :rows="4"
+                        :rows="5"
                         :disabled="!isEditing"
                     />
                     <TextArea
@@ -96,7 +96,7 @@ export default {
                         :value="form.address"
                         @update:value="(val) => (form.address = val)"
                         autocomplete="current-address"
-                        :rows="6"
+                        :rows="3"
                         :disabled="!isEditing"
                     />
                     <Select

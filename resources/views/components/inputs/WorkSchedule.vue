@@ -27,14 +27,15 @@ export default {
     data() {
         return {
             days: [
-                { key: "mon", label: "Пн" },
-                { key: "tue", label: "Вт" },
-                { key: "wed", label: "Ср" },
-                { key: "thu", label: "Чт" },
-                { key: "fri", label: "Пт" },
-                { key: "sat", label: "Сб" },
-                { key: "sun", label: "Вс" },
+                { key: "mon", label: "Пн", checked: this.modelValue['mon'] ? true : false },
+                { key: "tue", label: "Вт", checked: this.modelValue['tue'] ? true : false },
+                { key: "wed", label: "Ср", checked: this.modelValue['wed'] ? true : false },
+                { key: "thu", label: "Чт", checked: this.modelValue['thu'] ? true : false },
+                { key: "fri", label: "Пт", checked: this.modelValue['fri'] ? true : false },
+                { key: "sat", label: "Сб", checked: this.modelValue['sat'] ? true : false },
+                { key: "sun", label: "Вс", checked: this.modelValue['sun'] ? true : false },
             ],
+            localTime: {}
         };
     },
 
@@ -47,26 +48,49 @@ export default {
                     [key]: value,
                 },
             });
+            this.localTime = {
+                ...this.modelValue,
+                [day]: {
+                    ...this.modelValue[day],
+                    [key]: value,
+                }
+            };
         },
         toggleDay(day, val) {
             const newValue = { ...this.modelValue };
 
             if (val) {
+                this.days.forEach(d => {
+                    if (d.key === day) {
+                        d.checked = true
+                    }
+                })
                 if (!newValue[day]) {
                     newValue[day] = {
-                        date_start: null,
-                        date_end: null,
-                        lunch_start: null,
-                        lunch_end: null,
+                        date_start:     this.localTime[day]?.date_start     ?? '08:00',
+                        date_end:       this.localTime[day]?.date_end       ?? '17:00',
+                        lunch_start:    this.localTime[day]?.lunch_start    ?? '12:00',
+                        lunch_end:      this.localTime[day]?.lunch_end      ?? '13:00',
                     };
                 }
             } else {
+                this.days.forEach(d => {
+                    if (d.key === day) {
+                        d.checked = false
+                    }
+                })
+
                 delete newValue[day];
+
             }
 
             this.$emit("update:modelValue", newValue);
         },
     },
+
+    mounted() {
+        this.localTime = JSON.parse(JSON.stringify(this.modelValue));
+    }
 };
 </script>
 
@@ -76,14 +100,13 @@ export default {
             <div v-for="day in days" :key="day.key" class="day-row-container">
                 <div class="day-row">
                     <span class="day-label">{{ day.label }}:</span>
-
                     <CheckBox
-                        :modelValue="day.key in modelValue"
+                        :modelValue="day.checked"
                         @update:modelValue="(val) => toggleDay(day.key, val)"
                         :disabled="disabled"
                     />
 
-                    <div v-if="day.key in modelValue" class="time-picker-block">
+                    <div :class="{ 'active': day.checked }"  class="time-picker-block">
 
                         <div class="datepicker-wrapper-relative">
                             <TimePicker
@@ -129,6 +152,10 @@ export default {
                             />
                         </div>
                     </div>
+
+                    <div class="day-status" :class="{ 'active': !day.checked }">
+                        <span> не назначено </span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -151,10 +178,25 @@ export default {
         padding: 6px 0
 
         .day-row
+            position: relative
             display: flex
             align-items: flex-end
             width: 100%
             gap: 16px
+            height: 50px
+
+            .day-status
+                position: absolute
+                transition: .5s ease
+                right: 35%
+                &.active
+                    opacity: 1
+                    transform: translateX(-20px)
+                    pointer-events: auto
+                &:not(.active)
+                    opacity: 0
+                    transform: translateX(0px)
+                    pointer-events: none;
 
             .day-label
                 width: 30px
@@ -176,9 +218,21 @@ export default {
                 gap: 20px
                 flex: 1
                 flex-wrap: nowrap
+                transition: .5s ease
+
+                &.active
+                    opacity: 1
+                    transform: translateX(0px)
+                    pointer-events: auto
+
+                &:not(.active)
+                    opacity: 0
+                    transform: translateX(-10px)
+                    pointer-events: none
 
                 .datepicker-wrapper-relative
                     position: relative
                     width: 160px
                     flex-shrink: 0
+
 </style>

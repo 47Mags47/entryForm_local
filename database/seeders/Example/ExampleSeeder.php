@@ -17,6 +17,5 @@ class ExampleSeeder extends Seeder
         $this->call(UserSeeder::class);
         $this->call(ServiceSeeder::class);
         $this->call(SubscribeSeeder::class);
-        $this->call(FrameStatusSeeder::class);
     }
 }

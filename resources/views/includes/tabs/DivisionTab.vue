@@ -23,7 +23,7 @@ export default {
             hasAdmins,
             links: [
                 {
-                    title: "Общая информаця",
+                    title: "Общая информация",
                     href: route("divisions.show", {
                         division: division.id,
                     }),

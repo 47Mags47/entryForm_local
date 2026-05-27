@@ -22,7 +22,7 @@ class UpdateDivisionRequest extends FormRequest
             'name' => ['required', 'string', 'min:3', 'max:255'],
             'address' => ['required', 'string', 'min:3'],
             'city_id' => ['required', 'exists:' . City::class . ',id'],
-            'group_id' => ['required', 'exists:' . DivisionGroup::class . ',id'],
+            'group_id' => ['nullable', 'exists:' . DivisionGroup::class . ',id'],
             'url' => ['nullable', 'url'],
             'shedules' => ['required', 'array'],
             'shedules.*' => ['nullable', 'array'],
