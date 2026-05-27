@@ -87,10 +87,6 @@ export default {
             this.$emit("update:modelValue", newValue);
         },
     },
-
-    mounted() {
-        this.localTime = JSON.parse(JSON.stringify(this.modelValue));
-    }
 };
 </script>
 

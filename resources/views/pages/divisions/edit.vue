@@ -70,9 +70,6 @@ export default {
 
 <template>
     <AuthenticatedLayout>
-        <!-- <template v-for="key in Object.keys(form.shedules)">
-            <div> {{ key }} {{ form.shedules[key] }} </div>
-        </template> -->
         <HorizontalForm
             header="Организации"
             sbm="Сохранить"
