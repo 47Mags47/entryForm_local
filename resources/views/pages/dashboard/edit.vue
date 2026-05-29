@@ -17,6 +17,7 @@ export default {
                 first_name: current_user.first_name,
                 middle_name: current_user.middle_name,
                 last_name: current_user.last_name,
+                office: current_user.office,
             }),
             current_user,
         };
@@ -55,6 +56,12 @@ export default {
                 label="Отчество"
                 :value="form.middle_name"
                 @update:value="(val) => (form.middle_name = val)"
+            />
+            <StringInput
+                name="office"
+                label="Кабинет"
+                :value="form.office"
+                @update:value="(val) => (form.office = val)"
             />
         </VerticalForm>
     </AuthenticatedLayout>

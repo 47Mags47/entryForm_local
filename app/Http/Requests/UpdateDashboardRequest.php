@@ -14,9 +14,10 @@ class UpdateDashboardRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'first_name' => ['required', 'string', 'min:3', 'max:255'],
-            'middle_name' => ['nullable', 'string', 'min:3', 'max:255'],
-            'last_name' => ['nullable', 'string', 'min:3', 'max:255'],
+            'first_name'    => ['required', 'string', 'min:3', 'max:255'],
+            'middle_name'   => ['nullable', 'string', 'min:3', 'max:255'],
+            'last_name'     => ['nullable', 'string', 'min:3', 'max:255'],
+            'office'        => ['nullable', 'string', 'max:255' ]
         ];
     }
 }

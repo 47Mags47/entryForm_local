@@ -10,6 +10,7 @@ const form = useForm({
     last_name: "",
     middle_name: "",
     email: invite.email,
+    office: '',
     password: "",
     password_confirmation: "",
 });
@@ -57,6 +58,14 @@ function onSubmit(e) {
                 :value="form.email"
                 @update:value="(val) => (form.email = val)"
                 autocomplete="email"
+            />
+            <StringInput
+                label="Кабинет"
+                type="text"
+                name="office"
+                :value="form.office"
+                @update:value="(val) => (form.office = val)"
+                autocomplete="office"
             />
             <StringInput
                 label="Пароль"
