@@ -15,6 +15,7 @@ use App\Http\Controllers\SubscribeController;
 use App\Http\Controllers\UserInviteController;
 use App\Http\Controllers\WorkerController;
 use App\Models\UserRole;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -51,7 +52,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('/divisions', DivisionController::class);
 
     Route::resource('/division/{division}/subscribes', SubscribeController::class)
-        ->only(['index', 'create', 'store', 'show']);
+        ->only(['index', 'create', 'store', 'show', 'destroy']);
 
     Route::resource('/statistic', StatisticController::class)
         ->only(['index']);
