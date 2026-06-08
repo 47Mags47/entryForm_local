@@ -1,7 +1,7 @@
 <script>
 import { router, useForm, usePage } from "@inertiajs/vue3";
 import { AuthenticatedLayout } from "@layouts";
-import { VerticalForm, StringInput, BlueButton } from "@components";
+import { VerticalForm, StringInput, NumberInput, BlueButton } from "@components";
 
 export default {
     components: {
@@ -9,6 +9,7 @@ export default {
         VerticalForm,
         StringInput,
         BlueButton,
+        NumberInput
     },
     data() {
         const current_user = usePage().props.current_user.data;
@@ -17,6 +18,7 @@ export default {
                 first_name: current_user.first_name,
                 middle_name: current_user.middle_name,
                 last_name: current_user.last_name,
+                phone: current_user.phone,
                 office: current_user.office,
             }),
             current_user,
@@ -56,6 +58,14 @@ export default {
                 label="Отчество"
                 :value="form.middle_name"
                 @update:value="(val) => (form.middle_name = val)"
+            />
+            <NumberInput
+                label="Телефон"
+                name="phone"
+                placeholder="+7(___) ___-__-__"
+                :value="form.phone"
+                @update:value="(val) => (form.phone = val)"
+                autocomplete="phone"
             />
             <StringInput
                 name="office"

@@ -65,6 +65,7 @@ class WorkerController
             'first_name' => $request->string('first_name')->trim(),
             'middle_name' => $request->string('middle_name')->trim(),
             'email' => $request->email,
+            'phone' => $request->phone,
             'office' => $request->string('office')->trim(),
             'password' => Hash::make($request->password),
             'role_id' => UserRole::byCode('division_worker')->id,

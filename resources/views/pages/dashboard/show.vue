@@ -6,6 +6,7 @@ import {
     FormGroup,
     StringInput,
     BlueButton,
+    NumberInput
 } from "@components";
 
 export default {
@@ -14,6 +15,7 @@ export default {
         HorizontalForm,
         FormGroup,
         StringInput,
+        NumberInput,
         BlueButton,
     },
     data() {
@@ -24,6 +26,7 @@ export default {
                 middle_name: current_user.middle_name,
                 last_name: current_user.last_name,
                 email: current_user.email,
+                phone: current_user.phone,
                 office: current_user.office,
             }),
             current_user,
@@ -85,6 +88,15 @@ export default {
                         label="Email"
                         :value="form.email"
                         @update:value="(val) => (form.email = val)"
+                        disabled
+                    />
+                    <NumberInput
+                        label="Телефон"
+                        name="phone"
+                        placeholder="+7(___) ___-__-__"
+                        :value="form.phone"
+                        @update:value="(val) => (form.phone = val)"
+                        autocomplete="phone"
                         disabled
                     />
                     <br />

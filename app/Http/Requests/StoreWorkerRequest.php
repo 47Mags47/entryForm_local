@@ -21,7 +21,8 @@ class StoreWorkerRequest extends FormRequest
             'first_name'    => ['required', 'string', 'max:255'],
             'last_name'     => ['nullable', 'string', 'max:255'],
             'middle_name'   => ['nullable', 'string', 'max:255'],
-            'email'         => ['required', 'email', 'unique:' . User::class . ',email'],
+            'email'         => ['required', 'email',  'unique:' . User::class . ',email'],
+            'phone'         => ['nullable', 'string', 'max:255' ],
             'office'        => ['nullable', 'string', 'max:255' ],
             'password'      => ['required', 'string', 'min:6', 'confirmed'],
         ];

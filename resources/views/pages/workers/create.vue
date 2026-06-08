@@ -1,7 +1,7 @@
 <script setup>
 import { useForm, usePage } from "@inertiajs/vue3";
 import { GuestLayout } from "@layouts";
-import { VerticalForm, StringInput } from "@components";
+import { VerticalForm, StringInput, NumberInput } from "@components";
 
 const invite = usePage().props.invite.data
 const form = useForm({
@@ -10,6 +10,7 @@ const form = useForm({
     last_name: "",
     middle_name: "",
     email: invite.email,
+    phone: "",
     office: '',
     password: "",
     password_confirmation: "",
@@ -58,6 +59,14 @@ function onSubmit(e) {
                 :value="form.email"
                 @update:value="(val) => (form.email = val)"
                 autocomplete="email"
+            />
+            <NumberInput
+                label="Телефон"
+                name="phone"
+                placeholder="+7(___) ___-__-__"
+                :value="form.phone"
+                @update:value="(val) => (form.phone = val)"
+                autocomplete="phone"
             />
             <StringInput
                 label="Кабинет"
