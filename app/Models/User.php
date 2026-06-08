@@ -5,7 +5,6 @@ namespace App\Models;
 use App\Http\Resources\SubscribeTimeLineResource;
 use App\Models\UserRole;
 use Carbon\CarbonImmutable;
-use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -29,6 +28,7 @@ class User extends Authenticatable
         'middle_name',
         'last_name',
         'email',
+        'office',
         'password',
         'role_id',
         'division_id'

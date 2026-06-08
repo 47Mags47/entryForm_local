@@ -24,6 +24,7 @@ export default {
                 middle_name: current_user.middle_name,
                 last_name: current_user.last_name,
                 email: current_user.email,
+                office: current_user.office,
             }),
             current_user,
         };
@@ -67,6 +68,13 @@ export default {
                         label="Отчество"
                         :value="form.middle_name"
                         @update:value="(val) => (form.middle_name = val)"
+                        disabled
+                    />
+                    <StringInput
+                        name="office"
+                        label="Кабинет"
+                        :value="form.office"
+                        @update:value="(val) => (form.office = val)"
                         disabled
                     />
                 </FormGroup>

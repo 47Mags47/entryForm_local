@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreWorkerRequest;
 use App\Http\Requests\UpdateWorkerRequest;
 use App\Http\Resources\WorkerResource;
-use App\Jobs\SendInviteJob;
 use App\Models\DayOfTheWeek;
 use App\Models\Division;
 use App\Models\Service;
@@ -42,11 +41,6 @@ class WorkerController
      * Show the form for creating a new resource.
      */
     public function create(string $token) {
-        // if (!(user()->hasRole('admin')
-        //     or (user()->hasRole('division_admin') and user()->division->id === $division->id))) {
-        //     abort(403);
-        // }
-
         $invite = UserInvite::where('token', $token)->first();
 
         if ($invite === null)
@@ -61,11 +55,6 @@ class WorkerController
      * Store a newly created resource in storage.
      */
     public function store(StoreWorkerRequest $request) {
-        // if (!(user()->hasRole('admin')
-        //     or (user()->hasRole('division_admin')))) {
-        //     abort(403);
-        // }
-
         $invite = UserInvite::where('token', $request->input('token'))->first();
 
         if ($invite === null)
@@ -76,6 +65,7 @@ class WorkerController
             'first_name' => $request->string('first_name')->trim(),
             'middle_name' => $request->string('middle_name')->trim(),
             'email' => $request->email,
+            'office' => $request->string('office')->trim(),
             'password' => Hash::make($request->password),
             'role_id' => UserRole::byCode('division_worker')->id,
             'division_id' => $invite->division->id,
@@ -117,7 +107,6 @@ class WorkerController
                 'service_id' => $service_id,
             ]);
         }
-
 
         $worker->shedules()->delete();
         foreach ($request->input('shedules') as $day => $dates) {

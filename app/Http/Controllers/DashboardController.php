@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\UpdateDashboardRequest;
 use App\Models\Division;
 use App\Models\User;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class DashboardController
@@ -42,7 +41,7 @@ class DashboardController
         if (!(user()->id === $user->id)) {
             abort(403);
         }
-        $user->update($request->only('first_name', 'middle_name', 'last_name'));
+        $user->update($request->only('first_name', 'middle_name', 'last_name', 'office'));
 
         return redirect()->route('user.show', ['user' => $user->id])->with('success', 'ФИО успешно изменено');
     }

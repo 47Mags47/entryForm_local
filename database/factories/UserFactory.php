@@ -26,6 +26,7 @@ class UserFactory extends Factory
             'last_name' => $this->faker->lastName($gender),
             'middle_name' => $this->faker->firstName('male') . ($gender === 'male' ? 'ов' : 'ова'),
             'email' => $this->faker->unique()->email(),
+            'office' => $this->faker->numerify('###/#'),
             'password' => Hash::make($this->faker->word()),
             'division_id' => Division::all()->random()->id,
             'role_id' => UserRole::all()->random()->id,

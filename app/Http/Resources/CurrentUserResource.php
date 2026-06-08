@@ -20,6 +20,7 @@ class CurrentUserResource extends JsonResource
             'middle_name' => $this->middle_name,
             'last_name' => $this->last_name,
             'email'=> $this->email,
+            'office' => $this->office,
             'division' => $this->division !== null
                 ? [
                     "id" => $this->division->id,
