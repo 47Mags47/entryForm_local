@@ -29,6 +29,8 @@ return new class extends Migration {
             $table->string('phone')->nullable();
             $table->string('office')->nullable();
 
+            $table->boolean('receiveMail')->default(true);
+
             $table->foreignId('division_id')->nullable()->constrained(new Division()->getTable());
             $table->foreignId('role_id')->constrained(new UserRole()->getTable());
 

@@ -17,7 +17,8 @@ class UpdateDashboardRequest extends FormRequest
             'first_name'    => ['required', 'string', 'min:3', 'max:255'],
             'middle_name'   => ['nullable', 'string', 'min:3', 'max:255'],
             'last_name'     => ['nullable', 'string', 'min:3', 'max:255'],
-            'office'        => ['nullable', 'string', 'max:255' ]
+            'office'        => ['nullable', 'string', 'max:255' ],
+            'receiveMail'   => ['nullable', 'boolean']
         ];
     }
 }

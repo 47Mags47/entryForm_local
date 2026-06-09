@@ -22,12 +22,12 @@ export default {
         const current_user = usePage().props.current_user.data;
         return {
             form: useForm({
-                first_name: current_user.first_name,
-                middle_name: current_user.middle_name,
-                last_name: current_user.last_name,
-                email: current_user.email,
-                phone: current_user.phone,
-                office: current_user.office,
+                first_name: current_user.first_name ?? '',
+                middle_name: current_user.middle_name ?? '',
+                last_name: current_user.last_name ?? '',
+                email: current_user.email ?? '',
+                phone: current_user.phone ?? '',
+                office: current_user.office ?? '',
             }),
             current_user,
         };

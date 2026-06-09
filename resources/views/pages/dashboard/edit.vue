@@ -1,7 +1,7 @@
 <script>
 import { router, useForm, usePage } from "@inertiajs/vue3";
 import { AuthenticatedLayout } from "@layouts";
-import { VerticalForm, StringInput, NumberInput, BlueButton } from "@components";
+import { VerticalForm, StringInput, NumberInput, BlueButton, CheckBox } from "@components";
 
 export default {
     components: {
@@ -9,20 +9,26 @@ export default {
         VerticalForm,
         StringInput,
         BlueButton,
-        NumberInput
+        NumberInput,
+        CheckBox,
     },
     data() {
-        const current_user = usePage().props.current_user.data;
+        let current_user = usePage().props.current_user.data
+
         return {
             form: useForm({
-                first_name: current_user.first_name,
-                middle_name: current_user.middle_name,
-                last_name: current_user.last_name,
-                phone: current_user.phone,
-                office: current_user.office,
+                first_name:     current_user.first_name ?? '',
+                middle_name:    current_user.middle_name ?? '',
+                last_name:      current_user.last_name ?? '',
+                phone:          current_user.phone ?? '',
+                office:         current_user.office ?? '',
+                receiveMail:    current_user.receiveMail ?? false,
             }),
             current_user,
         };
+    },
+    computed: {
+        user: () => usePage().props.current_user.data,
     },
     methods: {
         onSubmit(e) {
@@ -72,6 +78,12 @@ export default {
                 label="Кабинет"
                 :value="form.office"
                 @update:value="(val) => (form.office = val)"
+            />
+            <CheckBox
+                name="receiveMail"
+                label="Получать уведомления"
+                :modelValue="form.receiveMail"
+                @update:modelValue="(val) => form.receiveMail = val"
             />
         </VerticalForm>
     </AuthenticatedLayout>

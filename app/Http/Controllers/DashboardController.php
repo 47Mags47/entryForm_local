@@ -41,7 +41,8 @@ class DashboardController
         if (!(user()->id === $user->id)) {
             abort(403);
         }
-        $user->update($request->only('first_name', 'middle_name', 'last_name', 'phone', 'office'));
+
+        $user->update($request->only('first_name', 'middle_name', 'last_name', 'phone', 'office', 'receiveMail'));
 
         return redirect()->route('user.show', ['user' => $user->id])->with('success', 'Данные успешно изменены');
     }

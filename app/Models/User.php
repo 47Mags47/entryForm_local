@@ -30,6 +30,7 @@ class User extends Authenticatable
         'email',
         'phone',
         'office',
+        'receiveMail',
         'password',
         'role_id',
         'division_id'
@@ -42,6 +43,7 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
+            'receiveMail' => 'bool',
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];

@@ -22,6 +22,7 @@ class CurrentUserResource extends JsonResource
             'email'=> $this->email,
             'phone' => $this->phone,
             'office' => $this->office,
+            'receiveMail' => $this->receiveMail,
             'division' => $this->division !== null
                 ? [
                     "id" => $this->division->id,

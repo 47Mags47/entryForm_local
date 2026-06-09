@@ -20,8 +20,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     if (Auth::user()) {
-        $adminRoleId = UserRole::byCode('admin')->id;
-        if (user()->role_id == $adminRoleId) {
+        if (user()->role_id == UserRole::byCode('admin')->id) {
             return redirect()->route('divisions.index');
         }
 
