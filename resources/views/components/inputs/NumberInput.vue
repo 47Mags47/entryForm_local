@@ -75,7 +75,7 @@ export default {
                 result += ') ' + digits.slice(4, 7)
             }
             if (digits.length >= 7) {
-                result += '-' + digits.slice(7, 9)
+                result += ' ' + digits.slice(7, 9)
             }
             if (digits.length >= 9) {
                 result += '-' + digits.slice(9, 11)

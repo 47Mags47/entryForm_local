@@ -15,9 +15,10 @@ class UpdateDashboardRequest extends FormRequest
     {
         return [
             'first_name'    => ['required', 'string', 'min:3', 'max:255'],
-            'middle_name'   => ['nullable', 'string', 'min:3', 'max:255'],
-            'last_name'     => ['nullable', 'string', 'min:3', 'max:255'],
-            'office'        => ['nullable', 'string', 'max:255' ],
+            'middle_name'   => ['required', 'string', 'min:3', 'max:255'],
+            'last_name'     => ['required', 'string', 'min:3', 'max:255'],
+            'office'        => ['required', 'string', 'max:255' ],
+            'phone'         => ['required', 'string', 'regex:/\+7 \([0-9]{3}\) [0-9]{3} [0-9]{2}-[0-9]{2}/'],
             'receiveMail'   => ['nullable', 'boolean']
         ];
     }

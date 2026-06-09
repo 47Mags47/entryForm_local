@@ -17,12 +17,12 @@ export default {
 
         return {
             form: useForm({
-                first_name:     current_user.first_name ?? '',
-                middle_name:    current_user.middle_name ?? '',
-                last_name:      current_user.last_name ?? '',
-                phone:          current_user.phone ?? '',
-                office:         current_user.office ?? '',
-                receiveMail:    current_user.receiveMail ?? false,
+                first_name:     current_user?.first_name ?? '',
+                middle_name:    current_user?.middle_name ?? '',
+                last_name:      current_user?.last_name ?? '',
+                phone:          current_user?.phone ?? '',
+                office:         current_user?.office ?? '',
+                receiveMail:    current_user?.receiveMail ?? false,
             }),
             current_user,
         };
@@ -68,7 +68,7 @@ export default {
             <NumberInput
                 label="Телефон"
                 name="phone"
-                placeholder="+7(___) ___-__-__"
+                placeholder="+7(___) ___ __-__"
                 :value="form.phone"
                 @update:value="(val) => (form.phone = val)"
                 autocomplete="phone"
