@@ -112,29 +112,4 @@ function onSubmit(e) {
         padding: 10px
         &:hover
             background: #ddd
-
-
-    // :deep(.table-container)
-    //     padding: 0
-    // :deep(.table-wrapper)
-    //     max-height: 524px
-
-    // // SERVICES TABLE
-    // :deep(table)
-    //     border-collapse: collapse
-    // :deep(table tr)
-    //     cursor: pointer
-    // :deep(table tr td)
-    //     width: fit-content !important
-        // border: 1px solid #ece9e7
-
-    // :deep(table tr td:last-child)
-    //     border-right: 0
-    // :deep(table tr td:first-child)
-    //     border-left: 0
-    // :deep(table tr:first-child td)
-    //     border-top: 0
-
-
-
 </style>
