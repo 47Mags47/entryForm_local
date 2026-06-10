@@ -8,7 +8,8 @@ use App\Models\Division;
 use App\Models\Service;
 use App\Models\Subscribe;
 use Inertia\Inertia;
-use Request;
+
+use Carbon\CarbonImmutable;
 
 class SubscribeController
 {
@@ -33,7 +34,16 @@ class SubscribeController
     }
 
     public function store(StoreSubscribeRequest $request, Division $division){
-        Subscribe::create(array_merge($request->validated(), ['division_id' => $division->id]));
+        $data = $request->validated();
+
+        $data['division_id'] = $division->id;
+
+        $start_date = CarbonImmutable::parse($request->input('start_date'))->format('Y-m-d');
+        $start_time = CarbonImmutable::parse($request->input('start_time'))->format('H:i');
+
+        $data['start_at'] = $start_date . ' ' . $start_time;
+
+        Subscribe::create($data);
 
         return redirect()->route('subscribes.index', ['division' => $division->id]);
     }

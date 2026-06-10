@@ -32,7 +32,8 @@ class StoreSubscribeRequest extends FormRequest
             'email'         => ['nullable', 'email'],
             'worker_id'     => ['required', 'exists:'. User::class .',id'],
             'service_id'    => ['required', 'exists:'. Service::class .',id'],
-            'start_at'      => ['required', 'date'],
+            'start_date' => ['required', 'date'],
+            'start_time' => ['required', 'date_format:H:i'],
         ];
     }
 }

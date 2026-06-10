@@ -127,7 +127,7 @@ export default {
 </script>
 
 <template>
-    <div class="datepicker-wrapper" ref="wrapperRef">
+    <div class="form-item datepicker-wrapper" ref="wrapperRef">
         <Label :labelText="label" />
         <DateInput
             ref="dateInput"

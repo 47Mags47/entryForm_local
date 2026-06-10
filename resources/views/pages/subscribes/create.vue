@@ -2,6 +2,7 @@
 import { useForm, usePage } from "@inertiajs/vue3";
 import { AuthenticatedLayout } from "@layouts";
 import { VerticalForm, StringInput, Select, DatePicker } from "@components";
+import axios from "axios";
 
 export default {
     components: {
@@ -22,10 +23,47 @@ export default {
             label: `${worker.last_name} ${worker.first_name[0]} ${worker.middle_name[0]}`,
             value: worker.id
         })),
+
+        watchedFormFields() {
+            return {
+                worker_id: this.form.worker_id,
+                service_id: this.form.service_id,
+                start_date: this.form.start_date,
+            }
+        },
+        timePlaceHolder() {
+            if (this.availableTime.length === 0)
+                return 'Нет доступного времени'
+            return 'Выберите время'
+        }
+    },
+
+    watch: {
+        watchedFormFields(newValue) {
+            if (
+                newValue.worker_id &&
+                newValue.service_id &&
+                newValue.start_date
+            ) {
+                axios.get(route('api.avalibleTime.index'), {
+                    params: {
+                        worker_id: newValue.worker_id,
+                        service_id: newValue.service_id,
+                        date: newValue.start_date.toLocaleDateString('sv-SE'),
+                    }
+                }).then(res => {
+                    this.availableTime = [...res.data]
+                }).catch(err => {
+                    this.availableTime = []
+                    console.error('Ошибка в axios-api-запросе api.avalibleTime.index:', err)
+                })
+            }
+        }
     },
 
     data() {
         return {
+            availableTime: [],
             form: useForm({
                 first_name: "",
                 last_name: "",
@@ -34,7 +72,8 @@ export default {
                 email: "",
                 service_id: "",
                 worker_id: "",
-                start_at: '',
+                start_date: '',
+                start_time: ''
             }),
         };
     },
@@ -43,7 +82,17 @@ export default {
         onSubmit(e) {
             e.preventDefault();
 
-            this.form.post(route("subscribes.store", { division: this.division.id }));
+            this.form
+                .transform((data) => ({
+                    ...data,
+                    start_date: data.start_date
+                        ?.toLocaleDateString('sv-SE')
+                }))
+                .post(
+                    route("subscribes.store", {
+                        division: this.division.id
+                    })
+                );
         },
     },
 }
@@ -100,8 +149,15 @@ export default {
         />
         <DatePicker
             label="Дата"
-            name="start_at"
-            v-model="form.start_at"
+            name="start_date"
+            v-model="form.start_date"
+        />
+        <Select
+            label="Время"
+            name="start_time"
+            v-model="form.start_time"
+            :options="availableTime"
+            :placeholder="timePlaceHolder ?? ''"
         />
 
     </VerticalForm>

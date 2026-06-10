@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Carbon\CarbonImmutable;
+use Carbon\CarbonPeriod;
 
 class Subscribe extends Model
 {
@@ -30,7 +32,7 @@ class Subscribe extends Model
     protected function casts(): array
     {
         return [
-            'start_at' => 'datetime',
+            'start_at' => 'datetime:Y-m-d H:i',
         ];
     }
 
