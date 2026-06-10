@@ -26,6 +26,7 @@ const form = useForm({
 });
 
 function toggleCheckbox(row, val) {
+    console.log(row, val)
     if (val) form.service_ids.push(row.id);
     else form.service_ids = form.service_ids.filter((el) => el !== row.id);
 }
@@ -72,28 +73,68 @@ function onSubmit(e) {
                         name="shedules"
                     />
                 </FormGroup>
-                <FormGroup name="services" label="Услуги">
-                    <div class="services">
-                        <List
-                            :data="services"
-                            :columns="columns"
-                            :head="false"
-                            :toolbarVisible="false"
-                        >
-                            <template #actions="{ row }">
-                                <CheckBox
-                                    :modelValue="
-                                        form.service_ids.includes(row.id)
-                                    "
-                                    @update:modelValue="
-                                        (val) => toggleCheckbox(row, val)
-                                    "
-                                />
-                            </template>
-                        </List>
-                    </div>
+                <FormGroup id="services" name="services" label="Услуги">
+                     <div
+                        class="services-row"
+                        v-for="(service, index) in services"
+                        :key="service.id"
+                        @click="toggleCheckbox( service, !form.service_ids.includes(service.id))"
+                     >
+                        <div class="service-row-checkbox">
+                            <CheckBox :modelValue="form.service_ids.includes(service.id)" />
+                        </div>
+                        <div class="service-row-name">
+                            <span> {{ service.name }} </span>
+                        </div>
+                     </div>
                 </FormGroup>
             </HorizontalForm>
         </DivisionTab>
     </AuthenticatedLayout>
 </template>
+
+<style lang="sass" scoped>
+#services
+    :deep(.services)
+        padding: 0
+        overflow-y: auto
+        max-height: 524px
+        @include scroll
+    :deep(.form-group)
+        width: 400px
+        justify-content: start
+
+    .services-row
+        display: flex
+        align-items: center
+        gap: 10px
+        cursor: pointer
+        padding: 10px
+        &:hover
+            background: #ddd
+
+
+    // :deep(.table-container)
+    //     padding: 0
+    // :deep(.table-wrapper)
+    //     max-height: 524px
+
+    // // SERVICES TABLE
+    // :deep(table)
+    //     border-collapse: collapse
+    // :deep(table tr)
+    //     cursor: pointer
+    // :deep(table tr td)
+    //     width: fit-content !important
+        // border: 1px solid #ece9e7
+
+    // :deep(table tr td:last-child)
+    //     border-right: 0
+    // :deep(table tr td:first-child)
+    //     border-left: 0
+    // :deep(table tr:first-child td)
+    //     border-top: 0
+
+
+
+</style>
