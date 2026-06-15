@@ -57,7 +57,7 @@ Route::middleware('auth')->group(function () {
         ->only(['index']);
 
     Route::resource('/divisions/{division}/division-admins', DivisionAdminController::class)
-        ->only(['index', 'create', 'store', 'destroy']);
+        ->only(['store', 'destroy']);
 
     Route::resource('/divisions/{division}/workers', WorkerController::class)
         ->only(['index']);

@@ -26,7 +26,6 @@ const form = useForm({
 });
 
 function toggleCheckbox(row, val) {
-    console.log(row, val)
     if (val) form.service_ids.push(row.id);
     else form.service_ids = form.service_ids.filter((el) => el !== row.id);
 }

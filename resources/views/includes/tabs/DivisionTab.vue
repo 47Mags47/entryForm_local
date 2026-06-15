@@ -30,15 +30,7 @@ export default {
                     isActive: this.current === "info",
                     hasAccess: hasAdmins,
                 },
-                {
-                    index: "admins",
-                    href: route("division-admins.index", {
-                        division: division.id,
-                    }),
-                    title: "Адмистраторы",
-                    isActive: this.current === "admins",
-                    hasAccess: hasAdmins,
-                },
+
                 {
                     index: "workers",
                     href: route("workers.index", {
