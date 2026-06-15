@@ -111,3 +111,8 @@ export default {
             </HorizontalForm>
     </AuthenticatedLayout>
 </template>
+
+<style lang="sass" scoped>
+.blue-button
+    margin-top: 20px
+</style>
