@@ -3,7 +3,8 @@ import { AuthenticatedLayout } from "@layouts";
 import { DivisionTab } from "@includes";
 import { Table,
     AddButton, DeleteButton, EditButton, BlueButton,
-    CheckBox, PenIco } from "@components";
+    CheckBox,
+    PenIco, PersonIco } from "@components";
 import { usePage, router } from "@inertiajs/vue3";
 
 import { ref, computed } from "vue";
@@ -94,24 +95,39 @@ const columns = [
                 </template>
 
                 <template #actions="{ row }">
-                    <EditButton
-                        :href="route('workers.edit', { worker: row.id })"
-                    />
-                    <DeleteButton
-                        :href="
-                            route('workers.destroy', {
-                                division: division.id,
-                                worker: row.id,
-                            })
-                        "
-                    />
-                    <CheckBox
-                        v-show="isAdminEdit && row.role.code !== 'admin' && current_user.id !== row.id"
-                        :modelValue="row.role.code === 'division_admin'"
-                        @update:modelValue="(val) => toggleCheckbox(row, val)"
-                    />
+                    <div class="container-actions-row">
+                        <BlueButton
+                            v-if="current_user.role.code === 'admin' && row.role.code !== 'admin'"
+                            @click="router.get(route('user.edit', { user: row.id }))">
+                            <PersonIco />
+                        </BlueButton>
+                        <EditButton
+                            :href="route('workers.edit', { worker: row.id })"
+                        />
+                        <DeleteButton
+                            :href="
+                                route('workers.destroy', {
+                                    division: division.id,
+                                    worker: row.id,
+                                })
+                            "
+                        />
+                        <CheckBox
+                            v-show="isAdminEdit && row.role.code !== 'admin' && current_user.id !== row.id"
+                            :modelValue="row.role.code === 'division_admin'"
+                            @update:modelValue="(val) => toggleCheckbox(row, val)"
+                        />
+                    </div>
                 </template>
             </Table>
         </DivisionTab>
     </AuthenticatedLayout>
 </template>
+
+<style lang="sass" scoped>
+.container-actions-row
+    width: 100%
+    display: flex
+    justify-content: end
+    gap: 10px
+</style>

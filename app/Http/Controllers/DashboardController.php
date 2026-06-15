@@ -6,16 +6,18 @@ use App\Http\Requests\UpdateDashboardRequest;
 use App\Models\Division;
 use App\Models\User;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Gate;
 
 class DashboardController
 {
     public function show(User $user)
     {
-        if (!(user()->id === $user->id)) {
+        if (!Gate::allows('dashboard', $user)) {
             abort(403);
         }
+
         return Inertia::render('pages/dashboard/show', [
-            'division' => fn() => getResource(Division::class),
+            'user' => getResource($user),
         ]);
     }
 
@@ -24,12 +26,12 @@ class DashboardController
      */
     public function edit(User $user)
     {
-        if (!(user()->id === $user->id)) {
+        if (!Gate::allows('dashboard', $user)) {
             abort(403);
         }
 
         return Inertia::render('pages/dashboard/edit', [
-            'division' => fn() => getResource(Division::class),
+            'user' => getResource($user),
         ]);
     }
 
@@ -38,11 +40,11 @@ class DashboardController
      */
     public function update(UpdateDashboardRequest $request, User $user)
     {
-        if (!(user()->id === $user->id)) {
+        if (!Gate::allows('dashboard', $user)) {
             abort(403);
         }
 
-        $user->update($request->only('first_name', 'middle_name', 'last_name', 'phone', 'office', 'receiveMail'));
+        $user->update($request->only('first_name', 'middle_name', 'last_name', 'phone', 'office', 'email'));
 
         return redirect()->route('user.show', ['user' => $user->id])->with('success', 'Данные успешно изменены');
     }

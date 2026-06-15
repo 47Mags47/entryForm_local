@@ -13,28 +13,25 @@ export default {
         CheckBox,
     },
     data() {
-        let current_user = usePage().props.current_user.data
+        let user = usePage().props.user.data
 
         return {
             form: useForm({
-                first_name:     current_user?.first_name ?? '',
-                middle_name:    current_user?.middle_name ?? '',
-                last_name:      current_user?.last_name ?? '',
-                phone:          current_user?.phone ?? '',
-                office:         current_user?.office ?? '',
-                receiveMail:    current_user?.receiveMail ?? false,
+                first_name:     user?.first_name ?? '',
+                middle_name:    user?.middle_name ?? '',
+                last_name:      user?.last_name ?? '',
+                phone:          user?.phone ?? '',
+                office:         user?.office ?? '',
+                receiveMail:    user?.receiveMail ?? false,
             }),
-            current_user,
+            user,
         };
-    },
-    computed: {
-        user: () => usePage().props.current_user.data,
     },
     methods: {
         onSubmit(e) {
             e.preventDefault();
 
-            this.form.put(route("user.update", { user: this.current_user.id }));
+            this.form.put(route("user.update", { user: this.user.id }));
         },
     },
 };
