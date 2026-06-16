@@ -30,7 +30,10 @@ export default {
             default: null,
         },
         name: String,
-        label: String,
+        label: {
+            type: String,
+            default: null,
+        },
         readonly: Boolean,
     },
 
@@ -89,7 +92,7 @@ export default {
 
 <template>
     <FormItem :name="name">
-        <Label :labelText="label" />
+        <Label :labelText="label" v-if="label !== null" />
         <input
             type="text"
             :id="inputId"

@@ -1,7 +1,9 @@
 <script>
 import { useForm, usePage } from "@inertiajs/vue3";
 import { AuthenticatedLayout } from "@layouts";
-import { VerticalForm, StringInput, Select, DatePicker } from "@components";
+import { VerticalForm, StringInput, Select } from "@components";
+import DatePicker from "../../components/inputs/datePicker_new/DatePicker.vue";
+import { DateTime } from "luxon";
 
 export default {
     components: {
@@ -34,8 +36,9 @@ export default {
                 email: "",
                 service_id: "",
                 worker_id: "",
-                start_at: '',
+                date: null,
             }),
+            now: DateTime.now(),
         };
     },
 
@@ -100,8 +103,9 @@ export default {
         />
         <DatePicker
             label="Дата"
-            name="start_at"
-            v-model="form.start_at"
+            name="date"
+            :value="form.date"
+            @update:value="(val) => (form.date = val)"
         />
 
     </VerticalForm>

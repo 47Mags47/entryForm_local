@@ -14,8 +14,8 @@ export default {
 
 <template>
     <div :class="['form-item', name]">
-        <slot />
         <FormError :name="name" />
+        <slot />
     </div>
 </template>
 

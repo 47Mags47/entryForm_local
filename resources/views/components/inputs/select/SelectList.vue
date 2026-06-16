@@ -8,6 +8,10 @@ export default {
             required: true,
         },
         modelValue: [String, Number],
+        hasSearch: {
+            type: Boolean,
+            default: true,
+        },
     },
     emits: ["select"],
 
@@ -33,12 +37,16 @@ export default {
             this.searchQuery = "";
         },
     },
+    mounted(){
+        if(this.$refs.selected !== undefined)
+            this.$refs.selected[0].scrollIntoView({ behavior: 'smooth' });
+    }
 };
 </script>
 
 <template>
     <div class="select-dropdown">
-        <div class="search-wrapper">
+        <div class="search-wrapper" v-if="hasSearch">
             <input
                 v-model="searchQuery"
                 type="text"
@@ -51,15 +59,16 @@ export default {
         <ul>
             <li
                 v-for="option in filteredOptions"
-                :key="option.value"
                 class="select-option"
-                :class="{ 'is-selected': option.value === modelValue }"
+                :key="option.value"
+                :class="{ 'is-selected': option.value == modelValue }"
+                :ref="option.value === modelValue ? 'selected' : null"
                 @click.stop="onSelect(option)"
             >
                 {{ option.label }}
             </li>
             <li v-if="filteredOptions.length === 0" class="select-empty">
-                Ничего не найдено
+                {{ hasSearch ? 'Ничего не найдено' : 'Тут пусто' }}
             </li>
         </ul>
     </div>
@@ -97,6 +106,9 @@ ul
     cursor: pointer
 
     &:hover
+        background: #83adf028
+
+    &.is-selected
         background: #83adf028
 
 .select-empty
