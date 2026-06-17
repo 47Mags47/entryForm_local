@@ -50,11 +50,30 @@ export default {
         return {
             isPopupOpen: false,
             selectedDate: this.value !== null ? this.value : null,
+
+            popupStyle: {
+                bottom: null,
+                position: 'absolute',
+            },
         };
     },
     methods: {
         popupButtonClickHandler() {
             this.isPopupOpen = !this.isPopupOpen
+
+            this.isPopupOpen ? this.fixPopupBottomPosition() : null
+        },
+
+        async fixPopupBottomPosition() {
+            await this.$nextTick()
+
+            const popupRect = this.$refs.dateInputPopup.$el.getBoundingClientRect()
+            const vh = window.innerHeight
+
+            if (popupRect.bottom > vh) {
+                this.popupStyle.position = 'fixed'
+                this.popupStyle.bottom = '10px'
+            }
         },
 
         dayClickHandler(date) {
@@ -91,6 +110,7 @@ export default {
             };
         },
     },
+
     mounted(){
         document.addEventListener("mousedown", this.outsideClickHandler)
     },
@@ -115,7 +135,9 @@ export default {
         <div class="calendar-icon">
             <CalendarIco @click="popupButtonClickHandler" />
         </div>
-        <DateInputPopup v-if="isPopupOpen"
+        <DateInputPopup v-show="isPopupOpen"
+            ref="dateInputPopup"
+            :style="popupStyle"
             :checkValid
             :startInterval
             :endInterval
@@ -134,7 +156,8 @@ export default {
     .custom-date-input
         @include input()
         width: 100%
-        padding: 8px 40px 8px 12px;
+        padding: 8px 40px 8px 12px
+
         &::-webkit-calendar-picker-indicator
             display: none
             -webkit-appearance: none

@@ -31,7 +31,7 @@ const popupStyles = computed(() => {
     return {
         position: "absolute",
         left: `${rect.left}px`,
-        top: `${rect.bottom + window.scrollY + 4}px`,
+        top: `${rect.bottom + window.scrollY}px`,
         width: `${rect.width}px`,
         zIndex: 9999,
     };

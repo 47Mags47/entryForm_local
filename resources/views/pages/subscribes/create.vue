@@ -1,7 +1,7 @@
 <script>
 import { useForm, usePage } from "@inertiajs/vue3";
 import { AuthenticatedLayout } from "@layouts";
-import { VerticalForm, StringInput, Select } from "@components";
+import { VerticalForm, StringInput, Select, TimePicker } from "@components";
 import DatePicker from "../../components/inputs/datePicker_new/DatePicker.vue";
 import { DateTime } from "luxon";
 
@@ -9,9 +9,8 @@ export default {
     components: {
         AuthenticatedLayout,
         VerticalForm,
-        StringInput,
-        Select,
-        DatePicker
+        StringInput, Select,
+        DatePicker, TimePicker
     },
 
     computed: {
@@ -107,7 +106,23 @@ export default {
             :value="form.date"
             @update:value="(val) => (form.date = val)"
         />
-
+        <TimePicker
+            id="timepicker"
+            label="Время"
+            name="time"
+        />
     </VerticalForm>
 </AuthenticatedLayout>
 </template>
+
+<style lang="sass" scoped>
+#timepicker
+    :deep(.datepicker-input)
+        display: flex
+        flex-direction: column
+        input
+            width: 100%
+        label
+            padding: 10px 0 3px 0
+            color: var(--label-color)
+</style>

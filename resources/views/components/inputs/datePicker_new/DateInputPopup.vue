@@ -263,6 +263,10 @@ export default {
 
     background: white
 
+    border: 1px solid lightgray
+
+    z-index: 10
+
     .header-container
         width: 100%
         height: 40px
