@@ -156,7 +156,6 @@ export default {
     .custom-date-input
         @include input()
         width: 100%
-        padding: 8px 40px 8px 12px
 
         &::-webkit-calendar-picker-indicator
             display: none
