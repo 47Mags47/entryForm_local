@@ -22,9 +22,6 @@ export default {
 
     data() {
         const page = usePage();
-        // const role = page.props.current_user.data.role.code;
-        // const division = page.props.division.data;
-        // const subscribes = page.props.subscribes;
 
         let columns = [];
 
@@ -61,8 +58,8 @@ export default {
                 {
                     key: "start_at",
                     label: "Дата записи",
-                    splitDateTime: true,
-                    width: "105px",
+                    splitDateTime: false,
+                    width: "150px",
                 },
                 {
                     key: ["worker", "name"],
