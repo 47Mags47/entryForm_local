@@ -2,7 +2,7 @@
 import { usePage } from "@inertiajs/vue3";
 import { AuthenticatedLayout } from "@layouts";
 import { DivisionTab } from "@includes";
-import { Table, GoToButton, AddButton } from "@components";
+import { Table, GoToButton, AddButton, DeleteButton } from "@components";
 
 export default {
     components: {
@@ -10,18 +10,25 @@ export default {
         DivisionTab,
         Table,
         GoToButton,
+        DeleteButton,
         AddButton
+    },
+
+    computed:{
+        role: () => usePage().props.current_user.data.role.code,
+        division: () => usePage().props.division.data,
+        subscribes: () => usePage().props.subscribes,
     },
 
     data() {
         const page = usePage();
-        const role = page.props.current_user.data.role.code;
-        const division = page.props.division.data;
-        const subscribes = page.props.subscribes;
+        // const role = page.props.current_user.data.role.code;
+        // const division = page.props.division.data;
+        // const subscribes = page.props.subscribes;
 
         let columns = [];
 
-        if (role === "admin") {
+        if (this.role === "admin") {
             columns = [
                 { key: "last_name", label: "Фамилия", width: "150px" },
                 { key: "first_name", label: "Имя", width: "150px" },
@@ -67,9 +74,6 @@ export default {
         }
 
         return {
-            role,
-            division,
-            subscribes,
             columns,
         };
     },
@@ -88,6 +92,12 @@ export default {
                     <AddButton :href="route('subscribes.create', {division: division.id})" />
                 </template>
                 <template #actions="{ row }">
+                    <DeleteButton
+                        :href="route('subscribes.destroy', {
+                            division: division.id,
+                            subscribe: row.id,
+                        })"
+                    />
                     <GoToButton
                         :href="
                             route('subscribes.show', {

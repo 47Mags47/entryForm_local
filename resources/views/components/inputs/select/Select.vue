@@ -18,10 +18,26 @@ export default {
             type: Array,
             required: true,
         },
-        label: String,
+        selected: {
+            type: [Number, String],
+            default: null
+        },
+        hasSearch: {
+            type: Boolean,
+            default: true,
+        },
+        label: {
+            type: String,
+            default: null,
+        },
+        onSelect: {
+            type: Function,
+            default: (option) => {}
+        },
         name: String,
         disabled: Boolean,
         placeholder: String,
+
     },
 
     emits: ["update:modelValue"],
@@ -36,7 +52,7 @@ export default {
     computed: {
         selectedLabel() {
             const selectedOption = this.options.find(
-                (option) => option.value === this.modelValue,
+                (option) => option.value == this.modelValue,
             );
             return selectedOption ? selectedOption.label : "";
         },
@@ -56,6 +72,7 @@ export default {
 
         selectOption(option) {
             this.$emit("update:modelValue", option.value);
+            this.onSelect(option)
             this.isOpen = false;
         },
 
@@ -81,7 +98,7 @@ export default {
 
 <template>
     <FormItem :name="name">
-        <Label :labelText="label" />
+        <Label :labelText="label" v-if="label !== null" />
         <div
             ref="selectWrapper"
             class="select-wrapper"
@@ -98,6 +115,7 @@ export default {
                 v-show="isOpen"
                 :options="options"
                 :model-value="modelValue"
+                :hasSearch
                 @select="selectOption"
             />
         </div>

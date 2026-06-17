@@ -30,8 +30,7 @@ class WorkerController
 
         return Inertia::render("pages/workers/index", [
             "users" => fn() => getResource(
-                User::where("role_id", UserRole::byCode("division_worker")->id)
-                    ->where("division_id", $division->id)
+                User::where("division_id", $division->id)
             ),
             "division" => fn() => getResource($division),
         ]);

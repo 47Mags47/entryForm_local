@@ -20,7 +20,7 @@ return new class extends Migration {
             $table->string('last_name');
             $table->string('middle_name')->nullable();
             $table->string('phone');
-            $table->string('email');
+            $table->string('email')->nullable();
             $table->text('comment')->nullable();
 
             $table->foreignId('division_id')->constrained(new Division()->getTable());

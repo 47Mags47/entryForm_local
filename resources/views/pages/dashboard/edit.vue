@@ -1,7 +1,7 @@
 <script>
 import { router, useForm, usePage } from "@inertiajs/vue3";
 import { AuthenticatedLayout } from "@layouts";
-import { VerticalForm, StringInput, NumberInput, BlueButton } from "@components";
+import { VerticalForm, StringInput, NumberInput, BlueButton, CheckBox } from "@components";
 
 export default {
     components: {
@@ -9,26 +9,29 @@ export default {
         VerticalForm,
         StringInput,
         BlueButton,
-        NumberInput
+        NumberInput,
+        CheckBox,
     },
     data() {
-        const current_user = usePage().props.current_user.data;
+        let user = usePage().props.user.data
+
         return {
             form: useForm({
-                first_name: current_user.first_name,
-                middle_name: current_user.middle_name,
-                last_name: current_user.last_name,
-                phone: current_user.phone,
-                office: current_user.office,
+                first_name:     user?.first_name ?? '',
+                middle_name:    user?.middle_name ?? '',
+                last_name:      user?.last_name ?? '',
+                phone:          user?.phone ?? '',
+                office:         user?.office ?? '',
+                receiveMail:    user?.receiveMail ?? false,
             }),
-            current_user,
+            user,
         };
     },
     methods: {
         onSubmit(e) {
             e.preventDefault();
 
-            this.form.put(route("user.update", { user: this.current_user.id }));
+            this.form.put(route("user.update", { user: this.user.id }));
         },
     },
 };
@@ -62,7 +65,7 @@ export default {
             <NumberInput
                 label="Телефон"
                 name="phone"
-                placeholder="+7(___) ___-__-__"
+                placeholder="+7(___) ___ __-__"
                 :value="form.phone"
                 @update:value="(val) => (form.phone = val)"
                 autocomplete="phone"
@@ -72,6 +75,12 @@ export default {
                 label="Кабинет"
                 :value="form.office"
                 @update:value="(val) => (form.office = val)"
+            />
+            <CheckBox
+                name="receiveMail"
+                label="Получать уведомления"
+                :modelValue="form.receiveMail"
+                @update:modelValue="(val) => form.receiveMail = val"
             />
         </VerticalForm>
     </AuthenticatedLayout>

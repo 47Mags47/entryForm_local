@@ -19,26 +19,26 @@ export default {
         BlueButton,
     },
     data() {
-        const current_user = usePage().props.current_user.data;
+        const user = usePage().props.user.data;
         return {
             form: useForm({
-                first_name: current_user.first_name,
-                middle_name: current_user.middle_name,
-                last_name: current_user.last_name,
-                email: current_user.email,
-                phone: current_user.phone,
-                office: current_user.office,
+                first_name: user.first_name ?? '',
+                middle_name: user.middle_name ?? '',
+                last_name: user.last_name ?? '',
+                email: user.email ?? '',
+                phone: user.phone ?? '',
+                office: user.office ?? '',
             }),
-            current_user,
+            user,
         };
     },
     methods: {
         onSubmit(e) {
             e.preventDefault();
-            router.get(route("user.edit", { user: this.current_user.id }));
+            router.get(route("user.edit", { user: this.user.id }));
         },
-        goto(href) {
-            router.get(route(href));
+        goto(href, params) {
+            router.get(route(href, params));
         },
     },
 };
@@ -111,3 +111,8 @@ export default {
             </HorizontalForm>
     </AuthenticatedLayout>
 </template>
+
+<style lang="sass" scoped>
+.blue-button
+    margin-top: 20px
+</style>

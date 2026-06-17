@@ -15,12 +15,12 @@ use App\Http\Controllers\SubscribeController;
 use App\Http\Controllers\UserInviteController;
 use App\Http\Controllers\WorkerController;
 use App\Models\UserRole;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     if (Auth::user()) {
-        $adminRoleId = UserRole::byCode('admin')->id;
-        if (user()->role_id == $adminRoleId) {
+        if (user()->role_id == UserRole::byCode('admin')->id) {
             return redirect()->route('divisions.index');
         }
 
@@ -51,13 +51,13 @@ Route::middleware('auth')->group(function () {
     Route::resource('/divisions', DivisionController::class);
 
     Route::resource('/division/{division}/subscribes', SubscribeController::class)
-        ->only(['index', 'create', 'store', 'show']);
+        ->only(['index', 'create', 'store', 'show', 'destroy']);
 
     Route::resource('/statistic', StatisticController::class)
         ->only(['index']);
 
     Route::resource('/divisions/{division}/division-admins', DivisionAdminController::class)
-        ->only(['index', 'create', 'store', 'destroy']);
+        ->only(['store', 'destroy']);
 
     Route::resource('/divisions/{division}/workers', WorkerController::class)
         ->only(['index']);

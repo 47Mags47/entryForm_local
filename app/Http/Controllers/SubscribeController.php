@@ -3,19 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreSubscribeRequest;
-use App\Http\Resources\ServiceResource;
 use App\Models\Division;
 use App\Models\Service;
 use App\Models\Subscribe;
 use Inertia\Inertia;
+<<<<<<< HEAD
 
 use Carbon\CarbonImmutable;
+=======
+>>>>>>> main
 
 class SubscribeController
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Division $division)
     {
         return Inertia::render('pages/subscribes/index', [
@@ -48,9 +47,6 @@ class SubscribeController
         return redirect()->route('subscribes.index', ['division' => $division->id]);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Division $division, Subscribe $subscribe)
     {
         if (
@@ -65,5 +61,23 @@ class SubscribeController
             'subscribe' => fn() => getResource($subscribe),
             'division' => fn() => getResource($division),
         ]);
+    }
+
+    public function destroy(Division $division, Subscribe $subscribe)
+    {
+        if (user()->hasRole('division_worker')) {
+            if ($subscribe->worker_id !== user()->id)
+                abort(403);
+        } elseif (user()->hasRole('division_admin')) {
+            if ($subscribe->division_id !== user()->division->id)
+                abort(403);
+        } else {
+            if (!user()->hasRole('admin'))
+                abort(403);
+        }
+
+        $subscribe->delete();
+
+        return redirect()->route('subscribes.index', ['division' => $division->id]);
     }
 }

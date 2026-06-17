@@ -1,16 +1,21 @@
 <script>
 import { useForm, usePage } from "@inertiajs/vue3";
 import { AuthenticatedLayout } from "@layouts";
+<<<<<<< HEAD
 import { VerticalForm, StringInput, Select, DatePicker } from "@components";
 import axios from "axios";
+=======
+import { VerticalForm, StringInput, Select, TimePicker } from "@components";
+import DatePicker from "../../components/inputs/datePicker_new/DatePicker.vue";
+import { DateTime } from "luxon";
+>>>>>>> main
 
 export default {
     components: {
         AuthenticatedLayout,
         VerticalForm,
-        StringInput,
-        Select,
-        DatePicker
+        StringInput, Select,
+        DatePicker, TimePicker
     },
 
     computed: {
@@ -72,9 +77,14 @@ export default {
                 email: "",
                 service_id: "",
                 worker_id: "",
+<<<<<<< HEAD
                 start_date: '',
                 start_time: ''
+=======
+                date: null,
+>>>>>>> main
             }),
+            now: DateTime.now(),
         };
     },
 
@@ -159,7 +169,18 @@ export default {
             :options="availableTime"
             :placeholder="timePlaceHolder ?? ''"
         />
-
     </VerticalForm>
 </AuthenticatedLayout>
 </template>
+
+<style lang="sass" scoped>
+#timepicker
+    :deep(.datepicker-input)
+        display: flex
+        flex-direction: column
+        input
+            width: 100%
+        label
+            padding: 10px 0 3px 0
+            color: var(--label-color)
+</style>

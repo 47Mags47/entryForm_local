@@ -30,7 +30,10 @@ export default {
             default: null,
         },
         name: String,
-        label: String,
+        label: {
+            type: String,
+            default: null,
+        },
         readonly: Boolean,
     },
 
@@ -75,7 +78,7 @@ export default {
                 result += ') ' + digits.slice(4, 7)
             }
             if (digits.length >= 7) {
-                result += '-' + digits.slice(7, 9)
+                result += ' ' + digits.slice(7, 9)
             }
             if (digits.length >= 9) {
                 result += '-' + digits.slice(9, 11)
@@ -89,7 +92,7 @@ export default {
 
 <template>
     <FormItem :name="name">
-        <Label :labelText="label" />
+        <Label :labelText="label" v-if="label !== null" />
         <input
             type="text"
             :id="inputId"
