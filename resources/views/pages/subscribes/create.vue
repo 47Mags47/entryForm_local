@@ -104,7 +104,6 @@ export default {
 <template>
 <AuthenticatedLayout>
     <VerticalForm header="Новая запись" sbm="Отправить" :handleSubmit="onSubmit">
-        <div @click="console.log(availableTime)">click</div>
         <StringInput
             label="Фамилия"
             name="last_name"
