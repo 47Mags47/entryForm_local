@@ -88,7 +88,7 @@ export default {
 
             if(this.startInterval !== null && luxonDate < this.startInterval && /[0-9]{4}-[0-9]{2}-[0-9]{2}/.test(value)){
                 alert('Дата выходит за возможный диапазон')
-                this.$refs.inputRef.value = this.selectedDate.toFormat('yyyy-MM-dd')
+                this.$refs.inputRef.value = this.selectedDate?.toFormat('yyyy-MM-dd')
                 return
             }
 

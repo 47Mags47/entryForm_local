@@ -29,7 +29,7 @@ class StoreSubscribeRequest extends FormRequest
             'last_name'     => ['required', 'string', 'min:3', 'max:255'],
             'middle_name'   => ['nullable', 'string', 'min:3', 'max:255'],
             'phone'         => ['required', 'regex:/^((8|\+7|7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}$/'],
-            'email'         => ['nullable', 'email'],
+            'email'         => ['nullable', 'email', 'regex:/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/'],
             'worker_id'     => ['required', 'exists:'. User::class .',id'],
             'service_id'    => ['required', 'exists:'. Service::class .',id'],
             'start_date' => ['required', 'date'],

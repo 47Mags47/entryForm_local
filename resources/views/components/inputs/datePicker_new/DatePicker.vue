@@ -11,6 +11,7 @@ export default {
         FormItem,
     },
     props: {
+        modelValue: [String, Date, null],
         label: {
             type: String,
             default: null
@@ -33,6 +34,10 @@ export default {
         end: {
             type: [String, Object],
             default: null
+        },
+        showAvailable: {
+            type: Boolean,
+            default: true,
         }
     },
     computed: {
@@ -63,7 +68,7 @@ export default {
             :startInterval="start"
             :endInterval="end"
         />
-        <div class="avaible-date-container">
+        <div v-if="showAvailable" class="avaible-date-container">
             <template v-if="start !== null && end === null">
                 Доступны даты с {{ start.toFormat('dd.MM.yyyy') }}
             </template>

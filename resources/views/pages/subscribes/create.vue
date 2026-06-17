@@ -1,21 +1,17 @@
 <script>
 import { useForm, usePage } from "@inertiajs/vue3";
 import { AuthenticatedLayout } from "@layouts";
-<<<<<<< HEAD
-import { VerticalForm, StringInput, Select, DatePicker } from "@components";
+import { VerticalForm, StringInput, Select, NumberInput, EmailInput } from "@components";
 import axios from "axios";
-=======
-import { VerticalForm, StringInput, Select, TimePicker } from "@components";
 import DatePicker from "../../components/inputs/datePicker_new/DatePicker.vue";
 import { DateTime } from "luxon";
->>>>>>> main
 
 export default {
     components: {
         AuthenticatedLayout,
         VerticalForm,
-        StringInput, Select,
-        DatePicker, TimePicker
+        StringInput, Select, NumberInput, EmailInput,
+        DatePicker
     },
 
     computed: {
@@ -54,7 +50,7 @@ export default {
                     params: {
                         worker_id: newValue.worker_id,
                         service_id: newValue.service_id,
-                        date: newValue.start_date.toLocaleDateString('sv-SE'),
+                        date: newValue.start_date,
                     }
                 }).then(res => {
                     this.availableTime = [...res.data]
@@ -77,14 +73,12 @@ export default {
                 email: "",
                 service_id: "",
                 worker_id: "",
-<<<<<<< HEAD
                 start_date: '',
                 start_time: ''
-=======
-                date: null,
->>>>>>> main
             }),
             now: DateTime.now(),
+            startTime: DateTime.now().plus({'day': 1}),
+            endTime: DateTime.now().plus({'month': 1})
         };
     },
 
@@ -96,7 +90,6 @@ export default {
                 .transform((data) => ({
                     ...data,
                     start_date: data.start_date
-                        ?.toLocaleDateString('sv-SE')
                 }))
                 .post(
                     route("subscribes.store", {
@@ -111,6 +104,7 @@ export default {
 <template>
 <AuthenticatedLayout>
     <VerticalForm header="Новая запись" sbm="Отправить" :handleSubmit="onSubmit">
+        <div @click="console.log(availableTime)">click</div>
         <StringInput
             label="Фамилия"
             name="last_name"
@@ -129,14 +123,14 @@ export default {
             :value="form.middle_name"
             @update:value="(val) => (form.middle_name = val)"
         />
-        <StringInput
+        <NumberInput
             label="Телефон"
             name="phone"
             placeholder="+7 (___) ___-__-__"
             :value="form.phone"
             @update:value="(val) => (form.phone = val)"
         />
-        <StringInput
+        <EmailInput
             label="E-mail"
             name="email"
             placeholder="example@mail.ru"
@@ -160,7 +154,10 @@ export default {
         <DatePicker
             label="Дата"
             name="start_date"
-            v-model="form.start_date"
+            :start="startTime"
+            :end="endTime"
+            :showAvailable="false"
+            @update:value="(val) => form.start_date = val"
         />
         <Select
             label="Время"

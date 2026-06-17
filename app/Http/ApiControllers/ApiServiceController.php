@@ -17,6 +17,7 @@ class ApiServiceController
         $date = CarbonImmutable::parse($request->input('date'));
 
         $times = $service->getAvailableTimeFromUser($worker, $date);
+
         return response()->json(
             collect($times)->map(function ($time) {
                 return [

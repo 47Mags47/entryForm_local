@@ -7,11 +7,8 @@ use App\Models\Division;
 use App\Models\Service;
 use App\Models\Subscribe;
 use Inertia\Inertia;
-<<<<<<< HEAD
 
 use Carbon\CarbonImmutable;
-=======
->>>>>>> main
 
 class SubscribeController
 {

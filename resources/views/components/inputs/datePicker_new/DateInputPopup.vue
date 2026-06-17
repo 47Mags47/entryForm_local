@@ -113,15 +113,9 @@ export default {
     },
     data() {
         let inintialDate = DateTime.now()
+
         if(this.selectedDate !== null)
             inintialDate = DateTime.fromFormat(this.selectedDate, 'yyyy-MM-dd')
-
-        if(this.startInterval !== null)
-            if(typeof this.startInterval === 'string')
-                inintialDate = DateTime.fromFormat(this.startInterval, 'yyyy-MM-dd')
-            else if(typeof this.startInterval === 'object')
-                inintialDate = this.startInterval
-
 
         return {
             currentDate: inintialDate
@@ -156,10 +150,10 @@ export default {
         },
 
         checkMonthAvaible(month){
-            if(this.startInterval !== null && month < this.startInterval)
+            if(this.startInterval !== null && this.startInterval.startOf('month').startOf('day') > month.startOf('month').startOf('day') )
                 return false
 
-            if(this.endInterval !== null && month > this.endInterval)
+            if(this.endInterval !== null && this.endInterval.endOf('month').endOf('day') < month.endOf('month').endOf('day') )
                 return false
 
             return true

@@ -34,6 +34,10 @@ class Service extends Model
     public function getAvailableTimeFromUser(User $worker, CarbonImmutable $date)
     {
         $shedule = $worker->shedules()->where('day_of_the_week_id', $date->dayOfWeek())->first();
+
+        if($shedule === null)
+            return [];
+
         $subscribes = $worker->subscribes()
             ->whereBetween("start_at", [$date->startOfDay(), $date->endOfDay()])
             ->orderBy('start_at')

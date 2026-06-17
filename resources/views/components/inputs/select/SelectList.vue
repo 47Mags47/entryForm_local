@@ -97,7 +97,7 @@ export default {
 
 ul
     overflow-y: auto
-    max-height: 200px
+    max-height: 120px
     @include scroll
 
 .select-option
