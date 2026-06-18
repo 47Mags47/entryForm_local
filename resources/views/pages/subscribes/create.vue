@@ -168,15 +168,3 @@ export default {
     </VerticalForm>
 </AuthenticatedLayout>
 </template>
-
-<style lang="sass" scoped>
-#timepicker
-    :deep(.datepicker-input)
-        display: flex
-        flex-direction: column
-        input
-            width: 100%
-        label
-            padding: 10px 0 3px 0
-            color: var(--label-color)
-</style>
