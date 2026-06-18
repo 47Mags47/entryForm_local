@@ -39,13 +39,13 @@ export default {
                 {
                     key: "start_at",
                     label: "Дата записи",
-                    splitDateTime: true,
-                    width: "105px",
+                    splitDateTime: false,
+                    width: "150px",
                 },
                 {
                     key: ["worker", "name"],
                     label: "Специалист",
-                    width: "150px",
+                    width: "170px",
                 },
                 { key: "actions", label: "", width: "60px" },
             ];
@@ -59,7 +59,7 @@ export default {
                     key: "start_at",
                     label: "Дата записи",
                     splitDateTime: false,
-                    width: "150px",
+                    width: "170px",
                 },
                 {
                     key: ["worker", "name"],
