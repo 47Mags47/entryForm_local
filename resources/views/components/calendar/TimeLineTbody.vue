@@ -104,5 +104,4 @@ th, td
         width: 100%
         height: 56px
         min-height: 56px
-        z-index: 1000
 </style>

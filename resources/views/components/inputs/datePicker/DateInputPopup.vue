@@ -259,6 +259,8 @@ export default {
 
     border: 1px solid lightgray
 
+    width: 340px
+
     z-index: 10
 
     .header-container

@@ -1,9 +1,8 @@
 <script>
 import { useForm, usePage } from "@inertiajs/vue3";
 import { AuthenticatedLayout } from "@layouts";
-import { VerticalForm, StringInput, Select, NumberInput, EmailInput } from "@components";
+import { VerticalForm, StringInput, Select, NumberInput, EmailInput, DatePicker } from "@components";
 import axios from "axios";
-import DatePicker from "../../components/inputs/datePicker_new/DatePicker.vue";
 import { DateTime } from "luxon";
 
 export default {
@@ -153,8 +152,6 @@ export default {
         <DatePicker
             label="Дата"
             name="start_date"
-            :start="startTime"
-            :end="endTime"
             :showAvailable="false"
             @update:value="(val) => form.start_date = val"
         />

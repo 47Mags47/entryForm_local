@@ -1,155 +1,89 @@
 <script>
-import dayjs from "dayjs";
 import DateInput from "./DateInput.vue";
-import DatePickerPopup from "./DatePickerPopup.vue";
 import Label from "../../Label.vue";
+import { DateTime } from "luxon";
+import FormItem from "../../FormItem.vue";
 
 export default {
     components: {
         DateInput,
-        DatePickerPopup,
-        Label
+        Label,
+        FormItem,
     },
-
     props: {
         modelValue: [String, Date, null],
-        disabled: Boolean,
         label: {
             type: String,
             default: null
+        },
+        name: {
+            type: String,
+            default: null
+        },
+        value: {
+            type: [Object, String]
+        },
+        disabled: {
+            type: Boolean,
+            default: false,
+        },
+        start: {
+            type: [String, Object],
+            default: null
+        },
+        end: {
+            type: [String, Object],
+            default: null
+        },
+        showAvailable: {
+            type: Boolean,
+            default: true,
         }
     },
-
-    emits: ["update:modelValue"],
-
-    data() {
-        return {
-            internalValue: "",
-            isEditing: false,
-            showPopup: false,
-        };
-    },
-
-    watch: {
-        modelValue: {
-            handler(val) {
-                if (!this.isEditing) {
-                    this.initializeValue();
-                }
-            },
-            immediate: true,
-        },
-    },
-
-    mounted() {
-        document.addEventListener("mousedown", this.handleClickOutside);
-    },
-
-    beforeUnmount() {
-        document.removeEventListener("mousedown", this.handleClickOutside);
-    },
-
     computed: {
-        popupStyles() {
-            if (!this.showPopup || !this.$refs.wrapperRef) {
-                return { position: "absolute", zIndex: 9999 };
-            }
-            const rect = this.$refs.wrapperRef.getBoundingClientRect();
-            return {
-                position: "absolute",
-                left: `${rect.left}px`,
-                top: `${rect.bottom + window.scrollY + 4}px`,
-                width: `${rect.width}px`,
-                zIndex: 9999,
-            };
-        },
+        getValue(){
+            if(typeof this.value === 'object')
+                return this.value
+
+            if(typeof this.value === 'string')
+                return DateTime.fromFormat(this.value, 'yyyy-MM-dd')
+
+            return null
+        }
     },
-
-    methods: {
-        initializeValue() {
-            this.internalValue = this.modelValue
-                ? dayjs(this.modelValue).format("YYYY-MM-DD")
-                : "";
-        },
-
-        openPopup() {
-            if (!this.disabled) {
-                this.showPopup = true;
-                this.isEditing = false;
-                this.$refs.dateInput.markAsPopupClick?.();
-            }
-        },
-
-        closePopup() {
-            this.showPopup = false;
-        },
-
-        handleClickOutside(e) {
-            if (!this.$refs.wrapperRef) return;
-            if (this.$refs.wrapperRef.contains(e.target)) return;
-            if (
-                this.$refs.popupWrapperRef &&
-                this.$refs.popupWrapperRef.contains(e.target)
-            ) {
-                return;
-            }
-            this.closePopup();
-        },
-
-        handleInputFocus() {
-            this.isEditing = true;
-            this.closePopup();
-        },
-
-        handleInputConfirm(val) {
-            const parsed = dayjs(val, "YYYY-MM-DD", true);
-            if (parsed.isValid()) {
-                this.internalValue = parsed.format("YYYY-MM-DD");
-                this.$emit("update:modelValue", parsed.toDate());
-            } else {
-                this.initializeValue();
-            }
-            this.isEditing = false;
-        },
-
-        handleSelectDate(val) {
-            const parsed = dayjs(val, "YYYY-MM-DD", true);
-            if (!parsed.isValid()) return;
-
-            this.$refs.dateInput.markAsPopupClick?.();
-
-            this.internalValue = parsed.format("YYYY-MM-DD");
-            this.$emit("update:modelValue", parsed.toDate());
-            this.closePopup();
-        },
-    },
-};
+    emits: [
+        "update:value"
+    ],
+}
 </script>
 
 <template>
-    <div class="form-item datepicker-wrapper" ref="wrapperRef">
+    <FormItem :name="name">
         <Label :labelText="label" />
         <DateInput
-            ref="dateInput"
-            :modelValue="internalValue"
-            :disabled="disabled"
-            @focus="handleInputFocus"
-            @confirm="handleInputConfirm"
-            @click="openPopup"
+            :name
+            :disabled
+            :value="getValue"
+            :onUpdate="(val) => $emit('update:value', val)"
+            :startInterval="start"
+            :endInterval="end"
         />
-
-        <Teleport to="body">
-            <div
-                v-if="showPopup"
-                ref="popupWrapperRef"
-                :style="popupStyles"
-                @click.stop
-            >
-                <DatePickerPopup
-                    :modelValue="internalValue"
-                    @update:internal="handleSelectDate"
-                />
-            </div>
-        </Teleport>
-    </div>
+        <div v-if="showAvailable" class="avaible-date-container">
+            <template v-if="start !== null && end === null">
+                Доступны даты с {{ start.toFormat('dd.MM.yyyy') }}
+            </template>
+            <template v-if="start === null && end !== null">
+                Доступны даты по {{ end.toFormat('dd.MM.yyyy') }}
+            </template>
+            <template v-if="start !== null && end !== null">
+                Доступны даты с {{ start.toFormat('dd.MM.yyyy') }} по {{ end.toFormat('dd.MM.yyyy') }}
+            </template>
+        </div>
+    </FormItem>
 </template>
+
+<style lang="sass">
+.avaible-date-container
+    font-size: .8rem
+    color: var(--label-color)
+</style>

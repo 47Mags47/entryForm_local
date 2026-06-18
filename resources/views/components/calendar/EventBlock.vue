@@ -71,6 +71,5 @@ export default {
     white-space: nowrap
     overflow: hidden
     text-overflow: ellipsis
-    z-index: 1000
     cursor: pointer
 </style>

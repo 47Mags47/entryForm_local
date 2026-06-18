@@ -70,13 +70,19 @@ export default {
     border-radius: 10px
     background: #fff
     margin: 24px auto
-    overflow: auto
     display: flex
     flex-direction: column
+    z-index: 1
 
     .timeline-grid
         width: 100%
         border-collapse: separate
         border-spacing: 0
         table-layout: fixed
+        table
+            border-radius: 10px
+    .timeline-header
+        z-index: 99
+        border-top-left-radius: 10px
+        border-top-right-radius: 10px
 </style>

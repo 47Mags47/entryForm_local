@@ -21,10 +21,19 @@ export default {
     },
 
     data() {
-        const currentDate = dayjs()
-            .year(this.dateProp.current.year)
-            .month(this.dateProp.current.month - 1)
-            .date(this.dateProp.current.day);
+        const params = new URLSearchParams(window.location.search);
+
+        const day = params.get('day');
+        const month = params.get('month');
+        const year = params.get('year');
+
+        let currentDate = null
+        if (day && month && year) {
+            currentDate = dayjs()
+                .year(year)
+                .month(month - 1)
+                .date(day);
+        }
 
         const previousDay = dayjs()
             .year(this.dateProp.previous.year)
@@ -43,9 +52,6 @@ export default {
             previousDay,
             nextDay,
             todayDate,
-            form: {
-                date: currentDate.toDate(),
-            },
         };
     },
 
@@ -70,7 +76,6 @@ export default {
             const date = dayjs(val);
             if (date.isValid()) {
                 this.goToDate(date);
-                this.form.date = date.toDate();
             }
         },
     },
@@ -80,9 +85,9 @@ export default {
 <template>
     <div class="timeline-header">
         <DatePicker
-            :modelValue="form.date"
-            @update:modelValue="handleDateChange"
-            label=""
+            name="start_date"
+            :value="currentDate?.format('YYYY-MM-DD')"
+            @update:value="handleDateChange"
         />
 
         <div class="header-title">
@@ -115,7 +120,6 @@ export default {
         gap: 8px
         position: sticky
         top: 0
-        z-index: 20
 
         .header-title
             flex: 1
