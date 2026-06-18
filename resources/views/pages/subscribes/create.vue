@@ -75,7 +75,7 @@ export default {
                 start_date: '',
                 start_time: ''
             }),
-            startTime: DateTime.now().startOf('day').plus({'day': 1}),
+            startTime: DateTime.now().startOf('day'),
             endTime: DateTime.now().plus({'month': 1})
         };
     },
