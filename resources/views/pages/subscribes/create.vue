@@ -75,8 +75,7 @@ export default {
                 start_date: '',
                 start_time: ''
             }),
-            now: DateTime.now(),
-            startTime: DateTime.now().startOf('day'),
+            startTime: DateTime.now().startOf('day').plus({'day': 1}),
             endTime: DateTime.now().plus({'month': 1})
         };
     },
@@ -152,6 +151,8 @@ export default {
         <DatePicker
             label="Дата"
             name="start_date"
+            :start="startTime"
+            :end="endTime"
             :showAvailable="false"
             @update:value="(val) => form.start_date = val"
         />
