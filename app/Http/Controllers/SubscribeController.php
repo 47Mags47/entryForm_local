@@ -9,13 +9,17 @@ use App\Models\Subscribe;
 use Inertia\Inertia;
 
 use Carbon\CarbonImmutable;
+use Carbon\Carbon;
 
 class SubscribeController
 {
     public function index(Division $division)
     {
         return Inertia::render('pages/subscribes/index', [
-            'subscribes' => fn() => getResource($division->subscribes()->whereHasAccess()),
+            'subscribes' => fn() => getResource($division->subscribes()
+                ->whereHasAccess()
+                ->orderBy('start_at')
+                ->where('start_at', '>=', Carbon::now('Asia/Krasnoyarsk'))),
             'division' => fn() => getResource($division),
         ]);
     }
