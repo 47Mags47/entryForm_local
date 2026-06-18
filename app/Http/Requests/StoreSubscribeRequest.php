@@ -32,7 +32,7 @@ class StoreSubscribeRequest extends FormRequest
             'email'         => ['nullable', 'email', 'regex:/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/'],
             'worker_id'     => ['required', 'exists:'. User::class .',id'],
             'service_id'    => ['required', 'exists:'. Service::class .',id'],
-            'start_date' => ['required', 'date'],
+            'start_date' => ['required', 'date_format:Y-m-d'],
             'start_time' => ['required', 'date_format:H:i'],
         ];
     }
