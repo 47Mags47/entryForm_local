@@ -7,7 +7,7 @@ import { Table,
     PenIco, PersonIco } from "@components";
 import { usePage, router } from "@inertiajs/vue3";
 
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 
 const worker = computed(() => usePage().props.users);
 const current_user = computed(() => usePage().props.current_user.data);
@@ -47,7 +47,7 @@ const toggleCheckbox = async (row, val) => {
     }
 };
 
-const columns = [
+const columns = computed(() => [
     {
         label: "ФИО",
         render: (row) => {
@@ -74,7 +74,12 @@ const columns = [
         }
     },
     { key: "actions", label: ""     },
-];
+    isAdminEdit.value ? { key: "admin", label: "Администратор" } : null
+]);
+
+watch(isAdminEdit, (n) => {
+    console.log(n)
+})
 </script>
 
 <template>
@@ -111,11 +116,6 @@ const columns = [
                                     worker: row.id,
                                 })
                             "
-                        />
-                        <CheckBox
-                            v-show="isAdminEdit && row.role.code !== 'admin' && current_user.id !== row.id"
-                            :modelValue="row.role.code === 'division_admin'"
-                            @update:modelValue="(val) => toggleCheckbox(row, val)"
                         />
                     </div>
                 </template>

@@ -26,6 +26,12 @@ export default {
             return getObjectValue(key, row);
         },
     },
+
+    computed: {
+        columnsWithoutNull() {
+            return this.columns.filter(column => column !== null && column !== undefined);
+        },
+    }
 };
 </script>
 
@@ -47,7 +53,7 @@ export default {
                 <thead v-if="head">
                     <tr>
                         <th
-                            v-for="{ label, width } in columns"
+                            v-for="{ label, width } in columnsWithoutNull"
                             :key="label"
                             :style="width ? { width: width } : {}"
                         >
@@ -58,7 +64,7 @@ export default {
                 <tbody>
                     <tr v-for="(row, r_index) in data?.data" :key="r_index">
                         <td
-                            v-for="(cell, c_index) in columns"
+                            v-for="(cell, c_index) in columnsWithoutNull"
                             :key="c_index"
                             :style="cell.width ? { width: cell.width } : {}"
                         >
@@ -177,6 +183,7 @@ export default {
 
         tbody
             tr
+                height: 64px
                 &:hover
                     td
                         background:#88a2ff63
@@ -186,8 +193,8 @@ export default {
                         border-bottom: 1px solid #ece9e7
 
             td
-                    &:last-child
-                        border-right: none
+                &:last-child
+                    border-right: none
 
 
         .table-actions
