@@ -2,15 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Carbon\CarbonImmutable;
-use Carbon\CarbonPeriod;
 
 class Subscribe extends Model
 {
-    /** @use HasFactory<\Database\Factories\User\SubscribeFactory> */
     use HasFactory;
 
     ### Настройки
@@ -36,17 +34,27 @@ class Subscribe extends Model
         ];
     }
 
-    public function scopeWhereHasAccess($query)
+    public function scopeWhereHasAccess(Builder $query)
     {
         return $query->where(function ($query) {
-            if(user()->hasRole('admin'))
+            if (user()->hasRole('admin'))
                 return $query;
 
             if (user()->hasRole('division_admin'))
                 return $query->orWhere('division_id', user()->division->id);
 
             if (user()->hasRole('division_worker'))
-                return $query->orWhere('worker_id', user()->id);
+                return $query->where('id', null)->orWhere(function ($query) {
+                    $query->orWhere('worker_id', user()->id);
+
+                    $services_ids = user()->services->pluck('id');
+                    $division_user_ids = user()->division->users->pluck('id');
+                    $other_user_ids = UserService::whereIn('service_id', $services_ids)->whereIn('user_id', $division_user_ids)->get('user_id')->pluck('user_id');
+
+                    $query->orWhere(function ($query) use ($other_user_ids, $services_ids) {
+                        $query->whereIn('worker_id', $other_user_ids)->whereIn('service_id', $services_ids);
+                    });
+                });
 
             return $query->whereKey(null);
         });
