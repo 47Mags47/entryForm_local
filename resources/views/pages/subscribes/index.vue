@@ -2,7 +2,8 @@
 import { usePage } from "@inertiajs/vue3";
 import { AuthenticatedLayout } from "@layouts";
 import { DivisionTab } from "@includes";
-import { Table, GoToButton, AddButton, DeleteButton } from "@components";
+import { Table, GoToButton, AddButton, DeleteButton, DatePicker } from "@components";
+import { DateTime } from "luxon";
 
 export default {
     components: {
@@ -11,7 +12,15 @@ export default {
         Table,
         GoToButton,
         DeleteButton,
-        AddButton
+        AddButton,
+        DatePicker
+    },
+
+    data() {
+        return {
+            selectedDate        : null,
+            selectedDateBetween: { from: DateTime.now(), to: null }
+        }
     },
 
     computed: {
@@ -75,7 +84,11 @@ export default {
 
             if (this.current_user.role.code === "division_worker")
                 return subscribe.worker.id === this.current_user.id
-        }
+        },
+        updateDateBetween(newDateBetween) {
+            this.selectedDateBetween   =   { ...newDateBetween }
+            console.log(2, this.selectedDateBetween)
+        },
     },
 };
 </script>
@@ -84,6 +97,16 @@ export default {
     <AuthenticatedLayout>
         <DivisionTab current="subscribes">
             <Table :data="subscribes" :columns="columns" header="Список обращений">
+                <template #toolbar-left>
+                    <DatePicker
+                        :isRange="true"
+                        label="Дата"
+                        name="date"
+                        :value="selectedDateBetween"
+                        :showAvailable="false"
+                        @update:value="updateDateBetween"
+                    />
+                </template>
                 <template #toolbar-right>
                     <AddButton :href="route('subscribes.create', { division: division.id })" />
                 </template>

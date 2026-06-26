@@ -22,6 +22,10 @@ export default {
                 return /[0-9]{4}-[0-9]{2}-[0-9]{2}/.test(val)
             }
         },
+        selectedDateBetween: {
+            type: Object,
+            defeault: {}
+        },
         startInterval: {
             type: [Object, String],
             default: null
@@ -167,7 +171,15 @@ export default {
                 return false
 
             return true
-        }
+        },
+
+        inRange(date) {
+            if (!this.selectedDateBetween?.from || !this.selectedDateBetween?.to)
+                return false
+
+            return date > DateTime.fromISO(this.selectedDateBetween?.from) &&
+                date < DateTime.fromISO(this.selectedDateBetween?.to)
+        },
     },
     watch: {
         selectedDate: {
@@ -225,7 +237,13 @@ export default {
                             <div
                                 v-if="checkValid(dayInterval.start) && checkDateInMonth(dayInterval.start) && checkSelectable(dayInterval.start)"
                                 class="day-cell-container available"
-                                :class="{'current-day': dayInterval.start.toMillis() == now.startOf('day').toMillis()}"
+                                :class="{
+                                    'current-day'   : dayInterval.start.toMillis()   == now.startOf('day').toMillis(),
+                                    'selected-day'  : !(dayInterval.start.toMillis() == now.startOf('day').toMillis()) &&
+                                        dayInterval.start.toFormat('yyyy-MM-dd')     === selectedDateBetween?.from ||
+                                        dayInterval.start.toFormat('yyyy-MM-dd')     === selectedDateBetween?.to,
+                                    'in-range'      : !(dayInterval.start.toMillis() == now.startOf('day').toMillis()) &&inRange(dayInterval.start),
+                                }"
                                 @click="() => dayClickHandler(dayInterval.start)"
                             >
                                 {{ dayInterval.start.day }}
@@ -261,7 +279,8 @@ export default {
 
     width: 340px
 
-    z-index: 10
+    top: 100%
+    z-index: 100
 
     .header-container
         width: 100%
@@ -305,6 +324,10 @@ export default {
                 color: #333
                 &.current-day
                     color: var(--blue-button-background-color)
+                &.selected-day
+                    color: #a770ff
+                &.in-range
+                    color: #c29cff
                 &.available
                     cursor: pointer
                     &:hover

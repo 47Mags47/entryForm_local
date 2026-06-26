@@ -3,15 +3,21 @@ import DateInput from "./DateInput.vue";
 import Label from "../../Label.vue";
 import { DateTime } from "luxon";
 import FormItem from "../../FormItem.vue";
+import DateInputBetween from "./DateInputBetween.vue";
 
 export default {
     components: {
         DateInput,
         Label,
         FormItem,
+        DateInputBetween
     },
     props: {
         modelValue: [String, Date, null],
+        isRange: {
+            type: Boolean,
+            default: false,
+        },
         label: {
             type: String,
             default: null
@@ -40,6 +46,30 @@ export default {
             default: true,
         }
     },
+    data() {
+        return {
+            selectedDateFrom:   null,
+            selectedDateTo:     null,
+        }
+    },
+    methods: {
+        updateDateFrom(newDateFrom) {
+            this.selectedDateFrom = newDateFrom;
+
+            this.$emit('update:value', {
+                from:  this.selectedDateFrom,
+                to:    this.selectedDateTo
+            })
+        },
+        updateDateTo(newDateTo) {
+            this.selectedDateTo = newDateTo;
+
+            this.$emit('update:value', {
+                from:  this.selectedDateFrom,
+                to:    this.selectedDateTo
+            })
+        }
+    },
     computed: {
         getValue(){
             if(typeof this.value === 'object')
@@ -60,14 +90,29 @@ export default {
 <template>
     <FormItem :name="name">
         <Label :labelText="label" />
-        <DateInput
+
+        <!--    HACK убрать isRange из пропсов у инпутов, он должен быть только у пикера
+                В идеале вынести пикер в этот компонент DatePicker -->
+        <DateInputBetween v-if="isRange"
             :name
+            :isRange
+            :disabled
+            :value="getValue"
+            :onFromUpdate="updateDateFrom"
+            :onToUpdate="updateDateTo"
+            :startInterval="start"
+            :endInterval="end"
+        />
+        <DateInput v-else
+            :name
+            :isRange
             :disabled
             :value="getValue"
             :onUpdate="(val) => $emit('update:value', val)"
             :startInterval="start"
             :endInterval="end"
         />
+
         <div v-if="showAvailable" class="avaible-date-container">
             <template v-if="start !== null && end === null">
                 Доступны даты с {{ start.toFormat('dd.MM.yyyy') }}

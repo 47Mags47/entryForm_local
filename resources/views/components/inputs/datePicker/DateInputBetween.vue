@@ -46,15 +46,24 @@ export default {
         },
 
         // Handlers
-        onUpdate: {
+        onFromUpdate: {
             type: Function,
             default: () => {}
         },
+        onToUpdate: {
+            type: Function,
+            default: () => {}
+        }
     },
     data() {
         return {
-            isPopupOpen: false,
-            selectedDate: this.value !== null ? this.value : null,
+            isPopupOpen:        false,
+
+            isFirstClick:       true,
+            // HACK добавить валидацию формата даты
+            selectedDateFrom:   this.value?.from ? this.value.from : null,
+            selectedDateTo:     this.value?.to   ? this.value.to   : null,
+            selectedDate:       null,
 
             popupStyle: {
                 bottom: null,
@@ -81,31 +90,68 @@ export default {
             }
         },
 
+        //  Пикер
         dayClickHandler(date) {
             this.selectedDate = date
-            this.onUpdate(this.selectedDate.toFormat('yyyy-MM-dd'))
-            this.isPopupOpen = false
+
+            if (this.isFirstClick) {
+                this.selectedDateFrom = date
+                this.selectedDateTo   = null
+            }
+            else
+                this.selectedDateTo   = date
+
+            const dateNotNull = this.selectedDateFrom?.isValid && this.selectedDateTo?.isValid
+
+            if (dateNotNull && this.selectedDateFrom > this.selectedDateTo)
+                [this.selectedDateFrom, this.selectedDateTo] = [this.selectedDateTo, this.selectedDateFrom]
+
+            this.onFromUpdate(this.selectedDateFrom)
+            this.onToUpdate(this.selectedDateTo)
+
+            this.isFirstClick = !this.isFirstClick
         },
 
-        inputBlurHandler(e) {
+        inputFromBlurHandler(e) {
             let value = e.target.value
             let luxonDate = DateTime.fromFormat(value, 'yyyy-MM-dd')
 
             if(this.startInterval !== null && luxonDate < this.startInterval && /[0-9]{4}-[0-9]{2}-[0-9]{2}/.test(value)){
                 alert('Дата выходит за возможный диапазон')
-                this.$refs.inputRef.value = this.selectedDate?.toFormat('yyyy-MM-dd')
+                this.$refs.inputFromRef.value = this.selectedDateFrom?.toFormat('yyyy-MM-dd')
                 return
             }
 
             if(this.endInterval !== null && luxonDate > this.endInterval && /[0-9]{4}-[0-9]{2}-[0-9]{2}/.test(value)){
                 alert('Дата выходит за возможный диапазон')
-                this.$refs.inputRef.value = this.selectedDate.toFormat('yyyy-MM-dd')
+                this.$refs.inputFromRef.value = this.selectedDateFrom.toFormat('yyyy-MM-dd')
                 return
             }
 
             if(/[0-9]{4}-[0-9]{2}-[0-9]{2}/.test(value)){
-                this.selectedDate = DateTime.fromFormat(value, 'yyyy-MM-dd')
-                this.onUpdate(value)
+                this.selectedDateFrom = DateTime.fromFormat(value, 'yyyy-MM-dd')
+                this.onFromUpdate(value)
+            }
+        },
+        inputToBlurHandler(e) {
+            let value = e.target.value
+            let luxonDate = DateTime.fromFormat(value, 'yyyy-MM-dd')
+
+            if(this.startInterval !== null && luxonDate < this.startInterval && /[0-9]{4}-[0-9]{2}-[0-9]{2}/.test(value)){
+                alert('Дата выходит за возможный диапазон')
+                this.$refs.inputToRef.value = this.selectedDateTo?.toFormat('yyyy-MM-dd')
+                return
+            }
+
+            if(this.endInterval !== null && luxonDate > this.endInterval && /[0-9]{4}-[0-9]{2}-[0-9]{2}/.test(value)){
+                alert('Дата выходит за возможный диапазон')
+                this.$refs.inputToRef.value = this.selectedDateTo.toFormat('yyyy-MM-dd')
+                return
+            }
+
+            if(/[0-9]{4}-[0-9]{2}-[0-9]{2}/.test(value)){
+                this.selectedDateTo = DateTime.fromFormat(value, 'yyyy-MM-dd')
+                this.onToUpdate(value)
             }
         },
 
@@ -130,14 +176,25 @@ export default {
         <input
             type="date"
             class="custom-date-input"
-            ref="inputRef"
-            :name
+            ref="inputFromRef"
+            :name="`${name}_from`"
             :disabled
             :placeholder
-            :value="selectedDate !== null ? selectedDate.toFormat('yyyy-MM-dd') : value"
-            @blur="inputBlurHandler"
+            :value="selectedDateFrom !== null ? selectedDateFrom.toFormat('yyyy-MM-dd') : null"
+            @blur="inputFromBlurHandler"
         />
-        <div class="overlay-calendar"></div>
+        <div class="overlay-calendar-from"></div>
+        <input
+            type="date"
+            class="custom-date-input"
+            ref="inputToRef"
+            :name="`${name}_to`"
+            :disabled
+            :placeholder
+            :value="selectedDateTo !== null ? selectedDateTo.toFormat('yyyy-MM-dd') : null"
+            @blur="inputToBlurHandler"
+        />
+        <div class="overlay-calendar-to"></div>
         <div class="calendar-icon">
             <CalendarIco @click="popupButtonClickHandler" />
         </div>
@@ -150,17 +207,34 @@ export default {
             :endInterval
             :onClick="dayClickHandler"
             :selectedDate="selectedDate?.toFormat('yyyy-MM-dd') ?? null"
+            :selectedDateBetween="{
+                from: selectedDateFrom?.toFormat('yyyy-MM-dd'),
+                to:   selectedDateTo?.toFormat('yyyy-MM-dd')
+            }"
         />
     </div>
 </template>
 
 <style lang="sass">
 .date-input-wrapper
-    position: relative
-    display: inline-block
-    width: 100%
+    @include input()
 
-    .overlay-calendar
+    position: relative
+    display: flex
+    width: 100%
+    padding: 0
+
+    .overlay-calendar-from
+        position: absolute
+        left: 110px
+        top: 50%
+        transform: translateY(-50%)
+
+        width: 25px
+        height: 25px
+        background: white
+
+    .overlay-calendar-to
         position: absolute
         right: 10px
         top: 50%
@@ -171,7 +245,8 @@ export default {
         background: white
 
     .custom-date-input
-        @include input()
+        border: 0
+        min-width: 150px
         width: 100%
 
     .calendar-icon
@@ -184,4 +259,5 @@ export default {
         display: flex
         align-items: center
         justify-content: center
+
 </style>
