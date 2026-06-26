@@ -87,7 +87,6 @@ export default {
         },
         updateDateBetween(newDateBetween) {
             this.selectedDateBetween   =   { ...newDateBetween }
-            console.log(2, this.selectedDateBetween)
         },
     },
 };
