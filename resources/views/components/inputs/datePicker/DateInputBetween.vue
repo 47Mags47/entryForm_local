@@ -191,7 +191,7 @@ export default {
         top: 50%
         transform: translateY(-50%)
 
-        width: 25px
+        width: 28px
         height: 25px
         background: white
 
