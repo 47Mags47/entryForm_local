@@ -89,7 +89,7 @@ export default {
 
 <template>
     <FormItem :name="name">
-        <Label :labelText="label" />
+        <Label v-if="label" :labelText="label" />
 
         <!--    HACK убрать isRange из пропсов у инпутов, он должен быть только у пикера
                 В идеале вынести пикер в этот компонент DatePicker -->
@@ -100,8 +100,6 @@ export default {
             :value="getValue"
             :onFromUpdate="updateDateFrom"
             :onToUpdate="updateDateTo"
-            :startInterval="start"
-            :endInterval="end"
         />
         <DateInput v-else
             :name

@@ -1,8 +1,8 @@
 <script>
-import { usePage } from "@inertiajs/vue3";
+import { usePage, useForm } from "@inertiajs/vue3";
 import { AuthenticatedLayout } from "@layouts";
 import { DivisionTab } from "@includes";
-import { Table, GoToButton, AddButton, DeleteButton, DatePicker } from "@components";
+import { Table, GoToButton, AddButton, DeleteButton, BlueButton, DatePicker } from "@components";
 import { DateTime } from "luxon";
 
 export default {
@@ -13,13 +13,19 @@ export default {
         GoToButton,
         DeleteButton,
         AddButton,
+        BlueButton,
         DatePicker
     },
 
     data() {
         return {
             selectedDate        : null,
-            selectedDateBetween: { from: DateTime.now(), to: null }
+            startDate: { from: DateTime.now(), to: null },
+
+            form: useForm({
+                from: null,
+                to: null,
+            }),
         }
     },
 
@@ -86,7 +92,19 @@ export default {
                 return subscribe.worker.id === this.current_user.id
         },
         updateDateBetween(newDateBetween) {
-            this.selectedDateBetween   =   { ...newDateBetween }
+            if (newDateBetween?.from?.isValid && newDateBetween?.to?.isValid) {
+                this.form.from   =   newDateBetween.from.toFormat('yyyy-MM-dd')
+                this.form.to     =   newDateBetween.to.toFormat('yyyy-MM-dd')
+            }
+        },
+
+        applyRange() {
+            this.form.get(route('subscribes.index', {
+                division: this.division.id,
+            }), {
+                preserveState: true,
+                preserveScroll: true,
+            });
         },
     },
 };
@@ -99,12 +117,12 @@ export default {
                 <template #toolbar-left>
                     <DatePicker
                         :isRange="true"
-                        label="Дата"
                         name="date"
-                        :value="selectedDateBetween"
+                        :value="startDate"
                         :showAvailable="false"
                         @update:value="updateDateBetween"
                     />
+                    <BlueButton :handle-click="applyRange" :disabled="form.from > form.to"> применить </BlueButton>
                 </template>
                 <template #toolbar-right>
                     <AddButton :href="route('subscribes.create', { division: division.id })" />
@@ -124,3 +142,11 @@ export default {
         </DivisionTab>
     </AuthenticatedLayout>
 </template>
+
+<style lang="sass">
+.toolbar-left
+    gap: 10px
+
+    .date-picker-button
+        background: blue
+</style>

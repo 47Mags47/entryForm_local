@@ -36,14 +36,6 @@ export default {
             type: Function,
             default: (day) => true
         },
-        startInterval: {
-            type: [Object, String],
-            default: null
-        },
-        endInterval: {
-            type: [Object, String],
-            default: null
-        },
 
         // Handlers
         onFromUpdate: {
@@ -114,45 +106,16 @@ export default {
 
         inputFromBlurHandler(e) {
             let value = e.target.value
-            let luxonDate = DateTime.fromFormat(value, 'yyyy-MM-dd')
 
-            if(this.startInterval !== null && luxonDate < this.startInterval && /[0-9]{4}-[0-9]{2}-[0-9]{2}/.test(value)){
-                alert('Дата выходит за возможный диапазон')
-                this.$refs.inputFromRef.value = this.selectedDateFrom?.toFormat('yyyy-MM-dd')
-                return
-            }
+            this.selectedDateFrom = DateTime.fromFormat(value, 'yyyy-MM-dd')
 
-            if(this.endInterval !== null && luxonDate > this.endInterval && /[0-9]{4}-[0-9]{2}-[0-9]{2}/.test(value)){
-                alert('Дата выходит за возможный диапазон')
-                this.$refs.inputFromRef.value = this.selectedDateFrom.toFormat('yyyy-MM-dd')
-                return
-            }
-
-            if(/[0-9]{4}-[0-9]{2}-[0-9]{2}/.test(value)){
-                this.selectedDateFrom = DateTime.fromFormat(value, 'yyyy-MM-dd')
-                this.onFromUpdate(value)
-            }
+            this.onFromUpdate(this.selectedDateFrom)
         },
         inputToBlurHandler(e) {
             let value = e.target.value
-            let luxonDate = DateTime.fromFormat(value, 'yyyy-MM-dd')
 
-            if(this.startInterval !== null && luxonDate < this.startInterval && /[0-9]{4}-[0-9]{2}-[0-9]{2}/.test(value)){
-                alert('Дата выходит за возможный диапазон')
-                this.$refs.inputToRef.value = this.selectedDateTo?.toFormat('yyyy-MM-dd')
-                return
-            }
-
-            if(this.endInterval !== null && luxonDate > this.endInterval && /[0-9]{4}-[0-9]{2}-[0-9]{2}/.test(value)){
-                alert('Дата выходит за возможный диапазон')
-                this.$refs.inputToRef.value = this.selectedDateTo.toFormat('yyyy-MM-dd')
-                return
-            }
-
-            if(/[0-9]{4}-[0-9]{2}-[0-9]{2}/.test(value)){
-                this.selectedDateTo = DateTime.fromFormat(value, 'yyyy-MM-dd')
-                this.onToUpdate(value)
-            }
+            this.selectedDateTo = DateTime.fromFormat(value, 'yyyy-MM-dd')
+            this.onToUpdate(this.selectedDateTo)
         },
 
         outsideClickHandler(e) {
@@ -203,8 +166,6 @@ export default {
             :isRange
             :style="popupStyle"
             :checkValid
-            :startInterval
-            :endInterval
             :onClick="dayClickHandler"
             :selectedDate="selectedDate?.toFormat('yyyy-MM-dd') ?? null"
             :selectedDateBetween="{

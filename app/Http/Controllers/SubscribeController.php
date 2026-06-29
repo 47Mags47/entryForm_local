@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
+
 use App\Http\Requests\StoreSubscribeRequest;
 use App\Models\Division;
 use App\Models\Service;
 use App\Models\Subscribe;
+
 use Inertia\Inertia;
 
 use Carbon\CarbonImmutable;
@@ -13,14 +16,25 @@ use Carbon\Carbon;
 
 class SubscribeController
 {
-    public function index(Division $division)
+    public function index(Request $request, Division $division)
     {
+        $query = $division->subscribes()
+        ->whereHasAccess()
+        ->orderBy('start_at')
+        ->where('start_at', '>=', Carbon::now('Asia/Krasnoyarsk'));
+
+        if ($request->filled('from')) {
+            $query->whereDate('start_at', '>=', Carbon::parse($request->from));
+        }
+
+        if ($request->filled('to')) {
+            $query->whereDate('start_at', '<=', Carbon::parse($request->to));
+        }
+
         return Inertia::render('pages/subscribes/index', [
-            'subscribes' => fn() => getResource($division->subscribes()
-                ->whereHasAccess()
-                ->orderBy('start_at')
-                ->where('start_at', '>=', Carbon::now('Asia/Krasnoyarsk'))),
+            'subscribes' => fn() => getResource($query),
             'division' => fn() => getResource($division),
+            'filters' => $request->only('from', 'to'),
         ]);
     }
 
