@@ -22,10 +22,10 @@ export default {
             isLoading: false,
 
             selectedDate        : null,
-            startDate: { from: DateTime.now(), to: null },
+            startDate: { from: DateTime.now().startOf('week'), to: null },
 
             form: useForm({
-                from: null,
+                from: DateTime.now().startOf('week'),
                 to: null,
             }),
         }
@@ -94,10 +94,12 @@ export default {
                 return subscribe.worker.id === this.current_user.id
         },
         updateDateBetween(newDateBetween) {
-            if (newDateBetween?.from?.isValid && newDateBetween?.to?.isValid) {
+            if (newDateBetween?.from?.isValid)
                 this.form.from   =   newDateBetween.from.toFormat('yyyy-MM-dd')
+
+            if(newDateBetween?.to?.isValid)
                 this.form.to     =   newDateBetween.to.toFormat('yyyy-MM-dd')
-            }
+
         },
 
         applyRange() {
@@ -134,7 +136,7 @@ export default {
                         :showAvailable="false"
                         @update:value="updateDateBetween"
                     />
-                    <BlueButton :handle-click="applyRange" :disabled="form.from > form.to"> применить </BlueButton>
+                    <BlueButton :handle-click="applyRange" :disabled="form.from > form.to || !form.from || !form.from"> применить </BlueButton>
                 </template>
                 <template #toolbar-right>
                     <AddButton :href="route('subscribes.create', { division: division.id })" />

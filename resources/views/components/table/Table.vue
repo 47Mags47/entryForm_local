@@ -66,6 +66,9 @@ export default {
                     <div v-if="isLoading" class="loading-ico-wrapper">
                         <SpinnerIco />
                     </div>
+                    <div v-else-if="!isLoading && data?.data.length === 0" class="no-data">
+                        <span>данных нет :(</span>
+                    </div>
                     <tr v-else v-for="(row, r_index) in data?.data" :key="r_index">
                         <td
                             v-for="(cell, c_index) in columns"
@@ -157,6 +160,11 @@ export default {
             left: 50%
             transform: translateX(-50%)
 
+        .no-data
+            position: absolute
+            left: 50%
+            transform: translate(-50%, 64px)
+            font-size: 24px
         td
             padding: 5px 10px
             border-right: 1px solid #ece9e7
