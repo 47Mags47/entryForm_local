@@ -18,17 +18,18 @@ class SubscribeController
 {
     public function index(Request $request, Division $division)
     {
-
         $query = $division->subscribes()
         ->whereHasAccess()
         ->orderBy('start_at')
-        ->where('start_at', '>=', Carbon::now('Asia/Krasnoyarsk'))
-        ->when($request->filled('from'), function ($query) use ($request) {
+        ->where('start_at', '>=', Carbon::now('Asia/Krasnoyarsk'));
+
+        if ($request->filled('from')) {
             $query->whereDate('start_at', '>=', Carbon::parse($request->from));
-        })
-        ->when($request->filled('to'), function ($query) use ($request) {
+        }
+
+        if ($request->filled('to')) {
             $query->whereDate('start_at', '<=', Carbon::parse($request->to));
-        });
+        }
 
         return Inertia::render('pages/subscribes/index', [
             'subscribes' => fn() => getResource($query),

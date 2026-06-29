@@ -95,15 +95,21 @@ export default {
         },
         updateDateBetween(newDateBetween) {
             if (newDateBetween?.from?.isValid)
-                this.form.from   =   newDateBetween.from.toFormat('yyyy-MM-dd')
+                this.form.from   =   newDateBetween.from
 
             if(newDateBetween?.to?.isValid)
-                this.form.to     =   newDateBetween.to.toFormat('yyyy-MM-dd')
+                this.form.to     =   newDateBetween.to
 
         },
 
         applyRange() {
-            this.form.get(route('subscribes.index', {
+            this.form
+            .transform(data => ({
+                ...data,
+                from: data.from?.toFormat('yyyy-MM-dd'),
+                to: data.to?.toFormat('yyyy-MM-dd'),
+            }))
+            .get(route('subscribes.index', {
                 division: this.division.id,
             }), {
                 preserveState: true,
@@ -136,6 +142,7 @@ export default {
                         :showAvailable="false"
                         @update:value="updateDateBetween"
                     />
+                    <div @click="console.log(form)">click</div>
                     <BlueButton :handle-click="applyRange" :disabled="form.from > form.to || !form.from || !form.from"> применить </BlueButton>
                 </template>
                 <template #toolbar-right>
