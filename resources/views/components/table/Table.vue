@@ -1,13 +1,19 @@
 <script>
 import { getObjectValue } from "../../../js/helpers/index";
 import { default as Pagination } from "../Pagination.vue";
+import SpinnerIco from "../icons/SpinnerIco.vue";
 
 export default {
     components: {
         Pagination,
+        SpinnerIco
     },
 
     props: {
+        isLoading: {
+            type: Boolean,
+            default: false,
+        },
         data: [Array, Object],
         columns: Array,
         header: String,
@@ -55,8 +61,12 @@ export default {
                         </th>
                     </tr>
                 </thead>
+
                 <tbody>
-                    <tr v-for="(row, r_index) in data?.data" :key="r_index">
+                    <div v-if="isLoading" class="loading-ico-wrapper">
+                        <SpinnerIco />
+                    </div>
+                    <tr v-else v-for="(row, r_index) in data?.data" :key="r_index">
                         <td
                             v-for="(cell, c_index) in columns"
                             :key="c_index"
@@ -141,6 +151,11 @@ export default {
         border-collapse: separate
         border-spacing: 0
         table-layout: auto
+
+        .loading-ico-wrapper
+            position: absolute
+            left: 50%
+            transform: translateX(-50%)
 
         td
             padding: 5px 10px

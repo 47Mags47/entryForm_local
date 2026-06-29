@@ -1,3 +1,4 @@
+export { default as SpinnerIco } from './SpinnerIco.vue'
 export { default as CalendarIco } from './CalendarIco.vue'
 export { default as PenIco } from './PenIco.vue'
 export { default as PersonIco } from './PersonIco.vue'

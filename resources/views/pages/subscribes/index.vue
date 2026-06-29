@@ -1,5 +1,5 @@
 <script>
-import { usePage, useForm } from "@inertiajs/vue3";
+import { usePage, useForm, router } from "@inertiajs/vue3";
 import { AuthenticatedLayout } from "@layouts";
 import { DivisionTab } from "@includes";
 import { Table, GoToButton, AddButton, DeleteButton, BlueButton, DatePicker } from "@components";
@@ -14,11 +14,13 @@ export default {
         DeleteButton,
         AddButton,
         BlueButton,
-        DatePicker
+        DatePicker,
     },
 
     data() {
         return {
+            isLoading: false,
+
             selectedDate        : null,
             startDate: { from: DateTime.now(), to: null },
 
@@ -107,13 +109,23 @@ export default {
             });
         },
     },
+
+    mounted() {
+        router.on('start', () => {
+            this.isLoading = true;
+        });
+
+        router.on('finish', () => {
+            this.isLoading = false;
+        });
+    }
 };
 </script>
 
 <template>
     <AuthenticatedLayout>
         <DivisionTab current="subscribes">
-            <Table :data="subscribes" :columns="columns" header="Список обращений">
+            <Table :data="subscribes" :columns="columns" header="Список обращений" :isLoading="isLoading">
                 <template #toolbar-left>
                     <DatePicker
                         :isRange="true"
