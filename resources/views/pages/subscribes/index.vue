@@ -22,10 +22,10 @@ export default {
             isLoading: false,
 
             selectedDate        : null,
-            startDate: { from: DateTime.now().startOf('week'), to: null },
+            startDate: { from: DateTime.now().startOf('month'), to: null },
 
             form: useForm({
-                from: DateTime.now().startOf('week'),
+                from: DateTime.now().startOf('month'),
                 to: null,
             }),
         }
@@ -142,7 +142,7 @@ export default {
                         :showAvailable="false"
                         @update:value="updateDateBetween"
                     />
-                    <BlueButton :handle-click="applyRange" :disabled="form.from > form.to || !form.from || !form.from"> применить </BlueButton>
+                    <BlueButton :handle-click="applyRange"> применить </BlueButton>
                 </template>
                 <template #toolbar-right>
                     <AddButton :href="route('subscribes.create', { division: division.id })" />
