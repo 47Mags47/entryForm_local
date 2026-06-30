@@ -142,7 +142,6 @@ export default {
                         :showAvailable="false"
                         @update:value="updateDateBetween"
                     />
-                    <div @click="console.log(form)">click</div>
                     <BlueButton :handle-click="applyRange" :disabled="form.from > form.to || !form.from || !form.from"> применить </BlueButton>
                 </template>
                 <template #toolbar-right>
