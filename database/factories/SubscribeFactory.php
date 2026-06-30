@@ -29,7 +29,7 @@ class SubscribeFactory extends Factory
             'division_id'       => Division::all()->random()->id,
             'service_id'        => Service::all()->random()->id,
             'worker_id'         => User::where('role_id', UserRole::byCode('division_worker')->id)->get()->random()->id,
-            'start_at'          => now()->subDay(rand(-10, 10))->subHour(rand(-24, 24))->subMinute(rand(1, 55)),
+            'start_at'          => now()->subDays(rand(-10, 10))->subHours(rand(-24, 24))->subMinutes(rand(1, 55)),
             'comment'           => $this->faker->paragraph(2),
         ];
     }
