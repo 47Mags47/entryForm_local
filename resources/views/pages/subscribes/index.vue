@@ -2,7 +2,7 @@
 import { usePage, useForm, router } from "@inertiajs/vue3";
 import { AuthenticatedLayout } from "@layouts";
 import { DivisionTab } from "@includes";
-import { Table, GoToButton, AddButton, DeleteButton, BlueButton, DatePicker } from "@components";
+import { Table, GoToButton, AddButton, DeleteButton, BlueButton, DatePicker, DownloadIco } from "@components";
 import { DateTime } from "luxon";
 
 export default {
@@ -15,6 +15,7 @@ export default {
         AddButton,
         BlueButton,
         DatePicker,
+        DownloadIco
     },
 
     data() {
@@ -145,6 +146,7 @@ export default {
                     <BlueButton :handle-click="applyRange"> применить </BlueButton>
                 </template>
                 <template #toolbar-right>
+                    <BlueButton :handle-click="console.log(1)"> <DownloadIco/> </BlueButton>
                     <AddButton :href="route('subscribes.create', { division: division.id })" />
                 </template>
                 <template #actions="{ row }">
