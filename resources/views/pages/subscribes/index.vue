@@ -26,7 +26,7 @@ export default {
             startDate: { from: DateTime.now().startOf('month'), to: null },
 
             form: useForm({
-                from: DateTime.now().startOf('month'),
+                from: DateTime.now().startOf('month').toFormat('yyyy-MM-dd'),
                 to: null,
             }),
         }
@@ -95,16 +95,16 @@ export default {
                 return subscribe.worker.id === this.current_user.id
         },
         updateDateBetween(newDateBetween) {
-            this.form.from   =   newDateBetween.from
-            this.form.to     =   newDateBetween.to
+            this.form.from   =   newDateBetween.from?.toFormat('yyyy-MM-dd')
+            this.form.to     =   newDateBetween.to?.toFormat('yyyy-MM-dd')
         },
 
         applyRange() {
             this.form
             .transform(data => ({
                 ...data,
-                from: data.from?.toFormat('yyyy-MM-dd'),
-                to: data.to?.toFormat('yyyy-MM-dd'),
+                from: data.from,
+                to: data.to,
             }))
             .get(route('subscribes.index', {
                 division: this.division.id,
@@ -115,7 +115,7 @@ export default {
         },
 
         subscribesExport() {
-            window.open(route('subscribes.export', { division: this.division.id }))
+            window.open(route('subscribes.export', { division: this.division.id, from: this.form.from, to: this.form.to }))
         }
     },
 
@@ -146,7 +146,9 @@ export default {
                     <BlueButton :handle-click="applyRange"> применить </BlueButton>
                 </template>
                 <template #toolbar-right>
-
+                    <BlueButton :handle-click="subscribesExport">
+                        <DownloadIco/>
+                    </BlueButton>
                     <AddButton :href="route('subscribes.create', { division: division.id })" />
                 </template>
                 <template #actions="{ row }">

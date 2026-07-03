@@ -12,6 +12,7 @@ use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\StatisticController;
 use App\Http\Controllers\SubscribeController;
+use App\Http\Controllers\SubscribesExportController;
 use App\Http\Controllers\UserInviteController;
 use App\Http\Controllers\WorkerController;
 use App\Models\UserRole;
@@ -50,6 +51,8 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('/divisions', DivisionController::class);
 
+    Route::get('/division/{division}/subscribes/export', [SubscribesExportController::class, 'index'])
+        ->name('subscribes.export');
     Route::resource('/division/{division}/subscribes', SubscribeController::class)
         ->only(['index', 'create', 'store', 'show', 'destroy']);
 

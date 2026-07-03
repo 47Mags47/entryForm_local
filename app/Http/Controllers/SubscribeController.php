@@ -16,6 +16,9 @@ use Carbon\Carbon;
 
 class SubscribeController
 {
+    // FIX при начальной загрузке страницы обращения показываются
+    // Но при первом клике применить дату без выбора второй даты не показываются обращения
+    // Исправить
     public function index(Request $request, Division $division)
     {
         $query = $division->subscribes()
