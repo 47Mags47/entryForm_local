@@ -46,7 +46,7 @@ export default {
                     {
                         key: ["division", "name"],
                         label: "Подразделение",
-                        width: "200px",
+                        width: "400px",
                     },
                     { key: ["service", "name"], label: "Услуга" },
                     {
@@ -117,6 +117,10 @@ export default {
                 preserveScroll: true,
             });
         },
+
+        subscribesExport() {
+            window.open(route('subscribes.export', { division: this.division.id }))
+        }
     },
 
     mounted() {
@@ -146,7 +150,7 @@ export default {
                     <BlueButton :handle-click="applyRange"> применить </BlueButton>
                 </template>
                 <template #toolbar-right>
-                    <BlueButton :handle-click="console.log(1)"> <DownloadIco/> </BlueButton>
+
                     <AddButton :href="route('subscribes.create', { division: division.id })" />
                 </template>
                 <template #actions="{ row }">
