@@ -21,17 +21,24 @@ class SubscribeController
     // Исправить
     public function index(Request $request, Division $division)
     {
+        $request->validate([
+            'from' => ['nullable', 'date_format:Y-m-d'],
+            'to' => ['nullable', 'date_format:Y-m-d']
+        ]);
+
         $query = $division->subscribes()
             ->whereHasAccess()
             ->orderBy('start_at')
             ->where(function($query) use ($request){
-                if ($request->has('from'))
+                if ($request->filled('from'))
                     $query->where('start_at', '>=', Carbon::parse($request->input('from')));
                 else
                     $query->where('start_at', '>=', now()->startOfMonth()->startOfDay());
 
-                if ($request->has('to'))
+                if ($request->filled('to'))
                     $query->where('start_at', '<=', Carbon::parse($request->input('to')));
+                else
+                    $query->where('start_at', '<=', now()->endOfMonth()->endOfDay());
 
                 return $query;
             });
