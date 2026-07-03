@@ -55,30 +55,12 @@ export default {
         return {
             isPopupOpen: false,
             selectedDate: this.value !== null ? this.value : null,
-
-            popupStyle: {
-                bottom: null,
-                position: 'absolute',
-            },
         };
     },
     methods: {
         popupButtonClickHandler() {
+            !this.isPopupOpen ? fixOverflow(this.$refs.dateInputPopup.$el) : null
             this.isPopupOpen = !this.isPopupOpen
-
-            this.isPopupOpen ? this.fixPopupBottomPosition() : null
-        },
-
-        async fixPopupBottomPosition() {
-            await this.$nextTick()
-
-            const popupRect = this.$refs.dateInputPopup.$el.getBoundingClientRect()
-            const vh = window.innerHeight
-
-            if (popupRect.bottom > vh) {
-                this.popupStyle.position = 'fixed'
-                this.popupStyle.bottom = '10px'
-            }
         },
 
         dayClickHandler(date) {
@@ -144,7 +126,6 @@ export default {
         <DateInputPopup v-show="isPopupOpen"
             ref="dateInputPopup"
             :isRange
-            :style="popupStyle"
             :checkValid
             :startInterval
             :endInterval
