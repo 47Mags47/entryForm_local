@@ -95,12 +95,8 @@ export default {
                 return subscribe.worker.id === this.current_user.id
         },
         updateDateBetween(newDateBetween) {
-            if (newDateBetween?.from?.isValid)
-                this.form.from   =   newDateBetween.from
-
-            if(newDateBetween?.to?.isValid)
-                this.form.to     =   newDateBetween.to
-
+            this.form.from   =   newDateBetween.from
+            this.form.to     =   newDateBetween.to
         },
 
         applyRange() {
