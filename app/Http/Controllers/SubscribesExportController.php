@@ -57,15 +57,14 @@ class SubscribesExportController
 
         // Результат
         $writer = new Xlsx($spreadsheet);
+        $exportFileName = sprintf(
+            'обращения_за_%s-%s.xlsx',
+            $from->format('d.m.Y'),
+            $to->format('d.m.Y')
+        );
         $response = response()->streamDownload(function () use ($writer) {
             $writer->save('php://output');
-        },
-            'обращения_за_' .
-            $from->format('d.m.Y+H.i') .
-            '-' .
-            $to->format('d.m.Y+H.i') .
-            '.xlsx'
-        );
+        }, $exportFileName);
 
         unset($writer);
         unset($spreadsheet);
