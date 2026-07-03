@@ -12,23 +12,23 @@ use PhpOffice\PhpSpreadsheet\Style\Border;
 class SubscribesExportController
 {
     public function index(Request $request, Division $division){
+        $request->validate([
+            'from' => ['nullable', 'date_format:Y-m-d'],
+            'to' => ['nullable', 'date_format:Y-m-d']
+        ]);
+
+        $from = $request->filled('from')
+            ? Carbon::parse($request->input('from'))
+            : now()->startOfMonth();
+
+        $to = $request->filled('to')
+            ? Carbon::parse($request->input('to'))
+            : now()->endOfMonth();
+
         $query = $division->subscribes()
             ->whereHasAccess()
             ->orderBy('start_at')
-            ->where(function($query) use ($request){
-                if ($request->has('from')) {
-                    $query->where('start_at', '>=', Carbon::parse($request->input('from')));
-
-                    if (!$request->has('to') && Carbon::parse($request->input('from'))->day === 1) {
-                        $query->where('start_at', '<=', Carbon::parse($request->input('from'))->endOfMonth());
-                    }
-                }
-                else
-                    $query->where('start_at', '>=', now()->startOfMonth()->startOfDay());
-
-                if ($request->has('to'))
-                    $query->where('start_at', '<=', Carbon::parse($request->input('to')));
-            });
+            ->whereBetween('start_at', [$from, $to]);
 
         $spreadsheet = $spreadsheet = IOFactory::load(storage_path('app/private/templates/subscribes/subscribesIndex.xlsx'));
         $sheet = $spreadsheet->getActiveSheet();
@@ -61,8 +61,9 @@ class SubscribesExportController
             $writer->save('php://output');
         },
             'обращения_за_' .
-            Carbon::parse($request->input('from'))->format('d.m.Y+H.i') .
-            ($request->has('to') ? '-' . Carbon::parse($request->input('to'))->format('d.m.Y+H.i') : '') .
+            $from->format('d.m.Y+H.i') .
+            '-' .
+            $to->format('d.m.Y+H.i') .
             '.xlsx'
         );
 

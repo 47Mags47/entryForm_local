@@ -16,9 +16,6 @@ use Carbon\Carbon;
 
 class SubscribeController
 {
-    // FIX при начальной загрузке страницы обращения показываются
-    // Но при первом клике применить дату без выбора второй даты не показываются обращения
-    // Исправить
     public function index(Request $request, Division $division)
     {
         $request->validate([
@@ -26,22 +23,18 @@ class SubscribeController
             'to' => ['nullable', 'date_format:Y-m-d']
         ]);
 
+        $from = $request->filled('from')
+            ? Carbon::parse($request->input('from'))
+            : now()->startOfMonth()->startOfDay();
+
+        $to = $request->filled('to')
+            ? Carbon::parse($request->input('to'))
+            : now()->endOfMonth()->endOfDay();
+
         $query = $division->subscribes()
             ->whereHasAccess()
             ->orderBy('start_at')
-            ->where(function($query) use ($request){
-                if ($request->filled('from'))
-                    $query->where('start_at', '>=', Carbon::parse($request->input('from')));
-                else
-                    $query->where('start_at', '>=', now()->startOfMonth()->startOfDay());
-
-                if ($request->filled('to'))
-                    $query->where('start_at', '<=', Carbon::parse($request->input('to')));
-                else
-                    $query->where('start_at', '<=', now()->endOfMonth()->endOfDay());
-
-                return $query;
-            });
+            ->whereBetween('start_at', [$from, $to]);
 
         return Inertia::render('pages/subscribes/index', [
             'subscribes' => fn() => getResource($query),
