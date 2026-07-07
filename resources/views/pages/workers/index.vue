@@ -50,7 +50,7 @@ const columns = [
                     { label: 'Работник организации', value: 'division_worker' }
                 ],
                 'onUpdate:modelValue': (value) => {
-                    if (row.role.code === 'admin') return
+                    if (row.role.code === 'admin' || value === 'admin') return
 
                     row.role.code = value ?? row.role.code;
 
