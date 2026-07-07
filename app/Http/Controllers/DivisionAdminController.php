@@ -20,10 +20,10 @@ class DivisionAdminController
         }
 
         $division->users()->whereKey($request->user_id)->update([
-            'role_id' => UserRole::byCode('division_admin')->id,
+            'role_id' => UserRole::byCode($request->input('role_code'))->id,
         ]);
 
-        return back()->with('success', 'Админимстратор подразделения успешно назначен');
+        return back()->with('success', 'Роль ' . $division->users()->find($request->user_id)->role->name . ' успешно назначена');
     }
 
     public function destroy(Division $division, User $division_admin)

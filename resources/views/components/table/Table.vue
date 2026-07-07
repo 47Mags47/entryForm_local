@@ -75,8 +75,13 @@ export default {
                             :key="c_index"
                             :style="cell.width ? { width: cell.width } : {}"
                         >
+                            <component
+                                v-if="cell.component"
+                                :is="cell.component(row)"
+                            />
+
                             <!-- Кастомный рендер, если указан -->
-                            <div v-if="cell.render">
+                            <div v-else-if="cell.render">
                                 {{ cell.render(row) }}
                             </div>
 

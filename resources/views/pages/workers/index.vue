@@ -3,9 +3,11 @@ import { AuthenticatedLayout } from "@layouts";
 import { DivisionTab } from "@includes";
 import { Table,
     AddButton, DeleteButton, EditButton, BlueButton,
-    CheckBox,
+    CheckBox, Select,
     PenIco, PersonIco } from "@components";
 import { usePage, router } from "@inertiajs/vue3";
+
+import { h } from "vue";
 
 import { ref, computed } from "vue";
 
@@ -14,38 +16,6 @@ const current_user = computed(() => usePage().props.current_user.data);
 const division = usePage().props.division.data;
 
 let isAdminEdit = ref(false);
-
-let loadingUserid = null
-
-const toggleCheckbox = async (row, val) => {
-    if (row.role.code === 'admin') return
-
-    loadingUserid = row.id
-    const previousRole = row.role.code;
-    row.role.code = val ? "division_admin" : "division_worker";
-    try {
-        if (val) {
-            await router.post(
-                route("division-admins.store", {
-                    division: division.id,
-                }),
-                { user_id: row.id },
-            );
-        } else {
-            await router.delete(
-                route("division-admins.destroy", {
-                    division: division.id,
-                    division_admin: row.id,
-                }),
-            );
-        }
-    } catch (error) {
-        console.error(error);
-        row.role.code = previousRole;
-    } finally {
-        loadingUserid = null
-    }
-};
 
 const columns = [
     {
@@ -69,8 +39,32 @@ const columns = [
     { key: "email", label: "Email"  },
     {
         label: 'Роль',
-        render: (row) => {
-            return loadingUserid === row.id ? 'загрузка..' : row.role.name
+        component: (row) => {
+            return h(Select, {
+                disabled: !isAdminEdit.value || row.role.code === 'admin',
+                modelValue: row.role.code,
+                hasSearch: false,
+                options: [
+                    { label: 'Администратор системы', value: 'admin' },
+                    { label: 'Администратор организации', value: 'division_admin' },
+                    { label: 'Работник организации', value: 'division_worker' }
+                ],
+                'onUpdate:modelValue': (value) => {
+                    if (row.role.code === 'admin') return
+
+                    row.role.code = value ?? row.role.code;
+
+                    router.post(
+                        route("division-admins.store", {
+                            division: division.id,
+                        }),
+                        {
+                            user_id: row.id,
+                            role_code: row.role.code
+                        },
+                    );
+                }
+            });
         }
     },
     { key: "actions", label: ""     },
@@ -111,11 +105,6 @@ const columns = [
                                     worker: row.id,
                                 })
                             "
-                        />
-                        <CheckBox
-                            v-show="isAdminEdit && row.role.code !== 'admin' && current_user.id !== row.id"
-                            :modelValue="row.role.code === 'division_admin'"
-                            @update:modelValue="(val) => toggleCheckbox(row, val)"
                         />
                     </div>
                 </template>
