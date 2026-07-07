@@ -28,7 +28,7 @@ export default {
             <div class="subscribe-show">
                 <div class="cards-container">
                     <div class="card">
-                        <h2 class="card-title">Данные клиента</h2>
+                        <h2 class="card-title">Данные заявителя</h2>
                         <div class="card-content">
                             <p>
                                 <strong>ФИО:</strong> {{ subscribe.last_name }}
