@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Division;
 use App\Models\Frame;
+use App\Models\City;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
 
@@ -12,8 +13,9 @@ class FrameController
     public function index(Division $division)
     {
         return Inertia::render('pages/frames/index', [
-            'division' => fn() => getResource($division),
-            'frame' => fn() => getResource(Frame::where('division_id', $division->id)),
+            'cities'    => fn() => getResource(City::class),
+            'division'  => fn() => getResource($division),
+            'frame'     => fn() => getResource(Frame::where('division_id', $division->id)),
         ]);
     }
     public function store(Division $division)

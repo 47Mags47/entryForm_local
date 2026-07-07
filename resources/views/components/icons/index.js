@@ -12,6 +12,7 @@ export { default as BuildingsIco } from './BuildingsIco.vue'
 export { default as CollectionIco } from './CollectionIco.vue'
 export { default as ListIco } from './ListIco.vue'
 export { default as DownloadIco } from './DownloadIco.vue'
+export { default as RefreshIco } from './RefreshIco.vue'
 
 export { default as ChevronRightIco } from './ChevronRightIco.vue'
 export { default as ChevronLeftIco } from './ChevronLeftIco.vue'
