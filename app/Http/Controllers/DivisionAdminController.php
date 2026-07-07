@@ -14,8 +14,8 @@ class DivisionAdminController
     {
         if (
             !(user()->hasRole('admin')
-                or (user()->hasRole('division_admin') and user()->division->id === $division->id)
-                or $request->input('role_code') === 'admin')
+            or (user()->hasRole('division_admin') and user()->division->id === $division->id)
+            or $request->input('role_code') === 'admin')
         ) {
             abort(403);
         }
