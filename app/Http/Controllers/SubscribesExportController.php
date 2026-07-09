@@ -42,7 +42,7 @@ class SubscribesExportController
         foreach ($query->cursor() as $subscribe) {
             $sheet->setCellValue("A{$row}", $subscribe->last_name . ' ' . $subscribe->first_name . ' ' . $subscribe->middle_name);
             $sheet->setCellValue("B{$row}", $subscribe->service->name);
-            $sheet->setCellValue("C{$row}", $subscribe->worker->last_name . ' ' . $subscribe->first_name . ' ' . $subscribe->middle_name);
+            $sheet->setCellValue("C{$row}", $subscribe->worker->last_name . ' ' . $subscribe->worker->first_name . ' ' . $subscribe->worker->middle_name);
             $sheet->setCellValue("D{$row}", $subscribe->worker->office);
             $sheet->setCellValue("E{$row}", $subscribe->start_at->format('d.m.Y H:i'));
 
