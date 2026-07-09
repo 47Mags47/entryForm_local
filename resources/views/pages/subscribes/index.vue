@@ -43,22 +43,17 @@ export default {
                     { key: "last_name", label: "Фамилия", width: "150px" },
                     { key: "first_name", label: "Имя", width: "150px" },
                     { key: "middle_name", label: "Отчество", width: "150px" },
-                    {
-                        key: ["division", "name"],
-                        label: "Подразделение",
-                        width: "400px",
-                    },
                     { key: ["service", "name"], label: "Услуга" },
                     {
                         key: "start_at",
                         label: "Дата записи",
                         splitDateTime: false,
-                        width: "150px",
+                        width: "180px",
                     },
                     {
                         key: ["worker", "name"],
                         label: "Специалист",
-                        width: "170px",
+                        width: "190px",
                     },
                     { key: "actions", label: "", width: "60px" },
                 ]
@@ -71,12 +66,12 @@ export default {
                         key: "start_at",
                         label: "Дата записи",
                         splitDateTime: false,
-                        width: "170px",
+                        width: "180px",
                     },
                     {
                         key: ["worker", "name"],
                         label: "Специалист",
-                        width: "150px",
+                        width: "190px",
                     },
                     { key: "actions", label: "", width: "60px" },
                 ];

@@ -32,7 +32,7 @@ class SubscribeResource extends JsonResource
                 'id' => $this->worker->id,
                 "name" => implode(' ', array_filter([
                     $this->worker->last_name,
-                    $this->worker->name ? mb_substr($this->worker->name, 0, 1) . '.' : null,
+                    $this->worker->first_name ? mb_substr($this->worker->first_name, 0, 1) . '.' : null,
                     $this->worker->middle_name ? mb_substr($this->worker->middle_name, 0, 1) . '.' : null,
                 ])),
                 'office' => $this->worker->office
