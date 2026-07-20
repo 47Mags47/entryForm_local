@@ -95,6 +95,13 @@ class Service extends Model
             return collect($period->toArray())->map(fn($date) => $date->format('H:i'));
         })->collapse()->toArray();
 
+
+        // Убираем прошедшее время
+        $availableTimes = collect($availableTimes)
+            ->filter(fn($time) => $time > now('Asia/Krasnoyarsk')->format('H:i'))
+            ->values()
+            ->toArray();
+
         return $availableTimes;
     }
 
