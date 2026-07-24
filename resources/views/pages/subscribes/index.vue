@@ -85,17 +85,20 @@ export default {
 
         applyRange() {
             this.form
-            .transform(data => ({
-                ...data,
-                from: data.from,
-                to: data.to,
-            }))
-            .get(route('subscribes.index', {
-                division: this.division.id,
-            }), {
-                preserveState: true,
-                preserveScroll: true,
-            });
+                .transform(data => ({
+                    ...data,
+                    from: data.from,
+                    to: data.to,
+                }))
+                .get(route('subscribes.index', {
+                    division: this.division.id,
+                }), {
+                    preserveState: true,
+                    preserveScroll: true,
+                });
+        },
+        resetData() {
+            router.get(route('subscribes.index', {division: this.division.id}))
         },
 
         subscribesExport() {
@@ -133,6 +136,7 @@ export default {
                         @update:value="updateDateBetween"
                     />
                     <BlueButton :handle-click="applyRange"> применить </BlueButton>
+                    <BlueButton :handle-click="resetData"> сбросить </BlueButton>
                 </template>
                 <template #toolbar-right>
                     <BlueButton :handle-click="subscribesExport">
