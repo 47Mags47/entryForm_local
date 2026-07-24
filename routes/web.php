@@ -76,6 +76,9 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('/workers', WorkerController::class)
         ->only(['edit', 'update', 'destroy']);
+    Route::get('/workers/{worker}/restore',   [WorkerController::class, 'restore'])
+        ->withTrashed()
+        ->name('workers.restore');
 
     Route::resource('/dashboard/user', DashboardController::class)
         ->only(['show', 'edit', 'update']);

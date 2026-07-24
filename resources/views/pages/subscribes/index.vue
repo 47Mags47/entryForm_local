@@ -99,7 +99,7 @@ export default {
 
         getRowColor(row) {
             if (row.deleted_at !== null)
-                return 'gray'
+                return 'row-deleted'
         }
     },
 
@@ -159,7 +159,7 @@ export default {
         background: blue
 
 
-.gray
+.row-deleted
     background: #ffe5e5
 
 </style>

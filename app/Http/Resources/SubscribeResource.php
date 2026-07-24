@@ -30,13 +30,13 @@ class SubscribeResource extends JsonResource
                 'name'   => $this->division?->name,
             ],
             "worker"        => [
-                'id'     => $this->worker->id,
+                'id'     => $this->worker?->id,
                 "name"   => implode(' ', array_filter([
-                    $this->worker->last_name,
-                    $this->worker->first_name ? mb_substr($this->worker->first_name, 0, 1) . '.' : null,
-                    $this->worker->middle_name ? mb_substr($this->worker->middle_name, 0, 1) . '.' : null,
+                    $this->worker?->last_name,
+                    $this->worker?->first_name ? mb_substr($this->worker?->first_name, 0, 1) . '.' : null,
+                    $this->worker?->middle_name ? mb_substr($this->worker?->middle_name, 0, 1) . '.' : null,
                 ])),
-                'office' => $this->worker->office
+                'office' => $this->worker?->office
             ],
             "comment"       => $this->comment,
         ];

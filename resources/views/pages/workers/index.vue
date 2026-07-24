@@ -4,7 +4,7 @@ import { DivisionTab } from "@includes";
 import { Table,
     AddButton, DeleteButton, EditButton, BlueButton,
     CheckBox, Select,
-    PenIco, PersonIco } from "@components";
+    PenIco, PersonIco, RestoreIco } from "@components";
 import { usePage, router } from "@inertiajs/vue3";
 
 import { h } from "vue";
@@ -16,6 +16,11 @@ const current_user = computed(() => usePage().props.current_user.data);
 const division = usePage().props.division.data;
 
 let isAdminEdit = ref(false);
+
+function getRowColor(row) {
+    if (row.deleted_at !== null)
+        return 'row-deleted'
+}
 
 const columns = [
     {
@@ -74,7 +79,7 @@ const columns = [
 <template>
     <AuthenticatedLayout>
         <DivisionTab current="workers">
-            <Table :data="worker" :columns="columns">
+            <Table :data="worker" :row-class="getRowColor" :columns="columns">
                 <template #toolbar-right>
                     <AddButton
                         :href="
@@ -96,16 +101,25 @@ const columns = [
                             <PersonIco />
                         </BlueButton>
                         <EditButton
+                            v-if="row.deleted_at === null"
                             :href="route('workers.edit', { worker: row.id })"
                         />
                         <DeleteButton
+                            v-if="row.deleted_at === null"
                             :href="
                                 route('workers.destroy', {
-                                    division: division.id,
-                                    worker: row.id,
+                                    division:   division.id,
+                                    worker:     row.id,
                                 })
                             "
                         />
+                        <BlueButton
+                            class="w-full"
+                            v-else
+                            @click="router.get(route('workers.restore', { worker: row.id }))"
+                        >
+                            <RestoreIco />
+                        </BlueButton>
                     </div>
                 </template>
             </Table>
@@ -113,10 +127,16 @@ const columns = [
     </AuthenticatedLayout>
 </template>
 
-<style lang="sass" scoped>
+<style lang="sass">
 .container-actions-row
     width: 100%
     display: flex
     justify-content: end
     gap: 10px
+
+.row-deleted
+    background: #ffe5e5
+
+.w-full
+    width: 100%
 </style>

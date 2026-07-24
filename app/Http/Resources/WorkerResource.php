@@ -21,6 +21,7 @@ class WorkerResource extends JsonResource
             "middle_name" => $this->middle_name,
             "last_name" => $this->last_name,
             "email"=> $this->email,
+            'deleted_at' =>$this->deleted_at,
             'division' => [
                 "id"=> $this->division->id,
                 "name"=> $this->division->name,

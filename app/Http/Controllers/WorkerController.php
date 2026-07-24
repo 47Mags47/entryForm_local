@@ -29,9 +29,7 @@ class WorkerController
         }
 
         return Inertia::render("pages/workers/index", [
-            "users" => fn() => getResource(
-                User::where("division_id", $division->id)
-            ),
+            "users" => fn() => WorkerResource::collection(User::withTrashed()->where("division_id", $division->id)->get()),
             "division" => fn() => getResource($division),
         ]);
     }
@@ -79,7 +77,7 @@ class WorkerController
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Division $division, User $worker) {
+    public function edit(User $worker) {
         if (!(user()->hasRole('admin')
             or (user()->hasRole('division_admin') and user()->division->id === $worker->division_id))) {
             abort(403);
@@ -128,13 +126,32 @@ class WorkerController
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Division $division, User $worker) {
-        if (!(user()->hasRole('admin')
-            or (user()->hasRole('division_admin') and user()->division->id === $worker->division_id))) {
+    public function destroy(User $worker) {
+        if (
+            !(user()->hasRole('admin') or (
+                user()->hasRole('division_admin') and
+                user()->division->id === $worker->division_id
+            ))
+        ) {
+            dump(true);
             abort(403);
         }
 
         $worker->delete();
         return redirect()->route('workers.index', ['division' => $worker->division_id])->with('success', value: 'Пользователь удален');
+    }
+
+    public function restore(User $worker) {
+        if (
+            !(user()->hasRole('admin') or (
+                user()->hasRole('division_admin') and
+                user()->division->id === $worker->division_id
+            ))
+        ) {
+            abort(403);
+        }
+
+        $worker->restore();
+        return redirect()->route('workers.index', ['division' => $worker->division_id])->with('success', value: 'Пользователь восстановлен');
     }
 }
