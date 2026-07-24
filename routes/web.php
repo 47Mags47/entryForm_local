@@ -54,7 +54,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/division/{division}/subscribes/export', [SubscribesExportController::class, 'index'])
         ->name('subscribes.export');
 
-    Route::Resource('/division/{division}/subscribes/{subscribe}', SubscribeController::class)
+    Route::Resource('/division/{division}/subscribes', SubscribeController::class)
         ->except(['edit', 'update'])
         ->withTrashed(['show', 'destroy']);
 
