@@ -38,43 +38,24 @@ export default {
         subscribes: () => usePage().props.subscribes,
 
         columns() {
-            return this.current_user.role.code === "admin"
-                ? [
-                    { key: "last_name", label: "Фамилия", width: "150px" },
-                    { key: "first_name", label: "Имя", width: "150px" },
-                    { key: "middle_name", label: "Отчество", width: "150px" },
-                    { key: ["service", "name"], label: "Услуга" },
-                    {
-                        key: "start_at",
-                        label: "Дата записи",
-                        splitDateTime: false,
-                        width: "180px",
-                    },
-                    {
-                        key: ["worker", "name"],
-                        label: "Специалист",
-                        width: "190px",
-                    },
-                    { key: "actions", label: "", width: "60px" },
-                ]
-                : [
-                    { key: "last_name", label: "Фамилия", width: "150px" },
-                    { key: "first_name", label: "Имя", width: "150px" },
-                    { key: "middle_name", label: "Отчество", width: "150px" },
-                    { key: ["service", "name"], label: "Услуга" },
-                    {
-                        key: "start_at",
-                        label: "Дата записи",
-                        splitDateTime: false,
-                        width: "180px",
-                    },
-                    {
-                        key: ["worker", "name"],
-                        label: "Специалист",
-                        width: "190px",
-                    },
-                    { key: "actions", label: "", width: "60px" },
-                ];
+            return [
+                { key: "last_name", label: "Фамилия", width: "150px" },
+                { key: "first_name", label: "Имя", width: "150px" },
+                { key: "middle_name", label: "Отчество", width: "150px" },
+                { key: ["service", "name"], label: "Услуга" },
+                {
+                    key: "start_at",
+                    label: "Дата записи",
+                    splitDateTime: false,
+                    width: "180px",
+                },
+                {
+                    key: ["worker", "name"],
+                    label: "Специалист",
+                    width: "190px",
+                },
+                { key: "actions", label: "", width: "60px" },
+            ];
         }
     },
 
