@@ -79,6 +79,6 @@ class Subscribe extends Model
     }
     public function worker(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'worker_id', 'id');
+        return $this->belongsTo(User::class, 'worker_id', 'id')->withTrashed();
     }
 }

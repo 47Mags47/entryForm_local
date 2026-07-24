@@ -36,9 +36,6 @@ export default {
         current_user: () => usePage().props.current_user.data,
         division: () => usePage().props.division.data,
         subscribes: () => usePage().props.subscribes,
-        markRowsDeleted() {
-            this.subscribes.data
-        },
 
         columns() {
             return [
@@ -53,9 +50,17 @@ export default {
                     width: "180px",
                 },
                 {
-                    key: ["worker", "name"],
                     label: "Специалист",
-                    width: "190px",
+                    width: "210px",
+                    class: (row) => {
+                        if (row.worker.deleted_at !== null)
+                            return 'deleted-worker'
+                    },
+                    render: (row) => {
+                        if (row.worker.deleted_at !== null)
+                            return `${row.worker.name} (удалён)`
+                        return row.worker.name
+                    }
                 },
                 { key: "actions", label: "", width: "60px" },
             ];
@@ -99,7 +104,7 @@ export default {
 
         getRowColor(row) {
             if (row.deleted_at !== null)
-                return 'row-deleted'
+                return 'deleted-row'
         }
     },
 
@@ -159,7 +164,10 @@ export default {
         background: blue
 
 
-.row-deleted
-    background: #ffe5e5
+.deleted-row
+    background: #ffe3e3
+
+.deleted-worker
+    color: red
 
 </style>

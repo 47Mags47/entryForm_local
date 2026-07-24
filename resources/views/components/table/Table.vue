@@ -81,6 +81,7 @@ export default {
                             v-for="(cell, c_index) in columns"
                             :key="c_index"
                             :style="cell.width ? { width: cell.width } : {}"
+                            :class="typeof cell.class === 'function' ? cell.class(row) : cell.class"
                         >
                             <component
                                 v-if="cell.component"

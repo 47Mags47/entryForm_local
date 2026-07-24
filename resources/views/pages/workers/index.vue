@@ -19,7 +19,7 @@ let isAdminEdit = ref(false);
 
 function getRowColor(row) {
     if (row.deleted_at !== null)
-        return 'row-deleted'
+        return 'deleted-row'
 }
 
 const columns = [
@@ -46,7 +46,7 @@ const columns = [
         label: 'Роль',
         component: (row) => {
             return h(Select, {
-                disabled: !isAdminEdit.value || row.role.code === 'admin',
+                disabled: !isAdminEdit.value || row.role.code === 'admin' || row.deleted_at !== null,
                 modelValue: row.role.code,
                 hasSearch: false,
                 options: [
@@ -134,8 +134,8 @@ const columns = [
     justify-content: end
     gap: 10px
 
-.row-deleted
-    background: #ffe5e5
+.deleted-row
+    background: #ffe3e3
 
 .w-full
     width: 100%

@@ -36,7 +36,8 @@ class SubscribeResource extends JsonResource
                     $this->worker?->first_name ? mb_substr($this->worker?->first_name, 0, 1) . '.' : null,
                     $this->worker?->middle_name ? mb_substr($this->worker?->middle_name, 0, 1) . '.' : null,
                 ])),
-                'office' => $this->worker?->office
+                'office' => $this->worker?->office,
+                'deleted_at' => $this->worker?->deleted_at,
             ],
             "comment"       => $this->comment,
         ];
