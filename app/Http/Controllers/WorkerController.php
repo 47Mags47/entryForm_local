@@ -45,6 +45,7 @@ class WorkerController
         if ($invite === null)
             return abort(404);
 
+
         return Inertia::render("pages/workers/create", [
             "invite" => fn() => getResource($invite),
         ]);

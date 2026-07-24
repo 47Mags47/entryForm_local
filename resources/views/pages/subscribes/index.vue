@@ -22,7 +22,7 @@ export default {
         return {
             isLoading: false,
 
-            selectedDate        : null,
+            selectedDate: null,
             startDate: { from: DateTime.now().startOf('month'), to: null },
 
             form: useForm({
@@ -36,6 +36,9 @@ export default {
         current_user: () => usePage().props.current_user.data,
         division: () => usePage().props.division.data,
         subscribes: () => usePage().props.subscribes,
+        markRowsDeleted() {
+            this.subscribes.data
+        },
 
         columns() {
             return [
@@ -92,6 +95,11 @@ export default {
 
         subscribesExport() {
             window.open(route('subscribes.export', { division: this.division.id, from: this.form.from, to: this.form.to }))
+        },
+
+        getRowColor(row) {
+            if (row.deleted_at !== null)
+                return 'gray'
         }
     },
 
@@ -103,14 +111,14 @@ export default {
         router.on('finish', () => {
             this.isLoading = false;
         });
-    }
+    },
 };
 </script>
 
 <template>
     <AuthenticatedLayout>
         <DivisionTab current="subscribes">
-            <Table :data="subscribes" :columns="columns" header="Список обращений" :isLoading="isLoading">
+            <Table :data="subscribes" :columns="columns" :row-class="getRowColor" header="Список обращений" :isLoading="isLoading">
                 <template #toolbar-left>
                     <DatePicker
                         :isRange="true"
@@ -149,4 +157,9 @@ export default {
 
     .date-picker-button
         background: blue
+
+
+.gray
+    background: #ffe5e5
+
 </style>

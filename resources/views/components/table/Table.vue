@@ -25,12 +25,19 @@ export default {
             type: Boolean,
             default: true,
         },
+        rowClass: {
+            type: [String, Function],
+            default: null
+        }
     },
 
     methods: {
         getObjectValue(key, row) {
             return getObjectValue(key, row);
         },
+        getRowClass(row) {
+            return typeof this.rowClass === 'function' ? this.rowClass(row) : this.rowClass
+        }
     },
 };
 </script>
@@ -69,7 +76,7 @@ export default {
                     <div v-else-if="!isLoading && data?.data.length === 0" class="no-data">
                         <span>данных нет :(</span>
                     </div>
-                    <tr v-else v-for="(row, r_index) in data?.data" :key="r_index">
+                    <tr v-else v-for="(row, r_index) in data?.data" :key="r_index" :class="getRowClass(row)">
                         <td
                             v-for="(cell, c_index) in columns"
                             :key="c_index"

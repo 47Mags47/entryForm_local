@@ -34,6 +34,11 @@ class SubscribeController
         $query = $division->subscribes()
             ->whereHasAccess()
             ->orderBy('start_at')
+            ->when(
+                user()->hasRole('division_worker'),
+                fn($query) => $query->withoutTrashed(),
+                fn($query) => $query->withTrashed()
+            )
             ->whereBetween('start_at', [$from, $to]);
 
         return Inertia::render('pages/subscribes/index', [
@@ -88,15 +93,23 @@ class SubscribeController
         if (user()->hasRole('division_worker')) {
             if ($subscribe->worker_id !== user()->id)
                 abort(403);
-        } elseif (user()->hasRole('division_admin')) {
-            if ($subscribe->division_id !== user()->division->id)
-                abort(403);
-        } else {
-            if (!user()->hasRole('admin'))
-                abort(403);
+
+            $subscribe->delete();
         }
 
-        $subscribe->delete();
+        elseif (user()->hasRole('division_admin')) {
+            if ($subscribe->division_id !== user()->division->id)
+                abort(403);
+
+            $subscribe->forceDelete();
+        }
+
+        else {
+            if (!user()->hasRole('admin'))
+                abort(403);
+
+            $subscribe->forceDelete();
+        }
 
         return redirect()->route('subscribes.index', ['division' => $division->id]);
     }

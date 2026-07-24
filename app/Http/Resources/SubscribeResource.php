@@ -15,29 +15,30 @@ class SubscribeResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            "id" => $this->id,
-            "first_name" => $this->first_name,
-            "middle_name" => $this->middle_name,
-            "last_name" => $this->last_name,
-            "email" => $this->email,
-            "phone" => $this->phone,
-            "start_at" => $this->start_at->format('d.m.Y H:i'),
-            "service" => [
-                'name' => $this->service?->name,
+            "id"            => $this->id,
+            "first_name"    => $this->first_name,
+            "middle_name"   => $this->middle_name,
+            "last_name"     => $this->last_name,
+            "email"         => $this->email,
+            "phone"         => $this->phone,
+            'deleted_at'    => $this->deleted_at,
+            "start_at"      => $this->start_at->format('d.m.Y H:i'),
+            "service"       => [
+                'name'   => $this->service?->name,
             ],
-            "division" => [
-                'name' => $this->division?->name,
+            "division"      => [
+                'name'   => $this->division?->name,
             ],
-            "worker" => [
-                'id' => $this->worker->id,
-                "name" => implode(' ', array_filter([
+            "worker"        => [
+                'id'     => $this->worker->id,
+                "name"   => implode(' ', array_filter([
                     $this->worker->last_name,
                     $this->worker->first_name ? mb_substr($this->worker->first_name, 0, 1) . '.' : null,
                     $this->worker->middle_name ? mb_substr($this->worker->middle_name, 0, 1) . '.' : null,
                 ])),
                 'office' => $this->worker->office
             ],
-            "comment" => $this->comment,
+            "comment"       => $this->comment,
         ];
     }
 }

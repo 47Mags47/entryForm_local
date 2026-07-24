@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Subscribe extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     ### Настройки
     ##################################################
@@ -45,6 +46,7 @@ class Subscribe extends Model
 
             if (user()->hasRole('division_worker'))
                 return $query->where('id', null)->orWhere(function ($query) {
+
                     $query->orWhere('worker_id', user()->id);
 
                     $services_ids = user()->services->pluck('id');
@@ -59,6 +61,10 @@ class Subscribe extends Model
             return $query->whereKey(null);
         });
     }
+
+
+    ### методы
+    ##################################################
 
     ### Связи
     ##################################################

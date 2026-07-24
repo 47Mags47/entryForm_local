@@ -54,7 +54,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/division/{division}/subscribes/export', [SubscribesExportController::class, 'index'])
         ->name('subscribes.export');
     Route::resource('/division/{division}/subscribes', SubscribeController::class)
-        ->only(['index', 'create', 'store', 'show', 'destroy']);
+        ->only(['index', 'create', 'store']);
+    Route::delete('/division/{division}/subscribes/{subscribe}', [SubscribeController::class, 'destroy'])
+        ->withTrashed()
+        ->name('subscribes.destroy');
+    Route::get('/division/{division}/subscribes/{subscribe}',   [SubscribeController::class, 'show'])
+        ->withTrashed()
+        ->name('subscribes.show');
 
     Route::resource('/statistic', StatisticController::class)
         ->only(['index']);

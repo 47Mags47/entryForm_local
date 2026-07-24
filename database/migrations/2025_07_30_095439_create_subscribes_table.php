@@ -30,6 +30,7 @@ return new class extends Migration {
             $table->timestamp('start_at');
 
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
