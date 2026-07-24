@@ -111,6 +111,6 @@ class SubscribeController
             $subscribe->forceDelete();
         }
 
-        return redirect()->route('subscribes.index', ['division' => $division->id]);
+        return redirect()->back();
     }
 }
