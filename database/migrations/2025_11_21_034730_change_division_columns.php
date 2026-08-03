@@ -16,7 +16,6 @@ return new class extends Migration {
             $table->dropForeign('main__divisions_parent_id_foreign');
             $table->dropColumn('parent_id');
             $table->foreignId('group_id')->nullable()->constrained(new DivisionGroup()->getTable());
-
         });
     }
 

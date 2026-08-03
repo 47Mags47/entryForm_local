@@ -15,26 +15,17 @@ class RootSeeder extends Seeder
      */
     public function run(): void
     {
-        User::create([
+        $root = User::factory()->create([
             'first_name' => 'root',
             'last_name' => '',
             'middle_name' => '',
             'email' => 'root',
             'password' => Hash::make('root'),
-            'division_id' => Division::count() > 0 ? 1: null,
-            'role_id' => UserRole::byCode('admin')->id,
             'email_verified_at' => now(),
         ]);
 
-        User::create([
-            'first_name' => 'admin',
-            'last_name' => '',
-            'middle_name' => '',
-            'email' => 'admin',
-            'password' => Hash::make('admin'),
-            'division_id' => Division::count() > 0 ? 1: null,
-            'role_id' => UserRole::byCode('division_admin')->id,
-            'email_verified_at' => now(),
+        $root->roles()->attach(UserRole::byCode('admin')->first(), [
+            'division_id' => null,
         ]);
     }
 }

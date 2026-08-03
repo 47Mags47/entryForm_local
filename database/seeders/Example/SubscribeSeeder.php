@@ -14,9 +14,13 @@ class SubscribeSeeder extends Seeder
     public function run(): void
     {
         Division::all()->each(
-            fn($division) => $division->workers->each(
-                fn($worker) => Subscribe::factory(5)->create(['worker_id' => $worker->id])
-            )
+            function ($division) {
+                $division->workers->each(
+                    function ($worker) {
+                        Subscribe::factory(5)->create(['worker_id' => $worker->id]);
+                    }
+                );
+            }
         );
     }
 }

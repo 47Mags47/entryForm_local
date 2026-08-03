@@ -17,11 +17,15 @@ class ServiceSeeder extends Seeder
     {
         $services = Service::factory(5)->create();
 
-        User::where('role_id', UserRole::byCode('division_worker')->id)->each(function ( User $user) use ($services) {
-            UserService::create([
-                'user_id' => $user->id,
-                'service_id' => $services->random()->id,
-            ]);
-        });
+        User::whereHas('divisions', function ($query) {
+            $query->where('role_id', UserRole::byCode('division_worker')->id);
+        })
+            ->get()
+            ->each(function (User $user) use ($services) {
+                UserService::create([
+                    'user_id' => $user->id,
+                    'service_id' => $services->random()->id,
+                ]);
+            });
     }
 }

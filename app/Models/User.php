@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
 use App\Models\ChangeEmailToken;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class User extends Authenticatable
 {
@@ -51,9 +52,11 @@ class User extends Authenticatable
 
     ### Методы
     ##################################################
-    public function hasRole(string $role)
+    public function hasRole(string $role, ?Division $division = null): bool
     {
-        return user()->role_id === UserRole::where('code', $role)->get()->first()->id;
+        return $division === null
+            ? $this->roles()->where('code', $role)->exists()
+            : $this->roles()->where('code', $role)->wherePivot('division_id', $division->id)->exists();
     }
 
     public function getTimeLine(Carbon|CarbonImmutable $day)
@@ -95,15 +98,25 @@ class User extends Authenticatable
 
     ### Связи
     ##################################################
-    public function role(): BelongsTo
+    public function roles(): BelongsToMany
     {
-        return $this->belongsTo(UserRole::class, 'role_id');
+        return $this->belongsToMany(UserRole::class, 'main__users_roles', null, 'role_id')->withPivot('division_id');
     }
 
-    public function division(): BelongsTo
+    // public function role(): BelongsTo
+    // {
+    //     return $this->belongsTo(UserRole::class, 'role_id');
+    // }
+
+    public function divisions(): BelongsToMany
     {
-        return $this->belongsTo(Division::class, 'division_id');
+        return $this->belongsToMany(Division::class, 'main__users_roles')->withPivot('role_id');
     }
+
+    // public function division(): BelongsTo
+    // {
+    //     return $this->belongsTo(Division::class, 'division_id');
+    // }
 
     public function services(): HasManyThrough
     {

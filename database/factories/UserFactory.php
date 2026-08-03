@@ -20,6 +20,7 @@ class UserFactory extends Factory
     public function definition(): array
     {
         $gender = rand(1, 2) === 1 ? 'male' : 'female';
+        $divisions = Division::all();
 
         return [
             'first_name' => $this->faker->firstName($gender),
@@ -28,8 +29,6 @@ class UserFactory extends Factory
             'email' => $this->faker->unique()->email(),
             'office' => $this->faker->numerify('###/#'),
             'password' => Hash::make($this->faker->word()),
-            'division_id' => Division::all()->random()->id,
-            'role_id' => UserRole::all()->random()->id,
             'email_verified_at' => now()->subDay(rand(1, 364)),
         ];
     }

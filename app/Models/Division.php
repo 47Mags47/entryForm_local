@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 class Division extends Model
@@ -53,17 +54,17 @@ class Division extends Model
         return $this->hasMany(DivisionShedule::class, 'division_id');
     }
 
-    public function users(): HasMany
+    public function users(): BelongsToMany
     {
-        return $this->hasMany(User::class, 'division_id');
+        return $this->belongsToMany(User::class, 'main__users_roles')->withPivot('role_id');
     }
 
-    public function admins(): HasMany
+    public function admins(): BelongsToMany
     {
         return $this->users()->where('role_id', UserRole::byCode('division_admin')->id);
     }
 
-    public function workers(): HasMany
+    public function workers(): BelongsToMany
     {
         return $this->users()->where('role_id', UserRole::byCode('division_worker')->id);
     }

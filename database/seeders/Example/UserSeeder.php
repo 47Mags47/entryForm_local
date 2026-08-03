@@ -4,6 +4,7 @@ namespace Database\Seeders\Example;
 
 use App\Models\Division;
 use App\Models\User;
+use App\Models\UserRole;
 use App\Models\WorkSchedule;
 use Illuminate\Database\Seeder;
 
@@ -15,11 +16,13 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         Division::all()->each(function (Division $division) {
-            $users = User::factory(rand(1, 3))->create([
-                'division_id' => $division->id,
-            ]);
+            $users = User::factory(rand(1, 3))->create();
 
             foreach ($users as $user) {
+                $user->divisions()->attach($division->id, [
+                    'role_id' => UserRole::byCode('division_worker')->id,
+                ]);
+
                 foreach (range(1, 5) as $day_of_the_week_id) {
                     WorkSchedule::create([
                         'date_start' => '08:00',

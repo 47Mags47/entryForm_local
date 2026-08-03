@@ -23,17 +23,24 @@ class CurrentUserResource extends JsonResource
             'phone' => $this->phone,
             'office' => $this->office,
             'receiveMail' => $this->receiveMail,
-            'division' => $this->division !== null
-                ? [
-                    "id" => $this->division->id,
-                    "name" => $this->division->name,
-                ]
-                : null,
-            'role'=> [
-                'id'=> $this->role->id,
-                'code'=> $this->role->code,
-                'name' => $this->role->name,
-            ],
+            'roles' => $this->roles->map(fn($role)=> [
+                'id'=> $role->id,
+                'code'=> $role->code,
+                'name' => $role->name,
+                'division_id' => $role->pivot->division_id,
+            ]),
+
+            // 'division' => $this->division !== null
+            //     ? [
+            //         "id" => $this->division->id,
+            //         "name" => $this->division->name,
+            //     ]
+            //     : null,
+            // 'role'=> [
+            //     'id'=> $this->role->id,
+            //     'code'=> $this->role->code,
+            //     'name' => $this->role->name,
+            // ],
         ];
     }
 }
