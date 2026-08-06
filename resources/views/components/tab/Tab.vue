@@ -9,6 +9,12 @@ export default {
     props: {
         links: Array,
     },
+
+    computed: {
+        visibleLinks() {
+            return this.links.filter(link => link.hasAccess);
+        }
+    }
 };
 </script>
 
@@ -17,13 +23,12 @@ export default {
         <ul class="nav">
             <li
                 :class="{ 'tab-item': true, active: link.isActive }"
-                v-for="(link, i) in links"
+                v-for="(link, i) in visibleLinks"
+                :key="i"
             >
                 <Link
-                    v-if="link.hasAccess"
                     :href="link.href"
                     :active="link.isActive"
-                    :key="i"
                     class="tab-link"
                 >
                     {{ link.title }}
