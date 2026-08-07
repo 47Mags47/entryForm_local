@@ -1,12 +1,10 @@
 <script>
 import { useForm, usePage } from "@inertiajs/vue3";
-import { AuthenticatedLayout } from "@layouts";
 import { DivisionTab } from "@includes";
 import { VerticalForm, StringInput } from "@components";
 
 export default {
     components: {
-        AuthenticatedLayout,
         DivisionTab,
         VerticalForm,
         StringInput,
@@ -31,21 +29,19 @@ export default {
 </script>
 
 <template>
-    <AuthenticatedLayout>
-        <DivisionTab :division_id="division.id">
-            <VerticalForm
-                header="Отправить приглашение"
-                sbm="Отправить"
-                :handleSubmit="onSubmit"
-            >
-                <StringInput
-                    label="Email"
-                    name="email"
-                    :value="form.email"
-                    @update:value="(val) => (form.email = val)"
-                    autocomplete="username"
-                />
-            </VerticalForm>
-        </DivisionTab>
-    </AuthenticatedLayout>
+    <DivisionTab :division_id="division.id">
+        <VerticalForm
+            header="Отправить приглашение"
+            sbm="Отправить"
+            :handleSubmit="onSubmit"
+        >
+            <StringInput
+                label="Email"
+                name="email"
+                :value="form.email"
+                @update:value="(val) => (form.email = val)"
+                autocomplete="username"
+            />
+        </VerticalForm>
+    </DivisionTab>
 </template>

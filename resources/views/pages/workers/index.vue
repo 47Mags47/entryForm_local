@@ -2,7 +2,6 @@
 import { h } from "vue";
 import { usePage, router } from "@inertiajs/vue3";
 import { DivisionTab } from "@includes";
-import { AuthenticatedLayout } from "@layouts";
 import {
     Table,
 
@@ -19,7 +18,6 @@ import {
 
 export default {
     components: {
-        AuthenticatedLayout,
         Table,
         DivisionTab,
 
@@ -109,43 +107,41 @@ export default {
 </script>
 
 <template>
-    <AuthenticatedLayout>
-        <DivisionTab current="workers">
-            <Table :data="users" :row-class="getRowColor" :columns="columns">
-                <template #toolbar-right>
-                    <AddButton :href="route('invites.create', {
-                        division: division.id,
-                    })" />
-                    <BlueButton v-if="getUserRole(current_user).code !== 'division_worker'"
-                        @click="() => isAdminEdit = !isAdminEdit">
-                        <PenIco />
+    <DivisionTab current="workers">
+        <Table :data="users" :row-class="getRowColor" :columns="columns">
+            <template #toolbar-right>
+                <AddButton :href="route('invites.create', {
+                    division: division.id,
+                })" />
+                <BlueButton v-if="getUserRole(current_user).code !== 'division_worker'"
+                    @click="() => isAdminEdit = !isAdminEdit">
+                    <PenIco />
+                </BlueButton>
+            </template>
+
+            <template #actions="{ row }">
+                <div class="container-actions-row">
+                    <BlueButton class="w-full" v-if="getUserRole(current_user).code === 'admin' && row.role.code !== 'admin' && row.deleted_at === null"
+                        @click="router.get(route('user.edit', { user: row.id }))">
+                        <PersonIco />
                     </BlueButton>
-                </template>
 
-                <template #actions="{ row }">
-                    <div class="container-actions-row">
-                        <BlueButton class="w-full" v-if="getUserRole(current_user).code === 'admin' && row.role.code !== 'admin' && row.deleted_at === null"
-                            @click="router.get(route('user.edit', { user: row.id }))">
-                            <PersonIco />
-                        </BlueButton>
+                    <EditButton class="w-full" v-if="row.deleted_at === null"
+                        :href="route('workers.edit', { worker: row.id, division: division.id })" />
 
-                        <EditButton class="w-full" v-if="row.deleted_at === null"
-                            :href="route('workers.edit', { worker: row.id, division: division.id })" />
-
-                        <DeleteButton class="w-full" v-if="row.deleted_at === null && row.id !== current_user.id" :href="route('workers.destroy', {
-                            division: division.id,
-                            worker: row.id,
-                        })
-                            " />
-                        <BlueButton class="w-full" v-else-if="row.deleted_at !== null"
-                            @click="router.get(route('workers.restore', { worker: row.id, division: division.id }))">
-                            <RestoreIco />
-                        </BlueButton>
-                    </div>
-                </template>
-            </Table>
-        </DivisionTab>
-    </AuthenticatedLayout>
+                    <DeleteButton class="w-full" v-if="row.deleted_at === null && row.id !== current_user.id" :href="route('workers.destroy', {
+                        division: division.id,
+                        worker: row.id,
+                    })
+                        " />
+                    <BlueButton class="w-full" v-else-if="row.deleted_at !== null"
+                        @click="router.get(route('workers.restore', { worker: row.id, division: division.id }))">
+                        <RestoreIco />
+                    </BlueButton>
+                </div>
+            </template>
+        </Table>
+    </DivisionTab>
 </template>
 
 <style lang="sass">

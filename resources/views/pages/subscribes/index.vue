@@ -1,13 +1,11 @@
 <script>
 import { usePage, useForm, router } from "@inertiajs/vue3";
-import { AuthenticatedLayout } from "@layouts";
 import { DivisionTab } from "@includes";
 import { Table, GoToButton, AddButton, DeleteButton, BlueButton, DatePicker, DownloadIco } from "@components";
 import { DateTime } from "luxon";
 
 export default {
     components: {
-        AuthenticatedLayout,
         DivisionTab,
         Table,
         GoToButton,
@@ -128,40 +126,38 @@ export default {
 </script>
 
 <template>
-    <AuthenticatedLayout>
-        <DivisionTab current="subscribes">
-            <Table :data="subscribes" :columns="columns" :row-class="getRowColor" header="Список обращений" :isLoading="isLoading">
-                <template #toolbar-left>
-                    <DatePicker
-                        :isRange="true"
-                        name="date"
-                        :value="startDate"
-                        :showAvailable="false"
-                        @update:value="updateDateBetween"
-                    />
-                    <BlueButton :handle-click="applyRange"> применить </BlueButton>
-                    <BlueButton :handle-click="resetData"> сбросить </BlueButton>
-                </template>
-                <template #toolbar-right>
-                    <BlueButton :handle-click="subscribesExport">
-                        <DownloadIco/>
-                    </BlueButton>
-                    <AddButton :href="route('subscribes.create', { division: division.id })" />
-                </template>
-                <template #actions="{ row }">
-                    <DeleteButton v-if="hasDelete(row)" :href="route('subscribes.destroy', {
-                        division: division.id,
-                        subscribe: row.id,
-                    })" />
-                    <GoToButton :href="route('subscribes.show', {
-                        division: division.id,
-                        subscribe: row.id,
-                    })
-                        " />
-                </template>
-            </Table>
-        </DivisionTab>
-    </AuthenticatedLayout>
+    <DivisionTab current="subscribes">
+        <Table :data="subscribes" :columns="columns" :row-class="getRowColor" header="Список обращений" :isLoading="isLoading">
+            <template #toolbar-left>
+                <DatePicker
+                    :isRange="true"
+                    name="date"
+                    :value="startDate"
+                    :showAvailable="false"
+                    @update:value="updateDateBetween"
+                />
+                <BlueButton :handle-click="applyRange"> применить </BlueButton>
+                <BlueButton :handle-click="resetData"> сбросить </BlueButton>
+            </template>
+            <template #toolbar-right>
+                <BlueButton :handle-click="subscribesExport">
+                    <DownloadIco/>
+                </BlueButton>
+                <AddButton :href="route('subscribes.create', { division: division.id })" />
+            </template>
+            <template #actions="{ row }">
+                <DeleteButton v-if="hasDelete(row)" :href="route('subscribes.destroy', {
+                    division: division.id,
+                    subscribe: row.id,
+                })" />
+                <GoToButton :href="route('subscribes.show', {
+                    division: division.id,
+                    subscribe: row.id,
+                })
+                    " />
+            </template>
+        </Table>
+    </DivisionTab>
 </template>
 
 <style lang="sass">

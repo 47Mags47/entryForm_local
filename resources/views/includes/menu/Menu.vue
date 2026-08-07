@@ -19,7 +19,7 @@ export default {
         PersonIco,
     },
     data() {
-        const current_user = usePage().props.current_user.data;
+        const current_user = usePage().props.current_user?.data;
         return {
             current_user,
         };
@@ -27,7 +27,7 @@ export default {
 
     methods: {
         hasRole(code){
-            return this.current_user.roles.filter((role) => role.role.code === code).length > 0
+            return this.current_user?.roles.filter((role) => role.role.code === code).length > 0
         }
     }
 };
@@ -52,7 +52,7 @@ export default {
                 <CollectionIco />
             </ItemMenu>
 
-            <ItemMenu :href="route('user.show', { user: current_user.id })" label="Личный Кабинет">
+            <ItemMenu :href="route('user.show', { user: current_user?.id })" label="Личный Кабинет">
                 <PersonIco />
             </ItemMenu>
         </ul>

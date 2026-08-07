@@ -1,13 +1,11 @@
 <script>
 import { useForm, usePage } from "@inertiajs/vue3";
-import { AuthenticatedLayout } from "@layouts";
 import { VerticalForm, StringInput, Select, NumberInput, EmailInput, DatePicker } from "@components";
 import axios from "axios";
 import { DateTime } from "luxon";
 
 export default {
     components: {
-        AuthenticatedLayout,
         VerticalForm,
         StringInput, Select, NumberInput, EmailInput,
         DatePicker
@@ -100,7 +98,6 @@ export default {
 </script>
 
 <template>
-<AuthenticatedLayout>
     <VerticalForm header="Новая запись" sbm="Отправить" :handleSubmit="onSubmit">
         <StringInput
             label="Фамилия"
@@ -164,5 +161,4 @@ export default {
             :placeholder="timePlaceHolder ?? ''"
         />
     </VerticalForm>
-</AuthenticatedLayout>
 </template>

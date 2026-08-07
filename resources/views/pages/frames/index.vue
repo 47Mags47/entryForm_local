@@ -1,12 +1,10 @@
 <script>
 import { usePage } from "@inertiajs/vue3";
-import { AuthenticatedLayout } from "@layouts";
 import { DivisionTab } from "@includes";
 import { Table, AddButton, EditButton, DeleteButton } from "@components";
 
 export default {
     components: {
-        AuthenticatedLayout,
         DivisionTab,
         Table,
         AddButton,
@@ -36,33 +34,31 @@ export default {
 </script>
 
 <template>
-    <AuthenticatedLayout>
-        <DivisionTab current="frame">
-            <Table :data="frame" :columns="columns" header="Фрейм">
+    <DivisionTab current="frame">
+        <Table :data="frame" :columns="columns" header="Фрейм">
 
-                <template
-                    #toolbar-right
-                    v-if="frame.data.length === 0"
+            <template
+                #toolbar-right
+                v-if="frame.data.length === 0"
 >
 
-                    <AddButton
-                        :href="route('frame.store', { division: division.id })"
-                        method="post"
-                    />
-                </template>
-                <template #actions = {row}>
-                    <EditButton
-                        :href="route('frame.update', { division: division.id, frame: row.id })"
-                        method="put"
-                    />
-                    <DeleteButton
-                        :href="
-                            route('frame.destroy', { division: division.id, frame: row.id })
-                        "
-                    />
-                </template>
-            </Table>
-        </DivisionTab>
-    </AuthenticatedLayout>
+                <AddButton
+                    :href="route('frame.store', { division: division.id })"
+                    method="post"
+                />
+            </template>
+            <template #actions = {row}>
+                <EditButton
+                    :href="route('frame.update', { division: division.id, frame: row.id })"
+                    method="put"
+                />
+                <DeleteButton
+                    :href="
+                        route('frame.destroy', { division: division.id, frame: row.id })
+                    "
+                />
+            </template>
+        </Table>
+    </DivisionTab>
     <iframe width="1800" height="900" src="http://entry-form.local/frames/RiUGgrF1zY4OzbgXykMoi8limHXXv37J3J0K6Q2a/subscribes/create"/>
 </template>

@@ -1,7 +1,6 @@
 <script setup>
 import { useForm, usePage } from "@inertiajs/vue3";
 import { DivisionTab } from "@includes";
-import { AuthenticatedLayout } from "@layouts";
 import {
     HorizontalForm,
     WorkSchedule,
@@ -43,53 +42,51 @@ function onSubmit(e) {
 </script>
 
 <template>
-    <AuthenticatedLayout>
-        <DivisionTab current="workers">
-            <HorizontalForm
-                header="Информация о работнике"
-                sbm="Сохранить"
-                :handleSubmit="onSubmit"
-            >
-                <FormGroup name="info" label="Информация">
-                    <StringInput
-                        label="ФИО"
-                        name="name"
-                        :value="form.name"
-                        disabled
-                    />
-                    <StringInput
-                        label="Email"
-                        name="email"
-                        :value="form.email"
-                        disabled
-                    />
-                </FormGroup>
+    <DivisionTab current="workers">
+        <HorizontalForm
+            header="Информация о работнике"
+            sbm="Сохранить"
+            :handleSubmit="onSubmit"
+        >
+            <FormGroup name="info" label="Информация">
+                <StringInput
+                    label="ФИО"
+                    name="name"
+                    :value="form.name"
+                    disabled
+                />
+                <StringInput
+                    label="Email"
+                    name="email"
+                    :value="form.email"
+                    disabled
+                />
+            </FormGroup>
 
-                <FormGroup name="work" label="График работы">
-                    <WorkSchedule
-                        header="График работы"
-                        v-model="form.shedules"
-                        name="shedules"
-                    />
-                </FormGroup>
-                <FormGroup id="services" name="services" label="Услуги">
-                     <div
-                        class="services-row"
-                        v-for="(service, index) in services"
-                        :key="service.id"
-                        @click="toggleCheckbox( service, !form.service_ids.includes(service.id))"
-                     >
-                        <div class="service-row-checkbox">
-                            <CheckBox :modelValue="form.service_ids.includes(service.id)" />
-                        </div>
-                        <div class="service-row-name">
-                            <span> {{ service.name }} </span>
-                        </div>
-                     </div>
-                </FormGroup>
-            </HorizontalForm>
-        </DivisionTab>
-    </AuthenticatedLayout>
+            <FormGroup name="work" label="График работы">
+                <WorkSchedule
+                    header="График работы"
+                    v-model="form.shedules"
+                    name="shedules"
+                />
+            </FormGroup>
+            <FormGroup id="services" name="services" label="Услуги">
+                    <div
+                    class="services-row"
+                    v-for="(service, index) in services"
+                    :key="service.id"
+                    @click="toggleCheckbox( service, !form.service_ids.includes(service.id))"
+                    >
+                    <div class="service-row-checkbox">
+                        <CheckBox :modelValue="form.service_ids.includes(service.id)" />
+                    </div>
+                    <div class="service-row-name">
+                        <span> {{ service.name }} </span>
+                    </div>
+                    </div>
+            </FormGroup>
+        </HorizontalForm>
+    </DivisionTab>
 </template>
 
 <style lang="sass" scoped>

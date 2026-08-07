@@ -1,11 +1,9 @@
 <script>
 import { usePage } from "@inertiajs/vue3";
-import { AuthenticatedLayout } from "@layouts";
 import { DivisionTab } from "@includes";
 
 export default {
     components: {
-        AuthenticatedLayout,
         DivisionTab,
     },
 
@@ -24,54 +22,52 @@ export default {
 </script>
 
 <template>
-    <AuthenticatedLayout>
-        <DivisionTab current="subscribes">
-            <div class="subscribe-show">
-                <div class="cards-container">
-                    <div class="card">
-                        <h2 class="card-title">Данные заявителя</h2>
-                        <div class="card-content">
-                            <p>
-                                <strong>ФИО:</strong> {{ subscribe.last_name }}
-                                {{ subscribe.first_name }}
-                                {{ subscribe.middle_name }}
-                            </p>
-                            <p><strong>Email:</strong> {{ subscribe.email }}</p>
-                            <p>
-                                <strong>Телефон:</strong> {{ subscribe.phone }}
-                            </p>
-                        </div>
+    <DivisionTab current="subscribes">
+        <div class="subscribe-show">
+            <div class="cards-container">
+                <div class="card">
+                    <h2 class="card-title">Данные заявителя</h2>
+                    <div class="card-content">
+                        <p>
+                            <strong>ФИО:</strong> {{ subscribe.last_name }}
+                            {{ subscribe.first_name }}
+                            {{ subscribe.middle_name }}
+                        </p>
+                        <p><strong>Email:</strong> {{ subscribe.email }}</p>
+                        <p>
+                            <strong>Телефон:</strong> {{ subscribe.phone }}
+                        </p>
                     </div>
+                </div>
 
-                    <div class="card">
-                        <h2 class="card-title">Данные обращения</h2>
-                        <div class="card-content">
-                            <p v-if="getUserRole(current_user).code === 'admin'">
-                                <strong>Подразделение:</strong>
-                                {{ subscribe.division?.name }}
-                            </p>
-                            <p>
-                                <strong>Специалист:</strong>
-                                {{ subscribe.worker.name }}
-                            </p>
-                            <p>
-                                <strong>Услуга:</strong>
-                                {{ subscribe.service.name }}
-                            </p>
-                            <p>
-                                <strong>Время начала:</strong>
-                                {{ subscribe.start_at }}
-                            </p>
-                            <p>
-                                <strong>Комментарий:</strong>
-                                {{ subscribe.comment }}
-                            </p>
-                        </div>
+                <div class="card">
+                    <h2 class="card-title">Данные обращения</h2>
+                    <div class="card-content">
+                        <p v-if="getUserRole(current_user).code === 'admin'">
+                            <strong>Подразделение:</strong>
+                            {{ subscribe.division?.name }}
+                        </p>
+                        <p>
+                            <strong>Специалист:</strong>
+                            {{ subscribe.worker.name }}
+                        </p>
+                        <p>
+                            <strong>Услуга:</strong>
+                            {{ subscribe.service.name }}
+                        </p>
+                        <p>
+                            <strong>Время начала:</strong>
+                            {{ subscribe.start_at }}
+                        </p>
+                        <p>
+                            <strong>Комментарий:</strong>
+                            {{ subscribe.comment }}
+                        </p>
                     </div>
                 </div>
             </div>
-        </DivisionTab>
-    </AuthenticatedLayout>
+        </div>
+    </DivisionTab>
 </template>
 
 <style scoped>

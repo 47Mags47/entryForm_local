@@ -1,11 +1,9 @@
 <script>
 import { useForm } from "@inertiajs/vue3";
-import { AuthenticatedLayout } from "@layouts";
 import { VerticalForm, StringInput } from "@components";
 
 export default {
     components: {
-        AuthenticatedLayout,
         VerticalForm,
         StringInput,
     },
@@ -29,19 +27,17 @@ export default {
 </script>
 
 <template>
-    <AuthenticatedLayout>
-        <VerticalForm
-            header="Смена Email"
-            sbm="Отправить"
-            :handleSubmit="onSubmit"
-        >
-            <StringInput
-                name="email"
-                label="Email"
-                type="email"
-                :value="form.email"
-                @update:value="(val) => (form.email = val)"
-            />
-        </VerticalForm>
-    </AuthenticatedLayout>
+    <VerticalForm
+        header="Смена Email"
+        sbm="Отправить"
+        :handleSubmit="onSubmit"
+    >
+        <StringInput
+            name="email"
+            label="Email"
+            type="email"
+            :value="form.email"
+            @update:value="(val) => (form.email = val)"
+        />
+    </VerticalForm>
 </template>

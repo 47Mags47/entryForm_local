@@ -1,8 +1,5 @@
 <script>
 import { usePage } from "@inertiajs/vue3";
-
-import { AuthenticatedLayout } from "@layouts";
-
 import {
     Table,
     EditButton,
@@ -13,7 +10,6 @@ import {
 
 export default {
     components: {
-        AuthenticatedLayout,
         Table,
         EditButton,
         DeleteButton,
@@ -44,21 +40,19 @@ export default {
 </script>
 
 <template>
-    <AuthenticatedLayout>
-        <Table :data="divisions" :columns="columns" header="Подразделения">
-            <template #toolbar-right v-if="current_user.roles[0]?.role.code === 'admin'">
-                <AddButton href="/divisions/create" />
-            </template>
+    <Table :data="divisions" :columns="columns" header="Подразделения">
+        <template #toolbar-right v-if="current_user.roles[0]?.role.code === 'admin'">
+            <AddButton href="/divisions/create" />
+        </template>
 
-            <template #actions="{ row }">
-                <EditButton v-if="current_user.roles[0]?.role.code === 'admin'" :href="route('divisions.edit', row)" class="w-full"/>
+        <template #actions="{ row }">
+            <EditButton v-if="current_user.roles[0]?.role.code === 'admin'" :href="route('divisions.edit', row)" class="w-full"/>
 
-                <GoToButton :href="route('divisions.show', row.id)" class="w-full"/>
+            <GoToButton :href="route('divisions.show', row.id)" class="w-full"/>
 
-                <DeleteButton v-if="row.userCount === 0" :href="route('divisions.destroy', row)" class="w-full" />
-            </template>
-        </Table>
-    </AuthenticatedLayout>
+            <DeleteButton v-if="row.userCount === 0" :href="route('divisions.destroy', row)" class="w-full" />
+        </template>
+    </Table>
 </template>
 
 <style lang="sass">

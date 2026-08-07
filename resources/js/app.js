@@ -1,6 +1,7 @@
 import { createApp, h } from "vue";
 import { createInertiaApp } from "@inertiajs/vue3";
 import { fixOverflow } from './helpers';
+import { AuthenticatedLayout } from '@layouts';
 
 createInertiaApp({
     progress: {
@@ -9,9 +10,17 @@ createInertiaApp({
         includeCSS: false,
         showSpinner: false,
     },
-    resolve: (name) => {
+    resolve: async (name) => {
         const pages = import.meta.glob("../views/**/*.vue", { eager: false });
-        return pages[`../views/${name}.vue`]();
+
+        const page = await pages[`../views/${name}.vue`]();
+
+        const exceptions = ['pages/session/login', 'pages/security/forgot-password', 'pages/workers/create']
+        if (!exceptions.includes(name)) {
+            page.default.layout ??= AuthenticatedLayout;
+        }
+
+        return page;
     },
     setup({ el, App, props, plugin }) {
         createApp({ render: () => h(App, props) })

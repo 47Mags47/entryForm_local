@@ -1,13 +1,9 @@
 <script>
 import { usePage } from "@inertiajs/vue3";
-
-import { AuthenticatedLayout } from "@layouts";
-
 import { Table, EditButton, DeleteButton, AddButton } from "@components";
 
 export default {
     components: {
-        AuthenticatedLayout,
         Table,
         EditButton,
         DeleteButton,
@@ -33,16 +29,14 @@ export default {
 </script>
 
 <template>
-    <AuthenticatedLayout>
-        <Table :data="division_group" :columns="columns" header="Группы подразделений">
-            <template #toolbar-right>
-                <AddButton :href="route('division-group.create')" />
-            </template>
+    <Table :data="division_group" :columns="columns" header="Группы подразделений">
+        <template #toolbar-right>
+            <AddButton :href="route('division-group.create')" />
+        </template>
 
-            <template #actions="{ row }">
-                <EditButton :href="route('division-group.edit', row)" />
-                <DeleteButton :href="route('division-group.destroy', row)" />
-            </template>
-        </Table>
-    </AuthenticatedLayout>
+        <template #actions="{ row }">
+            <EditButton :href="route('division-group.edit', row)" />
+            <DeleteButton :href="route('division-group.destroy', row)" />
+        </template>
+    </Table>
 </template>
