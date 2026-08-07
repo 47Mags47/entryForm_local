@@ -72,4 +72,5 @@ export default {
     overflow: hidden
     text-overflow: ellipsis
     cursor: pointer
+    z-index: 10
 </style>

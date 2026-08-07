@@ -48,7 +48,7 @@ export default {
                     class="time-slot"
                 >
                     <div class="events-track">
-                        <div
+                        <template
                             v-for="(record, i) in subscribe.timeline[slot]"
                             :key="i"
                         >
@@ -57,7 +57,7 @@ export default {
                                 :show="show"
                                 :division_id="division_id"
                             />
-                        </div>
+                        </template>
                     </div>
                 </td>
             </template>
