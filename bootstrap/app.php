@@ -21,7 +21,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->alias([
-            'has-role' => App\Http\Middleware\HasRoleMiddleware::class
+            'hasDivision' => App\Http\Middleware\DivisionMidleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

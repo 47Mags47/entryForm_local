@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+
 class Division extends Model
 {
     /** @use HasFactory<\Database\Factories\Admin\DivisionFactory> */
@@ -34,6 +36,18 @@ class Division extends Model
             if ($model->users()->count() > 0)
                 return abort(403, 'Невозможно удалить подразделение, пока в нем есть пользователи');
         });
+    }
+
+    ### Ограничения
+    ##################################################
+    public static function scopeHasAccess(Builder $builder){
+        if(user()->hasRole('admin'))
+            return $builder;
+
+        if(user()->divisions()->count() > 1)
+            return $builder->whereIn('id', user()->divisions()->get(['id'])->pluck('id'));
+
+        return $builder->where('id', user()->divisions->first()->id);
     }
 
     ### Связи

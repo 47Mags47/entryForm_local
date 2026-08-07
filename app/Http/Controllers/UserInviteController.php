@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreUserInviteRequest;
-use App\Http\Requests\UpdateUserInviteRequest;
 use App\Jobs\SendInviteJob;
 use App\Models\Division;
 use App\Models\UserInvite;
@@ -19,16 +18,15 @@ class UserInviteController
             abort(403);
         }
 
-        $division = Division::whereKey($request->division_id)->first();
+        $division = Division::whereKey($request->division)->first();
 
         return Inertia::render("pages/invites/create", [
-            "division" => fn() => getResource($division),
+            "current_division" => fn() => getResource($division),
         ]);
     }
 
     public function store(StoreUserInviteRequest $request){
-        if (!(user()->hasRole('admin')
-            or (user()->hasRole('division_admin')))) {
+        if (!(user()->hasRole('admin') or (user()->hasRole('division_admin')))) {
             abort(403);
         }
 
@@ -41,7 +39,7 @@ class UserInviteController
         SendInviteJob::dispatch($userInvite);
 
         return redirect()->route("workers.index", ['division' => $request->input('division_id')])
-            ->with("message", "Приглашение успешно отправлено");
+            ->with("success", "Приглашение успешно отправлено");
     }
 
     public function accept(string $token)

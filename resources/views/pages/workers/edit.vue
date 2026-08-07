@@ -14,7 +14,7 @@ import {
 import List from "../../components/list/List.vue";
 
 const worker = usePage().props.worker.data;
-const division = usePage().props.division.data;
+const division = usePage().props.current_division.data;
 const services = usePage().props.services;
 
 const form = useForm({
@@ -38,7 +38,7 @@ const columns = [
 function onSubmit(e) {
     e.preventDefault();
 
-    form.put(route("workers.update", { worker: worker.id }));
+    form.put(route("workers.update", { worker: worker.id, division: division.id }));
 }
 </script>
 

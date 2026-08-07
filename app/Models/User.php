@@ -23,23 +23,23 @@ class User extends Authenticatable
     ### Настройки
     ##################################################
     protected
-    $table = 'main__users',
-    $fillable = [
-        'first_name',
-        'middle_name',
-        'last_name',
-        'email',
-        'phone',
-        'office',
-        'receiveMail',
-        'password',
-        'role_id',
-        'division_id'
-    ],
-    $hidden = [
-        'password',
-        'remember_token',
-    ];
+        $table = 'main__users',
+        $fillable = [
+            'first_name',
+            'middle_name',
+            'last_name',
+            'email',
+            'phone',
+            'office',
+            'receiveMail',
+            'password',
+            'role_id',
+            'division_id'
+        ],
+        $hidden = [
+            'password',
+            'remember_token',
+        ];
 
     protected function casts(): array
     {
@@ -59,41 +59,48 @@ class User extends Authenticatable
             : $this->roles()->where('code', $role)->wherePivot('division_id', $division->id)->exists();
     }
 
+    public function hasDivision(Division $division): bool
+    {
+        return  $this->divisions()->where('id', $division->id)->count() > 0;
+    }
+
     public function getTimeLine(Carbon|CarbonImmutable $day)
     {
+        // HACK переписать, учитывая, что у одного пользователя может быть несколько подразделений
+        // $shedule = $this
+        //     ->division
+        //     ->shedules()
+        //     ->where('day_of_the_week_id', DayOfTheWeek::byNumber($day->dayOfWeekIso)->id)
+        //     ->first();
 
-        $shedule = $this
-            ->division
-            ->shedules()
-            ->where('day_of_the_week_id', DayOfTheWeek::byNumber($day->dayOfWeekIso)->id)
-            ->first();
+        // $date_start = $day->setTime($shedule?->date_start->hour ?? 0, $shedule?->date_start->minute ?? 0);
+        // $date_end = $day->setTime($shedule?->date_end->hour ?? 0, $shedule?->date_end->minute ?? 0);
 
-        $date_start = $day->setTime($shedule?->date_start->hour ?? 0, $shedule?->date_start->minute ?? 0);
-        $date_end = $day->setTime($shedule?->date_end->hour ?? 0, $shedule?->date_end->minute ?? 0);
+        // $userShedules = $this
+        //     ->subscribes()
+        //     ->where(function ($query) use ($shedule, $date_start, $date_end) {
+        //         if ($shedule !== null)
+        //             $query->whereBetween('start_at', [$date_start, $date_end]);
+        //         else
+        //             $query->whereKey(null);
+        //     })
+        //     ->get()
+        //     ->map(fn($subscribe) => SubscribeTimeLineResource::make($subscribe))
+        //     ->groupBy(
+        //         fn($subscribe) => $subscribe->start_at->minute > 30
+        //         ? $subscribe->start_at->startOfHour()->addMinutes(30)->format('Y-m-d H:i:s')
+        //         : $subscribe->start_at->startOfHour()->format('Y-m-d H:i:s')
+        //     );
 
-        $userShedules = $this
-            ->subscribes()
-            ->where(function ($query) use ($shedule, $date_start, $date_end) {
-                if ($shedule !== null)
-                    $query->whereBetween('start_at', [$date_start, $date_end]);
-                else
-                    $query->whereKey(null);
-            })
-            ->get()
-            ->map(fn($subscribe) => SubscribeTimeLineResource::make($subscribe))
-            ->groupBy(
-                fn($subscribe) => $subscribe->start_at->minute > 30
-                ? $subscribe->start_at->startOfHour()->addMinutes(30)->format('Y-m-d H:i:s')
-                : $subscribe->start_at->startOfHour()->format('Y-m-d H:i:s')
-            );
+        // if ($shedule === null)
+        //     return $userShedules;
 
-        if ($shedule === null)
-            return $userShedules;
+        // $interval = $date_start->toPeriod($date_end, '30 minutes');
+        // $intervalCollection = collect($interval->map(fn($time) => [$time->format('Y-m-d H:i:s') => collect([])]))->collapse();
 
-        $interval = $date_start->toPeriod($date_end, '30 minutes');
-        $intervalCollection = collect($interval->map(fn($time) => [$time->format('Y-m-d H:i:s') => collect([])]))->collapse();
+        // return $intervalCollection->merge($userShedules);
 
-        return $intervalCollection->merge($userShedules);
+        return null;
     }
 
     ### Связи
@@ -133,7 +140,8 @@ class User extends Authenticatable
         return $this->hasMany(Subscribe::class, 'worker_id', 'id');
     }
 
-    public function changeEmailTokens(){
+    public function changeEmailTokens()
+    {
         return $this->hasMany(ChangeEmailToken::class, 'user_id');
     }
 }

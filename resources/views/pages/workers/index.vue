@@ -1,123 +1,144 @@
-<script setup>
-import { AuthenticatedLayout } from "@layouts";
-import { DivisionTab } from "@includes";
-import { Table,
-    AddButton, DeleteButton, EditButton, BlueButton,
-    CheckBox, Select,
-    PenIco, PersonIco, RestoreIco } from "@components";
-import { usePage, router } from "@inertiajs/vue3";
-
+<script>
 import { h } from "vue";
+import { usePage, router } from "@inertiajs/vue3";
+import { DivisionTab } from "@includes";
+import { AuthenticatedLayout } from "@layouts";
+import {
+    Table,
 
-import { ref, computed } from "vue";
+    Select,
+    BlueButton,
+    AddButton,
+    EditButton,
+    DeleteButton,
 
-const worker = computed(() => usePage().props.users);
-const current_user = computed(() => usePage().props.current_user.data);
-const division = usePage().props.division.data;
+    PenIco,
+    PersonIco,
+    RestoreIco
+} from "@components";
 
-let isAdminEdit = ref(false);
+export default {
+    components: {
+        AuthenticatedLayout,
+        Table,
+        DivisionTab,
 
-function getRowColor(row) {
-    if (row.deleted_at !== null)
-        return 'deleted-row'
-}
+        Select,
+        BlueButton,
+        AddButton,
+        EditButton,
+        DeleteButton,
 
-const columns = [
-    {
-        label: "ФИО",
-        render: (row) => {
-            const lastName = row.last_name || "";
-            const firstNameInitial = row.first_name
-                ? row.first_name[0] + "."
-                : "";
-            const middleNameInitial = row.middle_name
-                ? row.middle_name[0] + "."
-                : "";
-
-            const result = [lastName, firstNameInitial, middleNameInitial]
-                .filter((part) => part !== "")
-                .join(" ");
-
-            return result || "-";
-        },
+        PenIco,
+        PersonIco,
+        RestoreIco
     },
-    { key: "email", label: "Email"  },
-    {
-        label: 'Роль',
-        component: (row) => {
-            return h(Select, {
-                disabled: !isAdminEdit.value || row.role.code === 'admin' || row.deleted_at !== null,
-                modelValue: row.role.code,
-                hasSearch: false,
-                options: [
-                    { label: 'Администратор системы', value: 'admin' },
-                    { label: 'Администратор организации', value: 'division_admin' },
-                    { label: 'Работник организации', value: 'division_worker' }
-                ],
-                'onUpdate:modelValue': (value) => {
-                    if (row.role.code === 'admin' || value === 'admin') return
+    computed: {
+        users: () => usePage().props.users,
+        division: () => usePage().props.current_division.data,
+        current_user: () => usePage().props.current_user.data,
 
-                    row.role.code = value ?? row.role.code;
+    },
+    data() {
+        return {
+            router,
+            isAdminEdit: false,
+            columns: [
+                {
+                    label: "ФИО",
+                    render: (row) => {
+                        const lastName = row.last_name || "";
+                        const firstNameInitial = row.first_name
+                            ? row.first_name[0] + "."
+                            : "";
+                        const middleNameInitial = row.middle_name
+                            ? row.middle_name[0] + "."
+                            : "";
 
-                    router.post(
-                        route("division-admins.store", {
-                            division: division.id,
-                        }),
-                        {
-                            user_id: row.id,
-                            role_code: row.role.code
-                        },
-                    );
-                }
-            });
+                        const result = [lastName, firstNameInitial, middleNameInitial]
+                            .filter((part) => part !== "")
+                            .join(" ");
+
+                        return result || "-";
+                    },
+                },
+                { key: "email", label: "Email" },
+                {
+                    label: 'Роль',
+                    component: (user) => {
+                        return h(Select, {
+                            disabled: !(this.isAdminEdit && user.id !== this.current_user.id && user.deleted_at === null && user.role.code !== 'admin'),
+
+                            modelValue: user.role.code,
+                            hasSearch: false,
+                            options: [
+                                user.role.code === 'admin' ? { label: 'Администратор системы', value: 'admin' } : null,
+                                { label: 'Администратор организации', value: 'division_admin' },
+                                { label: 'Работник организации', value: 'division_worker' }
+                            ].filter(Boolean),
+                            'onUpdate:modelValue': (value) => {
+                                if (user.role.code === 'admin' || value === 'admin') return
+
+                                router.post(
+                                    route("division-admins.store", {
+                                        division: this.division.id,
+                                    }),
+                                    {
+                                        user_id: user.id,
+                                        role_code: value
+                                    },
+                                );
+                            }
+                        });
+                    }
+                },
+                { key: "actions", label: "" },
+            ]
         }
     },
-    { key: "actions", label: ""     },
-];
+    methods: {
+        getRowColor(row) {
+            if (row.deleted_at !== null)
+                return 'deleted-row'
+        },
+        getUserRole(user) {
+            return user.roles.find(role => role.division.id === this.division.id)?.role ?? user.roles[0].role
+        }
+    }
+}
 </script>
 
 <template>
     <AuthenticatedLayout>
         <DivisionTab current="workers">
-            <Table :data="worker" :row-class="getRowColor" :columns="columns">
+            <Table :data="users" :row-class="getRowColor" :columns="columns">
                 <template #toolbar-right>
-                    <AddButton
-                        :href="
-                            route('invites.create', {
-                                division_id: division.id,
-                            })
-                        "
-                    />
-                    <BlueButton v-if="current_user.role.code !== 'division_worker'" @click="isAdminEdit = !isAdminEdit">
+                    <AddButton :href="route('invites.create', {
+                        division: division.id,
+                    })" />
+                    <BlueButton v-if="getUserRole(current_user).code !== 'division_worker'"
+                        @click="() => isAdminEdit = !isAdminEdit">
                         <PenIco />
                     </BlueButton>
                 </template>
 
                 <template #actions="{ row }">
                     <div class="container-actions-row">
-                        <BlueButton
-                            v-if="current_user.role.code === 'admin' && row.role.code !== 'admin'"
+                        <BlueButton v-if="getUserRole(current_user).code === 'admin' && row.role.code !== 'admin' && row.deleted_at === null"
                             @click="router.get(route('user.edit', { user: row.id }))">
                             <PersonIco />
                         </BlueButton>
-                        <EditButton
-                            v-if="row.deleted_at === null"
-                            :href="route('workers.edit', { worker: row.id })"
-                        />
-                        <DeleteButton
-                            v-if="row.deleted_at === null"
-                            :href="
-                                route('workers.destroy', {
-                                    division:   division.id,
-                                    worker:     row.id,
-                                })
-                            "
-                        />
-                        <BlueButton
-                            class="w-full"
-                            v-else
-                            @click="router.get(route('workers.restore', { worker: row.id }))"
-                        >
+
+                        <EditButton v-if="row.deleted_at === null"
+                            :href="route('workers.edit', { worker: row.id, division: division.id })" />
+
+                        <DeleteButton v-if="row.deleted_at === null" :href="route('workers.destroy', {
+                            division: division.id,
+                            worker: row.id,
+                        })
+                            " />
+                        <BlueButton class="w-full" v-else
+                            @click="router.get(route('workers.restore', { worker: row.id, division: division.id }))">
                             <RestoreIco />
                         </BlueButton>
                     </div>

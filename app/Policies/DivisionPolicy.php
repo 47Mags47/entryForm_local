@@ -21,9 +21,10 @@ class DivisionPolicy
      */
     public function view(User $user, Division $division): bool
     {
-        return $user->hasRole('admin')
-            or ($user->hasRole('division_admin') and $user->division->id === $division->id);
-
+        // return $user->hasRole('admin')
+        //     or $user->roles()->where('code', 'division_admin')->wherePivot('division_id', $division->id)->exists();
+        // return $user->hasRole('admin') or user()->hasDivision($division);
+        return $user->hasRole('admin') or user()->hasRole('division_admin', $division);
     }
 
     /**
@@ -40,7 +41,7 @@ class DivisionPolicy
     public function update(User $user, Division $division): bool
     {
         return $user->hasRole('admin')
-            or ($user->hasRole('division_admin') and $user->division->id === $division->id);
+            or $user->roles()->where('code', 'division_admin')->wherePivot('division_id', $division->id)->exists();
     }
 
     /**

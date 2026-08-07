@@ -17,12 +17,8 @@ class DivisionController
      */
     public function index()
     {
-        if (user()->cannot('viewAny', Division::class)) {
-            abort(403);
-        }
-
         return Inertia::render('pages/divisions/index', [
-            'divisions' => fn() => getResource(Division::class),
+            'divisions' => fn() => Division::hasAccess()->get()->toResourceCollection()
         ]);
     }
 
@@ -66,14 +62,16 @@ class DivisionController
 
     public function show(Division $division)
     {
-        if (user()->cannot('view', $division)) {
+        if (user()->hasRole('division_worker', $division))
+            return redirect()->route('subscribes.index', ['division' => $division->id]);
+
+        elseif (user()->cannot('view', $division)) {
             abort(403);
         }
 
         return Inertia::render(
             'pages/divisions/show',
             [
-                'division' => fn() => getResource($division),
                 'cities' => fn() => City::get(['id', 'name']),
             ]
         );
@@ -89,7 +87,6 @@ class DivisionController
         }
 
         return Inertia::render('pages/divisions/edit', [
-            'division' => fn() => getResource($division),
             'division_group' => fn() => DivisionGroup::get(['id', 'name']),
             'cities' => fn() => City::get(['id', 'name']),
         ]);

@@ -17,7 +17,7 @@ class UserInviteResource extends JsonResource
         return [
             'email' => $this->email,
             'token' => $this->token,
-            'division' => [
+            'current_division' => [
                 'id' => $this->division->id,
                 'name' => $this->division->name,
             ],

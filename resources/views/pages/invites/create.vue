@@ -17,7 +17,7 @@ export default {
             form: useForm({
                 email: "",
             }),
-            division: usePage().props.division.data,
+            division: usePage().props.current_division.data,
         };
     },
 

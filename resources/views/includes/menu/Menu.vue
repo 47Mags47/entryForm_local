@@ -24,67 +24,35 @@ export default {
             current_user,
         };
     },
+
+    methods: {
+        hasRole(code){
+            return this.current_user.roles.filter((role) => role.role.code === code).length > 0
+        }
+    }
 };
 </script>
 
 <template>
     <nav class="sidebar">
         <ul class="sidebar-menu">
-            <template v-if="['admin'].includes(current_user.role.code)">
-                <ItemMenu
-                    :href="route('divisions.index')"
-                    label="Подразделения"
-                >
-                    <HomeIco />
-                </ItemMenu>
+            <ItemMenu :href="route('divisions.index')" label="Подразделения">
+                <HomeIco />
+            </ItemMenu>
 
-                <ItemMenu :href="route('cities.index')" label="Города">
-                    <BuildingsIco />
-                </ItemMenu>
+            <ItemMenu v-if="hasRole('admin')" :href="route('cities.index')" label="Города">
+                <BuildingsIco />
+            </ItemMenu>
 
-                <ItemMenu :href="route('services.index')" label="Услуги">
-                    <ListIco />
-                </ItemMenu>
+            <ItemMenu v-if="hasRole('admin')" :href="route('services.index')" label="Услуги">
+                <ListIco />
+            </ItemMenu>
 
-                <ItemMenu :href="route('division-group.index')" label="Группы подразделений">
-                    <CollectionIco />
-                </ItemMenu>
-            </template>
+            <ItemMenu v-if="hasRole('admin')" :href="route('division-group.index')" label="Группы подразделений">
+                <CollectionIco />
+            </ItemMenu>
 
-            <template
-                v-if="['division_admin'].includes(current_user.role.code)"
-            >
-                <ItemMenu
-                    :href="
-                        route('divisions.show', {
-                            division: current_user.division.id,
-                        })
-                    "
-                    label="Домой"
-                >
-                    <HomeIco />
-                </ItemMenu>
-            </template>
-
-            <template
-                v-if="['division_worker'].includes(current_user.role.code)"
-            >
-                <ItemMenu
-                    :href="
-                        route('events.index', {
-                            division: current_user.division.id,
-                        })
-                    "
-                    label="Домой"
-                >
-                    <HomeIco />
-                </ItemMenu>
-            </template>
-
-            <ItemMenu
-                :href="route('user.show', { user: current_user.id })"
-                label="Личный Кабинет"
-            >
+            <ItemMenu :href="route('user.show', { user: current_user.id })" label="Личный Кабинет">
                 <PersonIco />
             </ItemMenu>
         </ul>

@@ -22,14 +22,14 @@ class UserResource extends JsonResource
             "email" => $this->email,
             "phone" => $this->phone,
             "office" => $this->office,
-            'division' => [
-                'id' => $this->division?->id,
-                'name' => $this->division?->name,
-            ],
+            'divisions' => $this->divisions->map(fn($division) => [
+                'id' => $division->id,
+                'name' => $division->name,
+            ]),
             'role' => [
-                "id" => $this->role->id,
-                "code" => $this->role->code,
-                "name" => $this->role->name,
+                'id' => $this->roles->first()?->id,
+                'code' => $this->roles->first()?->code,
+                'name' => $this->roles->first()?->name,
             ],
         ];
     }

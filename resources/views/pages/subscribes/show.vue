@@ -9,16 +9,17 @@ export default {
         DivisionTab,
     },
 
-    data() {
-        const subscribe = usePage().props.subscribe.data;
-        const user_role = usePage().props.current_user.data.role.code;
-        const division = usePage().props.division.data;
-        return {
-            subscribe,
-            user_role,
-            division,
-        };
+    computed: {
+        subscribe:      () => usePage().props.subscribe.data,
+        current_user:   () => usePage().props.current_user.data,
+        division:       () => usePage().props.current_division.data,
     },
+
+    methods: {
+        getUserRole(user) {
+            return user.roles.find(role => role.division.id === this.division.id)?.role ?? user.roles[0].role
+        }
+    }
 };
 </script>
 
@@ -45,7 +46,7 @@ export default {
                     <div class="card">
                         <h2 class="card-title">Данные обращения</h2>
                         <div class="card-content">
-                            <p v-if="['admin'].includes(user_role)">
+                            <p v-if="getUserRole(current_user).code === 'admin'">
                                 <strong>Подразделение:</strong>
                                 {{ subscribe.division?.name }}
                             </p>

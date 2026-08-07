@@ -26,22 +26,38 @@ Route::controller(SessionController::class)->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/', function () {
-        $userRoles = user()->roles;
-
-        if($userRoles->count() > 1){
-            return redirect()->route('divisions.index');
-        }else{
-            $userRole = $userRoles->first();
-
-            if($userRoles->first()->code === 'admin'){
-                return redirect()->route('divisions.index');
-            }else{
-                return redirect()->route('events.index', ['division' => $userRole->pivot->division_id]);
-            }
-        }
+        return redirect()->route('divisions.index');
     })->name('home');
 
-    Route::resource('/division/{division}/events', EventCalendarController::class)
+    // NEED DIVISION
+    Route::middleware('hasDivision')->group(function () {
+        Route::resource('/divisions', DivisionController::class);
+
+        Route::prefix('/divisions/{division}')->group(function () {
+            Route::resource('/events', EventCalendarController::class)
+                ->only(['index']);
+
+            Route::get('/subscribes/export', [SubscribesExportController::class, 'index'])
+                ->name('subscribes.export');
+            Route::Resource('/subscribes', SubscribeController::class)
+                ->except(['edit', 'update'])
+                ->withTrashed(['show', 'destroy']);
+
+            Route::resource('/division-admins', DivisionAdminController::class)
+                ->only(['store']);
+
+            Route::get('/workers/{worker}/restore', [WorkerController::class, 'restore'])
+                ->name('workers.restore')
+                ->withTrashed();
+            Route::resource('/workers', WorkerController::class);
+
+            Route::resource('/frame', FrameController::class)
+                ->except(['show', 'create', 'edit']);
+        });
+    });
+
+    // NOT NEED DIVISION
+    Route::resource('/statistic', StatisticController::class)
         ->only(['index']);
 
     Route::resource('/services', ServiceController::class)
@@ -53,39 +69,11 @@ Route::middleware('auth')->group(function () {
     Route::resource('/division-group', DivisionGroupController::class)
         ->except(['show']);
 
-    Route::resource('/divisions', DivisionController::class);
-
-    Route::get('/division/{division}/subscribes/export', [SubscribesExportController::class, 'index'])
-        ->name('subscribes.export');
-
-    Route::Resource('/division/{division}/subscribes', SubscribeController::class)
-        ->except(['edit', 'update'])
-        ->withTrashed(['show', 'destroy']);
-
-    Route::resource('/statistic', StatisticController::class)
-        ->only(['index']);
-
-    Route::resource('/divisions/{division}/division-admins', DivisionAdminController::class)
-        ->only(['store', 'destroy']);
-
-    Route::resource('/divisions/{division}/workers', WorkerController::class)
-        ->only(['index'])
-        ->withTrashed();
-
     Route::resource('/invites', UserInviteController::class)
         ->only(['create', 'store']);
 
-    Route::resource('/workers', WorkerController::class)
-        ->only(['edit', 'update', 'destroy']);
-    Route::get('/workers/{worker}/restore',   [WorkerController::class, 'restore'])
-        ->withTrashed()
-        ->name('workers.restore');
-
     Route::resource('/dashboard/user', DashboardController::class)
         ->only(['show', 'edit', 'update']);
-
-    Route::resource('/{division}/frame', FrameController::class)
-        ->except(['show', 'create', 'edit']);
 });
 
 

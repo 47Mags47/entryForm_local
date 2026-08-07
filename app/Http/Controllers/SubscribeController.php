@@ -57,7 +57,8 @@ class SubscribeController
         ]);
     }
 
-    public function store(StoreSubscribeRequest $request, Division $division){
+    public function store(StoreSubscribeRequest $request, Division $division)
+    {
         $data = $request->validated();
 
         $data['division_id'] = $division->id;
@@ -75,36 +76,31 @@ class SubscribeController
     public function show(Division $division, Subscribe $subscribe)
     {
         if (
-            $subscribe->division_id !== $division->id
-            || (user()->hasRole('division_admin') && $subscribe->division_id !== user()->division->id)
-            || (user()->hasRole('division_worker') && $subscribe->worker_id !== user()->id)
+            $subscribe->division_id === $division->id       ||
+            user()->hasRole('division_admin', $division)    ||
+            user()->hasRole('admin')                        ||
+            (user()->hasRole('division_worker', $division) && $subscribe->worker_id === user()->id)
         ) {
-            abort(403);
-        }
-
-        return Inertia::render('pages/subscribes/show', [
-            'subscribe' => fn() => getResource($subscribe),
-            'division' => fn() => getResource($division),
-        ]);
+            return Inertia::render('pages/subscribes/show', [
+                'subscribe' => fn() => getResource($subscribe),
+            ]);
+        } else
+            return abort(403);
     }
 
     public function destroy(Division $division, Subscribe $subscribe)
     {
-        if (user()->hasRole('division_worker')) {
+        if (user()->hasRole('division_worker', $division)) {
             if ($subscribe->worker_id !== user()->id)
                 abort(403);
 
             $subscribe->delete();
-        }
-
-        elseif (user()->hasRole('division_admin')) {
-            if ($subscribe->division_id !== user()->division->id)
+        } elseif (user()->hasRole('division_admin', $division)) {
+            if ($division->id !== $subscribe->division_id)
                 abort(403);
 
             $subscribe->forceDelete();
-        }
-
-        else {
+        } else {
             if (!user()->hasRole('admin'))
                 abort(403);
 

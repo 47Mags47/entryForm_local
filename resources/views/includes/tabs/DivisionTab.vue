@@ -12,25 +12,14 @@ export default {
     },
 
     data() {
-        const division = usePage().props.division.data;
-        const user_role = usePage().props.current_user.data.role.code;
-        const hasAdmins = ["admin", "division_admin"].includes(user_role);
-        const hasDivisionAdmins = ["division_admin"].includes(user_role);
+        const division = usePage().props.current_division.data
+        const current_user = usePage().props.current_user.data
+
+        const current_role = current_user.roles.filter((role) => role.division.id === division.id)[0]?.role ?? current_user.roles[0].role
 
         return {
             division,
-            user_role,
-            hasAdmins,
             links: [
-                {
-                    title: "Общая информация",
-                    href: route("divisions.show", {
-                        division: division.id,
-                    }),
-                    isActive: this.current === "info",
-                    hasAccess: hasAdmins,
-                },
-
                 {
                     index: "workers",
                     href: route("workers.index", {
@@ -38,8 +27,25 @@ export default {
                     }),
                     title: "Сотрудники",
                     isActive: this.current === "workers",
-                    hasAccess: hasAdmins,
+                    hasAccess: current_role.code === 'admin' || current_role.code === 'division_admin',
                 },
+                {
+                    title: "Генерация iFrame",
+                    href: route("frame.index", {
+                        division: division.id,
+                    }),
+                    isActive: this.current === "frame",
+                    hasAccess: current_role.code === 'admin' || current_role.code === 'division_admin',
+                },
+                {
+                    title: "Общая информация",
+                    href: route("divisions.show", {
+                        division: division.id,
+                    }),
+                    isActive: this.current === "info",
+                    hasAccess: current_role.code === 'admin' || current_role.code === 'division_admin',
+                },
+
                 {
                     index: "event-calendar",
                     href: route("events.index", { division: division.id }),
@@ -55,14 +61,6 @@ export default {
                     title: "Обращения",
                     isActive: this.current === "subscribes",
                     hasAccess: true,
-                },
-                {
-                    title: "Генерация iFrame",
-                    href: route("frame.index", {
-                        division: division.id,
-                    }),
-                    isActive: this.current === "frame",
-                    hasAccess: hasDivisionAdmins,
                 },
             ],
         };

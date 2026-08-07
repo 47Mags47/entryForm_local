@@ -33,9 +33,9 @@ export default {
     },
 
     computed: {
-        current_user: () => usePage().props.current_user.data,
-        division: () => usePage().props.division.data,
-        subscribes: () => usePage().props.subscribes,
+        current_user:   () => usePage().props.current_user.data,
+        division:       () => usePage().props.division.data,
+        subscribes:     () => usePage().props.subscribes,
 
         columns() {
             return [
@@ -69,13 +69,13 @@ export default {
 
     methods: {
         hasDelete(subscribe) {
-            if (this.current_user.role.code === "admin")
+            if (this.getUserRole(this.current_user).code === "admin")
                 return true
 
-            if (this.current_user.role.code === "division_admin")
+            if (this.getUserRole(this.current_user).code === "division_admin")
                 return true
 
-            if (this.current_user.role.code === "division_worker")
+            if (this.getUserRole(this.current_user).code === "division_worker")
                 return subscribe.worker.id === this.current_user.id
         },
         updateDateBetween(newDateBetween) {
@@ -108,6 +108,10 @@ export default {
         getRowColor(row) {
             if (row.deleted_at !== null)
                 return 'deleted-row'
+        },
+
+        getUserRole(user) {
+            return user.roles.find(role => role.division.id === this.division.id)?.role ?? user.roles[0].role
         }
     },
 

@@ -25,7 +25,7 @@ class UpdateWorkerRequest extends FormRequest
         $validator->after(function ($validator) {
             $shedules = $this->input('shedules', []);
 
-            $divisionId = $this->route('division') ?? $this->input('division_id');
+            $divisionId = $this->route('division')->id ?? $this->input('division_id');
             $division = Division::with('shedules')->find($divisionId);
 
             if (!$division) {
@@ -55,6 +55,7 @@ class UpdateWorkerRequest extends FormRequest
                             "Время начала должно быть меньше времени окончания ({$day->name})."
                         );
                     }
+
                     $divisionShedule = $division->shedules
                         ->where('day_of_the_week_id', $day->number)
                         ->first();

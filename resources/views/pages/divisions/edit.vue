@@ -24,7 +24,7 @@ export default {
     },
 
     data() {
-        const division = usePage().props.division.data;
+        const division = usePage().props.current_division.data;
         const division_group = usePage().props.division_group;
         const cities = usePage().props.cities;
         return {

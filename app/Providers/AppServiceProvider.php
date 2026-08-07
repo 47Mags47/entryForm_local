@@ -24,7 +24,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Gate::define('dashboard', function (User $user, User $targetUser) {
-            return $user->role->code === 'admin' || $user->id === $targetUser->id;
+            return $user->roles->contains(fn ($role) => $role->code === 'admin') || $user->id === $targetUser->id;
         });
     }
 }

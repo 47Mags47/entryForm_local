@@ -42,7 +42,7 @@ class Subscribe extends Model
                 return $query;
 
             if (user()->hasRole('division_admin'))
-                return $query->orWhere('division_id', user()->division->id);
+                return $query->whereIn('division_id', user()->divisions->pluck('id'));
 
             if (user()->hasRole('division_worker'))
                 return $query->where('id', null)->orWhere(function ($query) {
@@ -50,7 +50,11 @@ class Subscribe extends Model
                     $query->orWhere('worker_id', user()->id);
 
                     $services_ids = user()->services->pluck('id');
-                    $division_user_ids = user()->division->users->pluck('id');
+                    $divisionIds = user()->divisions->pluck('id');
+                    $division_user_ids = User::whereHas('divisions', function ($query) use ($divisionIds) {
+                        $query->whereIn('id', $divisionIds);
+                    })->pluck('id');
+
                     $other_user_ids = UserService::whereIn('service_id', $services_ids)->whereIn('user_id', $division_user_ids)->get('user_id')->pluck('user_id');
 
                     $query->orWhere(function ($query) use ($other_user_ids, $services_ids) {
