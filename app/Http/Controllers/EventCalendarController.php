@@ -21,12 +21,12 @@ class EventCalendarController
             ? [
                 [
                     'worker' => getResource(user()),
-                    'timeline' => user()->getTimeLine($day),
+                    'timeline' => user()->getTimeLine($day, $division),
                 ]
             ]
             : $division->workers->map(fn($worker) => [
                 'worker' => getResource($worker),
-                'timeline' => $worker->getTimeLine($day),
+                'timeline' => $worker->getTimeLine($day, $division),
             ]);
 
         return Inertia::render('pages/event-calendar/index', [

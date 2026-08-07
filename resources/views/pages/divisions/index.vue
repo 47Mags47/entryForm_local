@@ -51,7 +51,6 @@ export default {
             </template>
 
             <template #actions="{ row }">
-                {{ console.log(current_user) }}
                 <EditButton v-if="current_user.roles[0]?.role.code === 'admin'" :href="route('divisions.edit', row)" class="w-full"/>
 
                 <GoToButton :href="route('divisions.show', row.id)" class="w-full"/>

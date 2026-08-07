@@ -53,7 +53,12 @@ class SubscribeController
         return Inertia::render('pages/subscribes/create', [
             'division' => getResource($division),
             'services' => Service::all()->toResourceCollection(),
-            'workers' => $division->workers->toResourceCollection(),
+            'workers' => $division->workers()
+                ->whereHas('roles', function ($query) {
+                    $query->where('code', 'division_worker');
+                })
+                ->get()
+                ->toResourceCollection(),
         ]);
     }
 
