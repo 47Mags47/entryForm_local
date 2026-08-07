@@ -38,6 +38,7 @@ export default {
             const divisions = usePage().props.divisions;
             return divisions;
         },
+        current_user: () => usePage().props.current_user.data,
     },
 };
 </script>
@@ -45,19 +46,23 @@ export default {
 <template>
     <AuthenticatedLayout>
         <Table :data="divisions" :columns="columns" header="Подразделения">
-            <template #toolbar-right>
+            <template #toolbar-right v-if="current_user.roles[0]?.role.code === 'admin'">
                 <AddButton href="/divisions/create" />
             </template>
 
             <template #actions="{ row }">
-                <DeleteButton
-                    v-if="row.userCount === 0"
-                    :href="route('divisions.destroy', row)"
-                />
-                <EditButton :href="route('divisions.edit', row)" />
+                {{ console.log(current_user) }}
+                <EditButton v-if="current_user.roles[0]?.role.code === 'admin'" :href="route('divisions.edit', row)" class="w-full"/>
 
-                <GoToButton :href="route('divisions.show', row.id)" />
+                <GoToButton :href="route('divisions.show', row.id)" class="w-full"/>
+
+                <DeleteButton v-if="row.userCount === 0" :href="route('divisions.destroy', row)" class="w-full" />
             </template>
         </Table>
     </AuthenticatedLayout>
 </template>
+
+<style lang="sass">
+.w-full
+    width: 100%
+</style>

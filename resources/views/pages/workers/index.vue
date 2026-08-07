@@ -124,20 +124,20 @@ export default {
 
                 <template #actions="{ row }">
                     <div class="container-actions-row">
-                        <BlueButton v-if="getUserRole(current_user).code === 'admin' && row.role.code !== 'admin' && row.deleted_at === null"
+                        <BlueButton class="w-full" v-if="getUserRole(current_user).code === 'admin' && row.role.code !== 'admin' && row.deleted_at === null"
                             @click="router.get(route('user.edit', { user: row.id }))">
                             <PersonIco />
                         </BlueButton>
 
-                        <EditButton v-if="row.deleted_at === null"
+                        <EditButton class="w-full" v-if="row.deleted_at === null"
                             :href="route('workers.edit', { worker: row.id, division: division.id })" />
 
-                        <DeleteButton v-if="row.deleted_at === null" :href="route('workers.destroy', {
+                        <DeleteButton class="w-full" v-if="row.deleted_at === null && row.id !== current_user.id" :href="route('workers.destroy', {
                             division: division.id,
                             worker: row.id,
                         })
                             " />
-                        <BlueButton class="w-full" v-else
+                        <BlueButton class="w-full" v-else-if="row.deleted_at !== null"
                             @click="router.get(route('workers.restore', { worker: row.id, division: division.id }))">
                             <RestoreIco />
                         </BlueButton>

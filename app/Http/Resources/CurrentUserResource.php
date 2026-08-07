@@ -9,8 +9,6 @@ class CurrentUserResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
-        $role = $this->roles->firstWhere('division_id', $this->division?->id);
-
         return [
             'id' => $this->id,
             'first_name' => $this->first_name,

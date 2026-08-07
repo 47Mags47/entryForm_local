@@ -30,7 +30,6 @@ class EventCalendarController
             ]);
 
         return Inertia::render('pages/event-calendar/index', [
-            'division' => fn() => getResource($division),
             'subscribes' => fn() => $subscribes,
             'dates' => fn() => [
                 'previous' => [

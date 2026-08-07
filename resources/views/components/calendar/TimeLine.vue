@@ -17,7 +17,7 @@ export default {
     },
 
     data() {
-        const division = usePage().props.division.data;
+        const division = usePage().props.current_division.data;
         const subscribes = usePage().props.subscribes;
         const dateProp = usePage().props.dates;
 
