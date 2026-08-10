@@ -6,6 +6,8 @@ use App\Http\Requests\StoreUserInviteRequest;
 use App\Jobs\SendInviteJob;
 use App\Models\Division;
 use App\Models\UserInvite;
+use App\Models\UserRole;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
@@ -25,7 +27,8 @@ class UserInviteController
         ]);
     }
 
-    public function store(StoreUserInviteRequest $request){
+    public function store(StoreUserInviteRequest $request)
+    {
         if (!(user()->hasRole('admin') or (user()->hasRole('division_admin')))) {
             abort(403);
         }
@@ -50,5 +53,23 @@ class UserInviteController
             return abort(404);
 
         return redirect()->route("workers.create", ["token" => $invite->token]);
+    }
+
+    public function acceptForUserCreated(string $token, Request $request)
+    {
+        $invite = UserInvite::where('token', $token)->first();
+
+        if ($invite === null)
+            return abort(404);
+
+        $user = User::where('email', $invite->email)->first();
+
+        $division = $invite->division;
+
+        $user->divisions()->attach($division->id, [
+            'role_id' => UserRole::byCode('division_worker')->id,
+        ]);
+
+        return redirect()->route("events.index", ["division" => $request->input('division')]);
     }
 }

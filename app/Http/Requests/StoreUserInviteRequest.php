@@ -16,7 +16,7 @@ class StoreUserInviteRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "email" => ["required", "email", "unique:" . User::class . ",email"],
+            "email" => ["required", "email"],
             "division_id" => ["nullable", "exists:" . Division::class . ",id"],
         ];
     }

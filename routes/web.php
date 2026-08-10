@@ -15,7 +15,6 @@ use App\Http\Controllers\SubscribeController;
 use App\Http\Controllers\SubscribesExportController;
 use App\Http\Controllers\UserInviteController;
 use App\Http\Controllers\WorkerController;
-use App\Models\UserRole;
 use Illuminate\Support\Facades\Route;
 
 Route::controller(SessionController::class)->group(function () {
@@ -71,6 +70,8 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('/invites', UserInviteController::class)
         ->only(['create', 'store']);
+
+    Route::get('/invite-for-user-created/{token}/accept', [UserInviteController::class, 'acceptForUserCreated'])->name('invite-for-user-created.accept');
 
     Route::resource('/dashboard/user', DashboardController::class)
         ->only(['show', 'edit', 'update']);

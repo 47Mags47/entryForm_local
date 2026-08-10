@@ -19,9 +19,7 @@ class InviteMail extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct(public UserInvite $invite)
-    {
-    }
+    public function __construct(public UserInvite $invite) {}
 
     /**
      * Get the message envelope.
@@ -38,8 +36,21 @@ class InviteMail extends Mailable
      */
     public function content(): Content
     {
+        $isUserExists = User::where('email', $this->invite->email)->exists();
+        $url = $isUserExists
+            ? route('invite-for-user-created.accept', [
+                'token' => $this->invite->token,
+                'division' => $this->invite->division_id,
+            ])
+            : route('invites.accept', [
+                'token' => $this->invite->token,
+            ]);
+
         return new Content(
             view: 'mails.invite',
+            with: [
+                'url' => $url,
+            ],
         );
     }
 

@@ -76,6 +76,18 @@
             cursor: pointer;
         }
 
+        .link-container {
+            display: flex;
+            gap: 5px;
+            max-width: 100%;
+        }
+        .link-container a {
+            min-width: 0;
+            max-width: 100%;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+
         .footer {
             margin-top: 10px;
             font-size: 12px;
@@ -98,11 +110,16 @@
                 </span><br>
             </div>
             <div class="accept-button-wrapper">
-                <a href="{{ route('invites.accept', [
-                    'token' => $invite->token,
-                ]) }}"
-                    class="accept-button" style="color: white;">
+                <a href="{{ $url }}"
+                class="accept-button"
+                style="color: white;">
                     Подтвердить
+                </a>
+            </div>
+            <div class="link-container">
+                <span>Ссылка:</span>
+                <a href="{{ $url }}">
+                    {{ $url }}
                 </a>
             </div>
             <div class="footer">
