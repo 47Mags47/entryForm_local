@@ -30,9 +30,16 @@ class WorkerController
             abort(403);
         }
 
-        return Inertia::render("pages/workers/index", [
-            'users' => fn() =>  WorkerResource::collection($division->users()->withTrashed()->get()),
-        ]);
+        if ($request->boolean('trashed'))
+            return Inertia::render("pages/workers/index", [
+                'users' => fn() =>  WorkerResource::collection($division->users()->withTrashed()->get()),
+                'trashed' => $request->boolean('trashed') === null ? false : $request->boolean('trashed')
+            ]);
+        else
+            return Inertia::render("pages/workers/index", [
+                'users' => fn() =>  WorkerResource::collection($division->users()->get()),
+                'trashed' => $request->boolean('trashed') === null ? false : $request->boolean('trashed')
+            ]);
     }
 
     /**

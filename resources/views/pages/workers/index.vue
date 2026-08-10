@@ -10,6 +10,7 @@ import {
     AddButton,
     EditButton,
     DeleteButton,
+    CheckBox,
 
     PenIco,
     PersonIco,
@@ -26,6 +27,7 @@ export default {
         AddButton,
         EditButton,
         DeleteButton,
+        CheckBox,
 
         PenIco,
         PersonIco,
@@ -41,6 +43,7 @@ export default {
         return {
             router,
             isAdminEdit: false,
+            isShowWorkersDeleted: usePage().props.trashed,
             columns: [
                 {
                     label: "ФИО",
@@ -101,6 +104,15 @@ export default {
         },
         getUserRole(user) {
             return user.roles.find(role => role.division.id === this.division.id)?.role ?? user.roles[0].role
+        },
+
+        checkboxHandler(flag) {
+            this.isShowWorkersDeleted = flag
+
+            router.get(route('workers.index', {
+                division: this.division.id,
+                trashed: this.isShowWorkersDeleted
+            }))
         }
     }
 }
@@ -109,6 +121,14 @@ export default {
 <template>
     <DivisionTab current="workers">
         <Table :data="users" :row-class="getRowColor" :columns="columns">
+            <template #toolbar-left>
+                <CheckBox
+                    label="показать удалённых"
+                    :modelValue="isShowWorkersDeleted"
+                    @update:modelValue="checkboxHandler"
+                />
+            </template>
+
             <template #toolbar-right>
                 <AddButton :href="route('invites.create', {
                     division: division.id,
