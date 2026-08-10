@@ -63,9 +63,14 @@ export default {
                         return result || "-";
                     },
                 },
-                { key: "email", label: "Email" },
+                {
+                    key: "email",
+                    label: "Email",
+                    width: '600px'
+                },
                 {
                     label: 'Роль',
+                    width: '400px',
                     component: (user) => {
                         return h(Select, {
                             disabled: !(this.isAdminEdit && user.id !== this.current_user.id && user.deleted_at === null && user.role.code !== 'admin'),
