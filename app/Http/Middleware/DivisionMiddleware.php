@@ -5,7 +5,7 @@ namespace App\Http\Middleware;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
-class DivisionMidleware extends Middleware
+class DivisionMiddleware extends Middleware
 {
     public function share(Request $request): array
     {

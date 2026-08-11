@@ -32,7 +32,7 @@ Route::middleware('auth')->group(function () {
     Route::middleware('hasDivision')->group(function () {
         Route::resource('/divisions', DivisionController::class);
 
-        Route::prefix('/divisions/{division}')->group(function () {
+        Route::prefix('/divisions/{division}')->middleware('hasDivisionAccess')->group(function () {
             Route::resource('/events', EventCalendarController::class)
                 ->only(['index']);
 
