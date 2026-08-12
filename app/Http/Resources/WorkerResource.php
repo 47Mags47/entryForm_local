@@ -36,8 +36,8 @@ class WorkerResource extends JsonResource
                     $shedule->dayOfTheWeek->code => [
                         'date_start' => $shedule->date_start->format('H:i'),
                         'date_end' => $shedule->date_end->format('H:i'),
-                        'lunch_start' => $shedule->lunch_start->format('H:i'),
-                        'lunch_end' => $shedule->lunch_end->format('H:i'),
+                        'lunch_start' => $shedule->lunch_start?->format('H:i'),
+                        'lunch_end' => $shedule->lunch_end?->format('H:i'),
                     ],
                 ];
             })->collapse(),
