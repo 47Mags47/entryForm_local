@@ -78,6 +78,8 @@ class WorkerController
             'password' => Hash::make($request->password),
         ]);
 
+        $invite->delete();
+
         $user->divisions()->attach($invite->division->id, [
             'role_id' => UserRole::byCode('division_worker')->id,
         ]);

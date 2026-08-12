@@ -70,6 +70,8 @@ class UserInviteController
             'role_id' => UserRole::byCode('division_worker')->id,
         ]);
 
+        $invite->delete();
+
         return redirect()->route("events.index", ["division" => $request->input('division')]);
     }
 }
