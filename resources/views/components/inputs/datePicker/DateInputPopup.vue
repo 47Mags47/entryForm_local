@@ -241,7 +241,8 @@ export default {
                                     'current-day'   : dayInterval.start.toMillis()   == now.startOf('day').toMillis(),
                                     'selected-day'  : !(dayInterval.start.toMillis() == now.startOf('day').toMillis()) &&
                                         dayInterval.start.toFormat('yyyy-MM-dd')     === selectedDateBetween?.from ||
-                                        dayInterval.start.toFormat('yyyy-MM-dd')     === selectedDateBetween?.to,
+                                        dayInterval.start.toFormat('yyyy-MM-dd')     === selectedDateBetween?.to   ||
+                                        dayInterval.start.toFormat('yyyy-MM-dd')     === selectedDate,
                                     'in-range'      : !(dayInterval.start.toMillis() == now.startOf('day').toMillis()) &&inRange(dayInterval.start),
                                 }"
                                 @click="() => dayClickHandler(dayInterval.start)"
