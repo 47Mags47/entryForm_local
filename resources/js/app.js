@@ -11,7 +11,7 @@ createInertiaApp({
         showSpinner: false,
     },
     resolve: async (name) => {
-        const pages = import.meta.glob("../views/**/*.vue", { eager: false });
+        const pages = import.meta.glob("../views/pages/**/*.vue", { eager: false });
 
         const page = await pages[`../views/${name}.vue`]();
 
