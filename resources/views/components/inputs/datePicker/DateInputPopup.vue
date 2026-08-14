@@ -180,6 +180,10 @@ export default {
             return date > DateTime.fromISO(this.selectedDateBetween?.from) &&
                 date < DateTime.fromISO(this.selectedDateBetween?.to)
         },
+
+        isWeekend(day) {
+            return [6, 7].includes(day.weekday)
+        }
     },
     watch: {
         selectedDate: {
@@ -235,7 +239,7 @@ export default {
                     <tr v-for="weekInterval in interval.splitBy({ week: 1 })" >
                         <td v-for="dayInterval in weekInterval.splitBy({ day: 1 })">
                             <div
-                                v-if="checkValid(dayInterval.start) && checkDateInMonth(dayInterval.start) && checkSelectable(dayInterval.start)"
+                                v-if="checkValid(dayInterval.start) && checkDateInMonth(dayInterval.start) && checkSelectable(dayInterval.start) && !isWeekend(dayInterval.start)"
                                 class="day-cell-container available"
                                 :class="{
                                     'current-day'   : dayInterval.start.toMillis()   == now.startOf('day').toMillis(),
@@ -253,7 +257,7 @@ export default {
                                 v-else
                                 class="day-cell-container"
                                 :class="{
-                                    'disabled': !checkValid(dayInterval.start) || !checkSelectable(dayInterval.start),
+                                    'disabled': !checkValid(dayInterval.start) || !checkSelectable(dayInterval.start) || isWeekend(dayInterval.start),
                                     'other-month': !checkDateInMonth(dayInterval.start)
                                 }"
                             >
