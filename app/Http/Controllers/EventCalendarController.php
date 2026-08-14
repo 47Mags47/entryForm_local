@@ -17,17 +17,19 @@ class EventCalendarController
             ? CarbonImmutable::create($request->input('year'), $request->input('month'), $request->input('day'))
             : CarbonImmutable::now()->startOfDay();
 
-        $subscribes = user()->hasRole('division_worker')
-            ? [
-                [
-                    'worker' => getResource(user()),
-                    'timeline' => user()->getTimeLine($day, $division),
-                ]
-            ]
-            : $division->workers->map(fn($worker) => [
+        // HACK чтоб сотрудник мог видеть записи свои и чужие, если услуга совпадает
+        $workers = user()->hasRole('division_worker')
+            ? collect([user()])
+            : $division->admins->merge($division->workers);
+
+        $subscribes = $workers
+            ->filter(fn ($worker) => $worker->subscribes()->exists())
+            ->map(fn ($worker) => [
                 'worker' => getResource($worker),
                 'timeline' => $worker->getTimeLine($day, $division),
             ]);
+
+
 
         return Inertia::render('pages/event-calendar/index', [
             'subscribes' => fn() => $subscribes,

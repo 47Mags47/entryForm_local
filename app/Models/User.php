@@ -97,8 +97,6 @@ class User extends Authenticatable
         $intervalCollection = collect($interval->map(fn($time) => [$time->format('Y-m-d H:i:s') => collect([])]))->collapse();
 
         return $intervalCollection->merge($userShedules);
-
-        return null;
     }
 
     ### Связи
