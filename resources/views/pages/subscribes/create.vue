@@ -56,11 +56,25 @@ export default {
                     console.error('Ошибка в axios-api-запросе api.avalibleTime.index:', err)
                 })
             }
+
+            if (newValue.worker_id) {
+                axios.get(route('api.availableWeekdays.index'), {
+                    params: {
+                        worker_id: newValue.worker_id,
+                    }
+                }).then(res => {
+                    this.availableWeekdays = res.data
+                }).catch(err => {
+                    this.availableTime = []
+                    console.error('Ошибка в axios-api-запросе api.availableWeekdays.index:', err)
+                })
+            }
         }
     },
 
     data() {
         return {
+            availableWeekdays: [],
             availableTime: [],
             form: useForm({
                 first_name: "",
@@ -150,6 +164,7 @@ export default {
             name="start_date"
             :start="startTime"
             :end="endTime"
+            :available-weekdays="availableWeekdays"
             :showAvailable="false"
             @update:value="(val) => form.start_date = val"
         />

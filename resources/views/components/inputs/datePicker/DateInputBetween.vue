@@ -30,6 +30,10 @@ export default {
             type: String,
             default: "ДД.MM.ГГГГ",
         },
+        availableWeekdays: {
+            type: Array,
+            default: []
+        },
 
         // Functions
         checkValid: {
@@ -166,6 +170,7 @@ export default {
             :isRange
             :style="popupStyle"
             :checkValid
+            :availableWeekdays
             :onClick="dayClickHandler"
             :selectedDate="selectedDate?.toFormat('yyyy-MM-dd') ?? null"
             :selectedDateBetween="{
