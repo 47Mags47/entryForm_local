@@ -24,6 +24,7 @@ class EventCalendarController
 
         $subscribes = $workers
             ->filter(fn ($worker) => $worker->subscribes()->exists())
+            ->values()
             ->map(fn ($worker) => [
                 'worker' => getResource($worker),
                 'timeline' => $worker->getTimeLine($day, $division),
