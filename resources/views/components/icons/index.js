@@ -13,6 +13,7 @@ export { default as CollectionIco }     from './CollectionIco.vue'
 export { default as ListIco }           from './ListIco.vue'
 export { default as DownloadIco }       from './DownloadIco.vue'
 export { default as RestoreIco }        from './RestoreIco.vue'
+export { default as SearchIco }         from './SearchIco.vue'
 
 export { default as ChevronRightIco }   from './ChevronRightIco.vue'
 export { default as ChevronLeftIco }    from './ChevronLeftIco.vue'

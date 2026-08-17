@@ -19,6 +19,7 @@ export default {
 
     data() {
         return {
+            search: '',
             columns: [
                 { key: "name", label: "Наименование", width: "342px" },
                 { key: "address", label: "Адрес" },
@@ -35,12 +36,31 @@ export default {
             return divisions;
         },
         current_user: () => usePage().props.current_user.data,
+
+        filteredDivisions() {
+            const search = this.search.toLowerCase().trim();
+
+            if (!search) {
+                return this.divisions;
+            }
+
+            return {
+                ...this.divisions,
+                data: this.divisions.data.filter(division =>
+                    division.name.toLowerCase().includes(search)
+                ),
+            };
+        },
     },
 };
 </script>
 
 <template>
-    <Table :data="divisions" :columns="columns" header="Подразделения">
+    <Table :data="filteredDivisions" :columns="columns" header="Подразделения">
+        <template #toolbar-left>
+            <input v-model="search" type="text" placeholder="поиск.." class="search-input"/>
+        </template>
+
         <template #toolbar-right v-if="current_user.roles[0]?.role.code === 'admin'">
             <AddButton href="/divisions/create" />
         </template>
@@ -58,4 +78,7 @@ export default {
 <style lang="sass">
 .w-full
     width: 100%
+
+.search-input
+    width: 260px
 </style>
