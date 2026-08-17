@@ -1,4 +1,5 @@
 <script setup>
+import { ref } from "vue";
 import { useForm, usePage } from "@inertiajs/vue3";
 import { DivisionTab } from "@includes";
 import {
@@ -7,14 +8,14 @@ import {
     FormGroup,
     StringInput,
     Table,
-    CheckBox,
-
+    CheckBox
 } from "@components";
 import List from "../../components/list/List.vue";
 
 const worker = usePage().props.worker.data;
 const division = usePage().props.current_division.data;
 const services = usePage().props.services;
+const isSubscribe = ref(worker.is_subscribe_available);
 
 const form = useForm({
     shedules: worker.shedules,
@@ -37,7 +38,7 @@ const columns = [
 function onSubmit(e) {
     e.preventDefault();
 
-    form.put(route("workers.update", { worker: worker.id, division: division.id }));
+    form.put(route("workers.update", { worker: worker.id, isSubscribeAvailable: isSubscribe.value, division: division.id }));
 }
 </script>
 
@@ -61,6 +62,13 @@ function onSubmit(e) {
                     :value="form.email"
                     disabled
                 />
+                <div class="mt-10">
+                    <CheckBox
+                        label="доступна запись"
+                        :modelValue="isSubscribe"
+                        @update:modelValue="(val) => isSubscribe = !isSubscribe"
+                    />
+                </div>
             </FormGroup>
 
             <FormGroup name="work" label="График работы">
@@ -108,4 +116,7 @@ function onSubmit(e) {
         padding: 10px
         &:hover
             background: #ddd
+
+.mt-10
+    margin-top: 10px
 </style>

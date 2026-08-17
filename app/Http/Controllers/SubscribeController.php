@@ -53,7 +53,16 @@ class SubscribeController
         return Inertia::render('pages/subscribes/create', [
             'division' => getResource($division),
             'services' => Service::all()->toResourceCollection(),
-            'workers' => $division->admins->merge($division->workers)->toResourceCollection(),
+            'workers' => $division->admins()
+                ->wherePivot('is_subscribe_available', true)
+                ->whereHas('shedules')
+                ->get()
+                ->merge($division->workers()
+                    ->wherePivot('is_subscribe_available', true)
+                    ->whereHas('shedules')
+                    ->get()
+                )
+                ->toResourceCollection(),
         ]);
     }
 

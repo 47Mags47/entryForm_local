@@ -128,6 +128,14 @@ class WorkerController
                 ]);
             }
 
+            if($worker->hasRole('admin'))
+                return abort(403);
+
+            $worker->divisions()->updateExistingPivot(
+                $division->id,
+                ['is_subscribe_available' => $request->input('isSubscribeAvailable')]
+            );
+
             return redirect()
                 ->route('workers.index', ['division' => $division->id])
                 ->with('success', 'Рассписание обновлено');
