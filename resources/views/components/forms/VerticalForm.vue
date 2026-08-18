@@ -32,8 +32,7 @@ export default {
     background: rgb(251,251,251)
 
 .vertical-form
-    min-width: 500px
-    max-width: 550px
+    width: 500px
     padding: 25px
     margin-top: 40px
 
