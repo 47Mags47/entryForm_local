@@ -24,12 +24,12 @@ class SubscribeController
         ]);
 
         $from = $request->filled('from')
-            ? Carbon::parse($request->input('from'))
+            ? Carbon::parse($request->input('from'))->startOfDay()
             : now()->startOfMonth()->startOfDay();
 
         $to = $request->filled('to')
-            ? Carbon::parse($request->input('to'))
-            : now()->endOfMonth()->endOfDay();
+            ? Carbon::parse($request->input('to'))->endOfDay()
+            : $from->copy()->endOfMonth()->endOfDay();
 
         $query = $division->subscribes()
             ->whereHasAccess()
@@ -57,10 +57,11 @@ class SubscribeController
                 ->wherePivot('is_subscribe_available', true)
                 ->whereHas('shedules')
                 ->get()
-                ->merge($division->workers()
-                    ->wherePivot('is_subscribe_available', true)
-                    ->whereHas('shedules')
-                    ->get()
+                ->merge(
+                    $division->workers()
+                        ->wherePivot('is_subscribe_available', true)
+                        ->whereHas('shedules')
+                        ->get()
                 )
                 ->toResourceCollection(),
         ]);
