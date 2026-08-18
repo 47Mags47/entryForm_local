@@ -34,7 +34,7 @@ export default {
             type: [Object, String],
             default: null
         },
-        availableWeekdays: {
+        disabledWeekdays: {
             type: Array,
             default: []
         },
@@ -184,7 +184,7 @@ export default {
         isDisabled(day) {
             return this.checkValid(day.start)    ||
                 !this.checkSelectable(day.start) ||
-                !this.availableWeekdays.includes(day.weekday)
+                this.disabledWeekdays.includes(day.weekday)
         }
     },
     watch: {
@@ -241,7 +241,7 @@ export default {
                     <tr v-for="weekInterval in interval.splitBy({ week: 1 })" >
                         <td v-for="dayInterval in weekInterval.splitBy({ day: 1 })">
                             <div
-                                v-if="checkValid(dayInterval.start) && checkDateInMonth(dayInterval.start) && checkSelectable(dayInterval.start) && this.availableWeekdays.includes(dayInterval.start.weekday)"
+                                v-if="checkValid(dayInterval.start) && checkDateInMonth(dayInterval.start) && checkSelectable(dayInterval.start) && !this.disabledWeekdays.includes(dayInterval.start.weekday)"
                                 class="day-cell-container available"
                                 :class="{
                                     'current-day'   : dayInterval.start.toMillis()   == now.startOf('day').toMillis(),

@@ -63,7 +63,7 @@ export default {
                         worker_id: newValue.worker_id,
                     }
                 }).then(res => {
-                    this.availableWeekdays = res.data
+                    this.disabledWeekdays = [1, 2, 3, 4, 5, 6, 7].filter(day => !res.data.includes(day))
                 }).catch(err => {
                     this.availableTime = []
                     console.error('Ошибка в axios-api-запросе api.availableWeekdays.index:', err)
@@ -74,7 +74,7 @@ export default {
 
     data() {
         return {
-            availableWeekdays: [],
+            disabledWeekdays: [],
             availableTime: [],
             form: useForm({
                 first_name: "",
@@ -164,7 +164,7 @@ export default {
             name="start_date"
             :start="startTime"
             :end="endTime"
-            :available-weekdays="availableWeekdays"
+            :disabled-weekdays="disabledWeekdays"
             :showAvailable="false"
             @update:value="(val) => form.start_date = val"
         />
