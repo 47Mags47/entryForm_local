@@ -128,6 +128,17 @@ class Service extends Model
             }
         }
 
+        if ($date->isToday()) {
+            $now = CarbonImmutable::now('Asia/Novokuznetsk')->format('H:i');
+
+            $availableTimes = array_values(
+                array_filter(
+                    $availableTimes,
+                    fn($time) => $time > $now
+                )
+            );
+        }
+
         return $availableTimes;
     }
 
