@@ -27,7 +27,7 @@ export default {
         const month = params.get('month');
         const year = params.get('year');
 
-        let currentDate = null
+        let currentDate = dayjs()
         if (day && month && year) {
             currentDate = dayjs()
                 .year(year)
