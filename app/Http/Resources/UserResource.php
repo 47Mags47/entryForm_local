@@ -22,6 +22,7 @@ class UserResource extends JsonResource
             "email" => $this->email,
             "phone" => $this->phone,
             "office" => $this->office,
+            "receiveMail" => $this->receiveMail,
             'divisions' => $this->divisions->map(fn($division) => [
                 'id' => $division->id,
                 'name' => $division->name,

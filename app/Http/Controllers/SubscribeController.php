@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Http\Requests\StoreSubscribeRequest;
+use App\Jobs\SendSubscribeWorkerAlertJob;
 use App\Models\Division;
 use App\Models\Service;
 use App\Models\Subscribe;
@@ -78,7 +79,11 @@ class SubscribeController
 
         $data['start_at'] = $start_date . ' ' . $start_time;
 
-        Subscribe::create($data);
+        $subscribe = Subscribe::create($data);
+
+        if($subscribe->worker->receiveMail){
+            SendSubscribeWorkerAlertJob::dispatch($subscribe);
+        }
 
         return redirect()->route('subscribes.index', ['division' => $division->id]);
     }
