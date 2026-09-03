@@ -18,8 +18,6 @@ export default {
 
     data() {
         return {
-            isLoading: false,
-
             selectedDate: null,
             startDate: { from: DateTime.now().startOf('month'), to: null },
 
@@ -112,22 +110,12 @@ export default {
             return user.roles.find(role => role.division.id === this.division.id)?.role ?? user.roles[0].role
         }
     },
-
-    mounted() {
-        router.on('start', () => {
-            this.isLoading = true;
-        });
-
-        router.on('finish', () => {
-            this.isLoading = false;
-        });
-    },
 };
 </script>
 
 <template>
     <DivisionTab current="subscribes">
-        <Table :data="subscribes" :columns="columns" :row-class="getRowColor" header="Список обращений" :isLoading="isLoading">
+        <Table :data="subscribes" :columns="columns" :row-class="getRowColor" header="Список обращений">
             <template #toolbar-left>
                 <DatePicker
                     :isRange="true"
