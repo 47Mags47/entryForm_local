@@ -120,8 +120,7 @@ thead
         align-items: center
         padding: 6px 12px
         gap: 8px
-        position: sticky
-        top: 0
+        z-index: 1000
 
         .header-title
             flex: 1

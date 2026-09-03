@@ -218,7 +218,6 @@ export default {
             border-radius: 10px
 
     .timeline-header
-        z-index: 99
         border-top-left-radius: 10px
         border-top-right-radius: 10px
 </style>
