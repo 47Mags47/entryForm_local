@@ -17,15 +17,15 @@ class EventCalendarController
             ? CarbonImmutable::create($request->input('year'), $request->input('month'), $request->input('day'))
             : CarbonImmutable::now()->startOfDay();
 
-        // HACK чтоб сотрудник мог видеть записи свои и чужие, если услуга совпадает
-        $workers = user()->hasRole('division_worker')
-            ? collect([user()])
-            : $division->admins->merge($division->workers);
+        $workers = $division->admins->merge($division->workers);
 
         $subscribes = $workers
-            ->filter(fn ($worker) => $worker->subscribes()->exists())
+            ->filter(fn($worker) => $worker->subscribes()
+                ->whereDate('start_at', $day)
+                ->exists()
+            )
             ->values()
-            ->map(fn ($worker) => [
+            ->map(fn($worker) => [
                 'worker' => getResource($worker),
                 'timeline' => $worker->getTimeLine($day, $division),
             ]);

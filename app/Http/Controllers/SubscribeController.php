@@ -33,7 +33,6 @@ class SubscribeController
             : $from->copy()->endOfMonth()->endOfDay();
 
         $query = $division->subscribes()
-            ->whereHasAccess()
             ->orderBy('start_at')
             ->when(
                 user()->hasRole('division_worker'),
