@@ -30,6 +30,9 @@ export default {
             subscribes,
             scrollLeft: 0,
             maxScroll: 0,
+            isDragging: false,
+            startX: 0,
+            startScrollLeft: 0,
         };
     },
 
@@ -65,13 +68,13 @@ export default {
             router.get(route(routeName, params));
         },
 
+        // СКРОЛЛ
         updateScrollPosition(event) {
             const wrapper = event.target;
 
             this.maxScroll = wrapper.scrollWidth - wrapper.clientWidth;
             this.scrollLeft = wrapper.scrollLeft;
         },
-
         scrollTable(direction) {
             const wrapper = this.$refs.tableWrapper;
 
@@ -86,7 +89,36 @@ export default {
                     : Math.max(wrapper.scrollLeft - amount, 0),
                 behavior: 'smooth',
             });
-        }
+        },
+
+        // СКРОЛЛ ЗАЖАТИЕМ КНОПКОЙ МЫШИ
+        startDrag(event) {
+            const wrapper = this.$refs.tableWrapper;
+
+            this.isDragging = true;
+            this.startX = event.pageX;
+            this.startScrollLeft = wrapper.scrollLeft;
+
+            wrapper.classList.add('dragging');
+        },
+        drag(event) {
+            if (!this.isDragging) return;
+
+            const wrapper = this.$refs.tableWrapper;
+            const x = event.pageX;
+            const walk = x - this.startX;
+
+            wrapper.scrollLeft = this.startScrollLeft - walk;
+        },
+        stopDrag() {
+            this.isDragging = false;
+
+            const wrapper = this.$refs.tableWrapper;
+
+            if (wrapper) {
+                wrapper.classList.remove('dragging');
+            }
+        },
     },
 };
 </script>
@@ -95,7 +127,15 @@ export default {
     <div class="box">
         <div class="timeline-wrapper">
             <TimeLineHeader :header :division_id="division.id" :dateProp />
-            <div class="table-wrapper" ref="tableWrapper" @scroll="updateScrollPosition">
+            <div
+                class="table-wrapper"
+                ref="tableWrapper"
+                @scroll="updateScrollPosition"
+                @mousedown="startDrag"
+                @mousemove="drag"
+                @mouseup="stopDrag"
+                @mouseleave="stopDrag"
+            >
                 <table class="timeline-grid">
                     <TimeLineThead :allSlots :division_id="division.id" />
                     <TimeLineTbody :allSlots :subscribes :show :division_id="division.id" />
@@ -139,6 +179,10 @@ export default {
 
     .table-wrapper
         overflow-x: auto
+
+        &.dragging
+            cursor: grabbing
+            user-select: none
 
     .button-move-scroll-container
         display: flex
