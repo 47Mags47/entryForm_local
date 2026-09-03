@@ -31,9 +31,6 @@ export default {
             const blocks = document.getElementsByClassName("event-content");
             for (let i = 0; i < blocks.length; i++) {
                 const block = blocks[i];
-                if (block.scrollWidth > block.clientWidth) {
-                    block.innerText = "...";
-                }
             }
         }, 0);
     },

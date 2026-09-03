@@ -32,6 +32,7 @@ export default {
 
 <style lang="sass" scoped>
 thead th
+    width: 400px
     border: 1px solid #88a2ff81
     padding: 6px
     vertical-align: top
@@ -62,5 +63,8 @@ thead th
                 height: 56px
                 min-height: 56px
 .user-header-cell
+    position: sticky
+    left: 0
+    z-index: 10
     width: 140px
 </style>

@@ -70,6 +70,11 @@ export default {
 </template>
 
 <style lang="sass" scoped>
+td:first-child
+    position: sticky
+    left: 0
+    z-index: 100
+
 th, td
     border: 1px solid #88a2ff81
     padding: 6px

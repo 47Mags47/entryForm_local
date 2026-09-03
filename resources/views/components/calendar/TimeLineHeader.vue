@@ -111,6 +111,8 @@ export default {
 </template>
 
 <style lang="sass" scoped>
+thead
+    min-width: 200px
 .timeline-header
         background: rgb(216, 216, 255)
         display: flex

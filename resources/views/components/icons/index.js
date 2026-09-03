@@ -19,3 +19,6 @@ export { default as ChevronRightIco }   from './ChevronRightIco.vue'
 export { default as ChevronLeftIco }    from './ChevronLeftIco.vue'
 export { default as ChevronDownIco }    from './ChevronDownIco.vue'
 export { default as ChevronUpIco }      from './ChevronUpIco.vue'
+
+export { default as ArrowLeftIco }      from './ArrowLeftIco.vue'
+export { default as ArrowRightIco }     from './ArrowRightIco.vue'
