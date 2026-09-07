@@ -136,6 +136,7 @@ export default {
                         :showAvailable="false"
                         @update:value="updateDateBetween"
                     />
+                    <!-- HACK select не рос в высоту -->
                     <Select class="filter-item" :options="workers" name="workers" v-model="form.worker_id" :has-search="false" placeholder="Специалист"/>
                     <Select class="filter-item" :options="services" name="services" v-model="form.service_id" :has-search="false" placeholder="Услуга"/>
                 </div>
@@ -166,6 +167,7 @@ export default {
 <style lang="sass">
 .toolbar-left
     gap: 10px
+    flex-wrap: wrap
 
     .date-picker-button
         background: blue
@@ -179,6 +181,7 @@ export default {
 
 .filters-wrapper
     display: flex
+    flex-wrap: wrap
     gap: 10px
     .filter-item
         width: 300px

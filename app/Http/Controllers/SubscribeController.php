@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\DB;
 
 class SubscribeController
 {
+    // HACK fullTextSearch https://laravel.com/framework/docs/13.x/search#full-text-search
     public function index(Request $request, Division $division)
     {
         $request->validate([
@@ -44,17 +45,6 @@ class SubscribeController
                 fn($query) => $query->where('service_id', $request->input('service_id'))
             )
             ->paginate(25);
-
-        // Воркеры не зависят от фильтрации выбранного воркера (воркер_ид)
-        $workers = Subscribe::divisionSubscribes($division)
-            ->whereBetween('start_at', [$from, $to])
-            ->paginate(25)
-            ->getCollection()
-            ->pluck('worker')
-            ->filter()
-            ->unique('id')
-            ->values();
-
         //
         $services = Subscribe::divisionSubscribes($division)
             ->whereBetween('start_at', [$from, $to])
@@ -73,8 +63,8 @@ class SubscribeController
                 'from' => $request->input('from'),
                 'to' => $request->input('to'),
             ],
-            'workers' => $workers->toResourceCollection(),
-            'services' => $services->toResourceCollection()
+            'workers' => $division->workers->toResourceCollection(),
+            'services' => Service::all()->toResourceCollection(),
         ]);
     }
 
