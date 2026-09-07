@@ -128,15 +128,17 @@ export default {
     <DivisionTab current="subscribes">
         <Table :data="subscribes" :columns="columns" :row-class="getRowColor" header="Список обращений">
             <template #toolbar-left>
-                <DatePicker
-                    :isRange="true"
-                    name="date"
-                    :value="startDate"
-                    :showAvailable="false"
-                    @update:value="updateDateBetween"
-                />
-                <Select :options="workers" name="workers" v-model="form.worker_id" :has-search="false" placeholder="Специалист"/>
-                <Select :options="services" name="services" v-model="form.service_id" :has-search="false" placeholder="Услуга"/>
+                <div class="filters-wrapper">
+                    <DatePicker
+                        :isRange="true"
+                        name="date"
+                        :value="startDate"
+                        :showAvailable="false"
+                        @update:value="updateDateBetween"
+                    />
+                    <Select class="filter-item" :options="workers" name="workers" v-model="form.worker_id" :has-search="false" placeholder="Специалист"/>
+                    <Select class="filter-item" :options="services" name="services" v-model="form.service_id" :has-search="false" placeholder="Услуга"/>
+                </div>
                 <BlueButton :handle-click="applyFilters"> применить </BlueButton>
                 <BlueButton :handle-click="resetData"> сбросить </BlueButton>
             </template>
@@ -175,7 +177,11 @@ export default {
 .deleted-worker
     color: red
 
-.select-wrapper
-    min-width: 200px
+.filters-wrapper
+    display: flex
+    gap: 10px
+    .filter-item
+        width: 300px
+
 
 </style>
