@@ -21,7 +21,7 @@ export function fixOverflow(el, parent) {
 
     let isOverflow = false
     const rect = el.getBoundingClientRect();
-    const parentRect = parent.getBoundingClientRect()
+    const parentRect = parent?.getBoundingClientRect()
 
     let overflowBottom = null
     let overflowRight = null

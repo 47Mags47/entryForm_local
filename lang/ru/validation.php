@@ -277,6 +277,10 @@ return [
         'title' => 'Заголовок',
         'username' => 'Никнейм',
         'year' => 'Год',
+        'service_id' => 'Услуга',
+        'worker_id' => 'Сотрудник',
+        'start_date' => 'Дата',
+        'start_time' => 'Время'
     ],
 
 ];

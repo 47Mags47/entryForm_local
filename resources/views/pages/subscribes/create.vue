@@ -1,13 +1,13 @@
 <script>
 import { useForm, usePage } from "@inertiajs/vue3";
-import { VerticalForm, StringInput, Select, NumberInput, EmailInput, DatePicker } from "@components";
+import { VerticalForm, StringInput, Select, NumberInput, EmailInput, DatePicker, TextArea } from "@components";
 import axios from "axios";
 import { DateTime } from "luxon";
 
 export default {
     components: {
         VerticalForm,
-        StringInput, Select, NumberInput, EmailInput,
+        StringInput, Select, NumberInput, EmailInput, TextArea,
         DatePicker
     },
 
@@ -83,6 +83,7 @@ export default {
                 phone: "",
                 email: "",
                 service_id: "",
+                comment: "",
                 worker_id: "",
                 start_date: '',
                 start_time: ''
@@ -174,6 +175,12 @@ export default {
             v-model="form.start_time"
             :options="availableTime"
             :placeholder="timePlaceHolder ?? ''"
+        />
+        <TextArea
+            name="comment"
+            :value="form.comment"
+            label="Комментарий"
+            @update:value="(val) => form.comment = val"
         />
     </VerticalForm>
 </template>
