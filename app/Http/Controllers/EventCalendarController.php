@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Division;
+use App\Models\Service;
+use App\Models\Subscribe;
+use App\Models\User;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -17,23 +20,12 @@ class EventCalendarController
             ? CarbonImmutable::create($request->input('year'), $request->input('month'), $request->input('day'))
             : CarbonImmutable::now()->startOfDay();
 
-        $workers = $division->admins->merge($division->workers);
-
-        $subscribes = $workers
-            ->filter(fn($worker) => $worker->subscribes()
-                ->whereDate('start_at', $day)
-                ->exists()
-            )
-            ->values()
-            ->map(fn($worker) => [
-                'worker' => getResource($worker),
-                'timeline' => $worker->getTimeLine($day, $division),
-            ]);
-
+        $subscribes = Subscribe::divisionSubscribes($division)->whereBetween('start_at', [$day->startOfDay(), $day->endOfDay()])->get();
 
 
         return Inertia::render('pages/event-calendar/index', [
             'subscribes' => fn() => $subscribes,
+            'division' => fn() => $division->toResource(),
             'dates' => fn() => [
                 'previous' => [
                     'day' => $day->subDay()->day,

@@ -1,10 +1,10 @@
 <script>
-import { router } from "@inertiajs/vue3";
+import { usePage, router } from "@inertiajs/vue3";
 import { default as DatePicker } from "../inputs/datePicker/DatePicker.vue";
 import { default as BlueButton } from "../buttons/BlueButton.vue";
 import { default as ChevronRightIco } from "../icons/ChevronRightIco.vue";
 import { default as ChevronLeftIco } from "../icons/ChevronLeftIco.vue";
-import dayjs from "dayjs";
+import { DateTime, Interval } from "luxon";
 
 export default {
     components: {
@@ -21,62 +21,70 @@ export default {
     },
 
     data() {
-        const params = new URLSearchParams(window.location.search);
+        return {};
+    },
 
-        const day = params.get('day');
-        const month = params.get('month');
-        const year = params.get('year');
+    computed: {
+        dates: () => usePage().props.dates,
+        division: () => usePage().props.division,
+        currentDate() {
+            return DateTime.now().set({
+                year: this.dates.current.year,
+                month: this.dates.current.month,
+                day: this.dates.current.day,
+            });
+        },
+        interval() {
+            const start = DateTime.fromFormat(
+                this.division.data.shedules.mon.date_start,
+                "HH:mm",
+            ).set({
+                year: this.dates.current.year,
+                month: this.dates.current.month,
+                day: this.dates.current.day,
+            });
 
-        let currentDate = dayjs()
-        if (day && month && year) {
-            currentDate = dayjs()
-                .year(year)
-                .month(month - 1)
-                .date(day);
-        }
-
-        const previousDay = dayjs()
-            .year(this.dateProp.previous.year)
-            .month(this.dateProp.previous.month - 1)
-            .date(this.dateProp.previous.day);
-
-        const nextDay = dayjs()
-            .year(this.dateProp.next.year)
-            .month(this.dateProp.next.month - 1)
-            .date(this.dateProp.next.day);
-
-        const todayDate = dayjs();
-
-        return {
-            currentDate,
-            previousDay,
-            nextDay,
-            todayDate,
-        };
+            const end = DateTime.fromFormat(
+                this.division.data.shedules.mon.date_end,
+                "HH:mm",
+            ).set({
+                year: this.dates.current.year,
+                month: this.dates.current.month,
+                day: this.dates.current.day,
+            });
+            return Interval.fromDateTimes(start, end);
+        },
     },
 
     methods: {
+        handleDateChange(date) {
+            const luxonDate = DateTime.fromISO(date);
+            const isValidDate = luxonDate.isValid;
+
+            if (isValidDate) {
+                this.goToDate(luxonDate);
+            }
+        },
+
         goToDate(date) {
-            router.get(route("events.index", { division: this.division_id }), {
-                year: date.year(),
-                month: date.month() + 1,
-                day: date.date(),
-            });
+            router.get(
+                route("events.index", { division: this.division.data.id }),
+                {
+                    year: date.year,
+                    month: date.month,
+                    day: date.day,
+                },
+            );
         },
         goToPreviousDay() {
-            this.goToDate(this.previousDay);
+            this.goToDate(this.dates.previous);
         },
         goToToday() {
-            this.goToDate(this.todayDate);
+            const today = DateTime.now()
+            this.goToDate(today);
         },
         goToNextDay() {
-            this.goToDate(this.nextDay);
-        },
-        handleDateChange(val) {
-            const date = dayjs(val);
-            if (date.isValid()) {
-                this.goToDate(date);
-            }
+            this.goToDate(this.dates.next);
         },
     },
 };
@@ -86,13 +94,11 @@ export default {
     <div class="timeline-header">
         <DatePicker
             name="start_date"
-            :value="currentDate?.format('YYYY-MM-DD')"
+            :value="currentDate?.toFormat('yyyy-MM-dd')"
             @update:value="handleDateChange"
         />
 
-        <div class="header-title">
-            {{ header }}
-        </div>
+        <div class="header-title">Календарь</div>
 
         <div class="date-nav-buttons">
             <BlueButton class="nav-btn" @click="goToPreviousDay">
@@ -114,27 +120,27 @@ export default {
 thead
     min-width: 200px
 .timeline-header
-        background: rgb(216, 216, 255)
+    position: relative
+    background: rgb(216, 216, 255)
+    display: flex
+    justify-content: space-between
+    align-items: center
+    padding: 6px 12px
+    gap: 8px
+    z-index: 1000
+    border-radius: 14px 14px 0px 0px
+
+    .datepicker-input
+        width: 280px
+
+    .header-title
+        flex: 1
+        text-align: center
+        font-size: 16px
+        font-weight: 500
+
+    .date-nav-buttons
         display: flex
-        justify-content: space-between
-        align-items: center
-        padding: 6px 12px
-        gap: 8px
-        z-index: 1000
-
-        .header-title
-            flex: 1
-            text-align: center
-            font-size: 16px
-            font-weight: 500
-
-        .date-nav-buttons
-            display: flex
-            gap: 6px
-            white-space: nowrap
-
-</style>
-<style lang="sass" scoped>
-.datepicker-input
-    width: 280px
+        gap: 6px
+        white-space: nowrap
 </style>

@@ -9,7 +9,7 @@ export function getObjectValue(key, object){
 
 }
 
-export function fixOverflow(el) {
+export function fixOverflow(el, parent) {
     if (typeof el !== 'object') {
         console.error('Аргумент не является объектом!')
         return
@@ -21,9 +21,19 @@ export function fixOverflow(el) {
 
     let isOverflow = false
     const rect = el.getBoundingClientRect();
+    const parentRect = parent.getBoundingClientRect()
 
-    const overflowBottom = rect.bottom > window.innerHeight;
-    const overflowRight  = rect.right > window.innerWidth;
+    let overflowBottom = null
+    let overflowRight = null
+
+    if (parentRect) {
+        overflowBottom = rect.bottom > parentRect.height
+        overflowRight  = rect.right > parentRect.height
+    }
+    else {
+        overflowBottom = rect.bottom > window.innerHeight
+        overflowRight  = rect.right > window.innerWidth
+    }
 
     // Если вылез снизу за экран
     if(overflowBottom) {

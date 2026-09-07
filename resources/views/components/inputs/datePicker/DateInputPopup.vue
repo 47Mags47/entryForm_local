@@ -287,7 +287,7 @@ export default {
     width: 340px
 
     top: 100%
-    z-index: 10000
+    z-index: 1000
 
     .header-container
         width: 100%

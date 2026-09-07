@@ -14,6 +14,7 @@ use Inertia\Inertia;
 
 use Carbon\CarbonImmutable;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class SubscribeController
 {
@@ -32,17 +33,10 @@ class SubscribeController
             ? Carbon::parse($request->input('to'))->endOfDay()
             : $from->copy()->endOfMonth()->endOfDay();
 
-        $query = $division->subscribes()
-            ->orderBy('start_at')
-            ->when(
-                user()->hasRole('division_worker'),
-                fn($query) => $query->withoutTrashed(),
-                fn($query) => $query->withTrashed()
-            )
-            ->whereBetween('start_at', [$from, $to]);
+        $subscribes = Subscribe::divisionSubscribes($division)->whereBetween('start_at', [$from, $to])->paginate(25);
 
         return Inertia::render('pages/subscribes/index', [
-            'subscribes' => fn() => getResource($query),
+            'subscribes' => fn() => $subscribes->toResourceCollection(),
             'division' => fn() => getResource($division),
             'filters' => $request->only('from', 'to'),
         ]);
