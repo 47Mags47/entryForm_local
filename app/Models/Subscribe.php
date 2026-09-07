@@ -72,20 +72,35 @@ class Subscribe extends Model
 
     ### Ограничения
     ##################################################
-    public static function divisionSubscribes(Division $division){
+    public static function divisionSubscribes(Division $division)
+    {
         $division_ids = ($division->group !== null ? $division->group->divisions : collect([])->push($division))->pluck('id');
 
         return self::with(['service', 'worker'])
-            ->whereIn('division_id', $division_ids)->where(function($query){
-                if(user()->hasRole('admin'))
+            ->whereIn('division_id', $division_ids)->where(function ($query) {
+                if (user()->hasRole('admin'))
                     return $query;
 
-                if(user()->hasRole('division_admin'))
+                if (user()->hasRole('division_admin'))
                     return $query;
 
                 $service_ids = user()->services->pluck('id');
                 return $query->whereIn('service_id', $service_ids);
             });
+    }
+
+    public static function divisionWorkers(Division $division)
+    {
+        $division_ids = ($division->group !== null ? $division->group->divisions : collect([])->push($division))->pluck('id');
+
+        return User::query()
+            ->whereHas('divisions', function ($query) use ($division_ids) {
+                $query->whereIn('id', $division_ids);
+            })
+            ->whereHas('subscribes', function ($query) use ($division_ids) {
+                $query->whereIn('division_id', $division_ids);
+            })
+            ->get();
     }
 
     ### Связи

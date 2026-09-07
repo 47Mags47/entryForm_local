@@ -33,12 +33,31 @@ class SubscribeController
             ? Carbon::parse($request->input('to'))->endOfDay()
             : $from->copy()->endOfMonth()->endOfDay();
 
-        $subscribes = Subscribe::divisionSubscribes($division)->whereBetween('start_at', [$from, $to])->paginate(25);
+        $subscribes = Subscribe::divisionSubscribes($division)
+            ->whereBetween('start_at', [$from, $to])
+            ->when(
+                $request->filled('worker_id'),
+                fn($query) => $query->where('worker_id', $request->input('worker_id'))
+            )
+            ->paginate(25);
+
+        $workers = Subscribe::divisionSubscribes($division)
+            ->whereBetween('start_at', [$from, $to])
+            ->paginate(25)
+            ->getCollection()
+            ->pluck('worker')
+            ->filter()
+            ->unique('id')
+            ->values();
 
         return Inertia::render('pages/subscribes/index', [
             'subscribes' => fn() => $subscribes->toResourceCollection(),
             'division' => fn() => getResource($division),
-            'filters' => $request->only('from', 'to'),
+            'filters' => [
+                'from' => $request->input('from'),
+                'to' => $request->input('to'),
+            ],
+            'workers' => $workers->toResourceCollection()
         ]);
     }
 
@@ -74,7 +93,7 @@ class SubscribeController
 
         $subscribe = Subscribe::create($data);
 
-        if($subscribe->worker->receiveMail){
+        if ($subscribe->worker->receiveMail) {
             SendSubscribeWorkerAlertJob::dispatch($subscribe);
         }
 
@@ -84,9 +103,9 @@ class SubscribeController
     public function show(Division $division, Subscribe $subscribe)
     {
         if (
-            $subscribe->division_id === $division->id       ||
-            user()->hasRole('division_admin', $division)    ||
-            user()->hasRole('admin')                        ||
+            $subscribe->division_id === $division->id ||
+            user()->hasRole('division_admin', $division) ||
+            user()->hasRole('admin') ||
             (user()->hasRole('division_worker', $division) && $subscribe->worker_id === user()->id)
         ) {
             return Inertia::render('pages/subscribes/show', [

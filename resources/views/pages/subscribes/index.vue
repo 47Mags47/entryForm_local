@@ -1,7 +1,7 @@
 <script>
 import { usePage, useForm, router } from "@inertiajs/vue3";
 import { DivisionTab } from "@includes";
-import { Table, GoToButton, AddButton, DeleteButton, BlueButton, DatePicker, DownloadIco } from "@components";
+import { Table, GoToButton, AddButton, DeleteButton, BlueButton, DatePicker, DownloadIco, Select } from "@components";
 import { DateTime } from "luxon";
 
 export default {
@@ -13,7 +13,8 @@ export default {
         AddButton,
         BlueButton,
         DatePicker,
-        DownloadIco
+        DownloadIco,
+        Select
     },
 
     data() {
@@ -24,6 +25,7 @@ export default {
             form: useForm({
                 from: DateTime.now().startOf('month').toFormat('yyyy-MM-dd'),
                 to: null,
+                worker_id: '',
             }),
         }
     },
@@ -32,6 +34,10 @@ export default {
         current_user:   () => usePage().props.current_user.data,
         division:       () => usePage().props.division.data,
         subscribes:     () => usePage().props.subscribes,
+        workers: () => (usePage().props.workers?.data ?? []).map(worker => ({
+                value: worker.id,
+                label: worker.last_name + ' ' + worker.first_name?.charAt(0).toUpperCase() + '.' + worker.middle_name?.charAt(0).toUpperCase() + '.',
+            })),
 
         columns() {
             return [
@@ -79,7 +85,7 @@ export default {
             this.form.to     =   newDateBetween.to?.toFormat('yyyy-MM-dd')
         },
 
-        applyRange() {
+        applyFilters() {
             this.form
                 .transform(data => ({
                     ...data,
@@ -124,7 +130,8 @@ export default {
                     :showAvailable="false"
                     @update:value="updateDateBetween"
                 />
-                <BlueButton :handle-click="applyRange"> применить </BlueButton>
+                <Select :options="workers" name="workers" v-model="form.worker_id" :has-search="false" placeholder="Специалист"/>
+                <BlueButton :handle-click="applyFilters"> применить </BlueButton>
                 <BlueButton :handle-click="resetData"> сбросить </BlueButton>
             </template>
             <template #toolbar-right>
@@ -161,5 +168,8 @@ export default {
 
 .deleted-worker
     color: red
+
+.select-wrapper
+    width: 200px
 
 </style>
