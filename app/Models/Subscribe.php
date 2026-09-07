@@ -89,20 +89,6 @@ class Subscribe extends Model
             });
     }
 
-    public static function divisionWorkers(Division $division)
-    {
-        $division_ids = ($division->group !== null ? $division->group->divisions : collect([])->push($division))->pluck('id');
-
-        return User::query()
-            ->whereHas('divisions', function ($query) use ($division_ids) {
-                $query->whereIn('id', $division_ids);
-            })
-            ->whereHas('subscribes', function ($query) use ($division_ids) {
-                $query->whereIn('division_id', $division_ids);
-            })
-            ->get();
-    }
-
     ### Связи
     ##################################################
     public function service(): BelongsTo

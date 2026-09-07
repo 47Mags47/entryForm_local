@@ -39,8 +39,13 @@ class SubscribeController
                 $request->filled('worker_id'),
                 fn($query) => $query->where('worker_id', $request->input('worker_id'))
             )
+            ->when(
+                $request->filled('service_id'),
+                fn($query) => $query->where('service_id', $request->input('service_id'))
+            )
             ->paginate(25);
 
+        // Воркеры не зависят от фильтрации выбранного воркера (воркер_ид)
         $workers = Subscribe::divisionSubscribes($division)
             ->whereBetween('start_at', [$from, $to])
             ->paginate(25)
@@ -50,6 +55,17 @@ class SubscribeController
             ->unique('id')
             ->values();
 
+        //
+        $services = Subscribe::divisionSubscribes($division)
+            ->whereBetween('start_at', [$from, $to])
+            ->paginate(25)
+            ->getCollection()
+            ->pluck('service')
+            ->filter()
+            ->unique('id')
+            ->values();
+
+
         return Inertia::render('pages/subscribes/index', [
             'subscribes' => fn() => $subscribes->toResourceCollection(),
             'division' => fn() => getResource($division),
@@ -57,7 +73,8 @@ class SubscribeController
                 'from' => $request->input('from'),
                 'to' => $request->input('to'),
             ],
-            'workers' => $workers->toResourceCollection()
+            'workers' => $workers->toResourceCollection(),
+            'services' => $services->toResourceCollection()
         ]);
     }
 

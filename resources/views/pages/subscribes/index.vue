@@ -26,6 +26,7 @@ export default {
                 from: DateTime.now().startOf('month').toFormat('yyyy-MM-dd'),
                 to: null,
                 worker_id: '',
+                service_id: ''
             }),
         }
     },
@@ -37,6 +38,10 @@ export default {
         workers: () => (usePage().props.workers?.data ?? []).map(worker => ({
                 value: worker.id,
                 label: worker.last_name + ' ' + worker.first_name?.charAt(0).toUpperCase() + '.' + worker.middle_name?.charAt(0).toUpperCase() + '.',
+            })),
+        services: () => (usePage().props.services?.data ?? []).map(service => ({
+                value: service.id,
+                label: service.name
             })),
 
         columns() {
@@ -131,6 +136,7 @@ export default {
                     @update:value="updateDateBetween"
                 />
                 <Select :options="workers" name="workers" v-model="form.worker_id" :has-search="false" placeholder="Специалист"/>
+                <Select :options="services" name="services" v-model="form.service_id" :has-search="false" placeholder="Услуга"/>
                 <BlueButton :handle-click="applyFilters"> применить </BlueButton>
                 <BlueButton :handle-click="resetData"> сбросить </BlueButton>
             </template>
@@ -170,6 +176,6 @@ export default {
     color: red
 
 .select-wrapper
-    width: 200px
+    min-width: 200px
 
 </style>
