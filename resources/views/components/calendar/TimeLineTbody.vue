@@ -101,18 +101,6 @@ export default {
                 subscribe: this.getSubscribe(worker_id, time)
             }))
         },
-
-        fixOverflowPreview(event) {
-            const preview = event.currentTarget.querySelector('.event-preview');
-            const parentPreview = event.currentTarget.closest('.table-wrapper')
-
-            if (!preview || !parentPreview) return;
-
-            // Даём браузеру сначала показать preview
-            requestAnimationFrame(() => {
-                fixOverflow(preview, parentPreview);
-            });
-        }
     }
 };
 </script>
@@ -226,9 +214,22 @@ export default {
             z-index: 10
 
             .service-name-wrapper
+                height: 100%
                 width: 100%
+                min-width: 0
+
                 overflow: hidden
-                text-overflow: ellipsis
+
+                display: flex
+                justify-content: center
+                align-items: center
+
+                span
+                    min-width: 0
+                    overflow: hidden
+                    text-overflow: ellipsis
+                    white-space: nowrap
+                    font-size: 12px
 
             .event-preview
                 position: fixed
