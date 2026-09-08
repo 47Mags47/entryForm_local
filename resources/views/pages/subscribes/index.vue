@@ -21,13 +21,14 @@ export default {
         return {
             selectedDate: null,
             startDate: { from: DateTime.now().startOf('month'), to: null },
-            search: '',
+            searchTimeout: null,
 
             form: useForm({
                 from: DateTime.now().startOf('month').toFormat('yyyy-MM-dd'),
                 to: null,
                 worker_id: '',
                 service_id: '',
+                search: ''
             }),
         }
     },
@@ -73,27 +74,16 @@ export default {
                 { key: "actions", label: "", width: "60px" },
             ];
         },
+    },
 
-        filteredSubscribes() {
-            const filtered = this.search.toLowerCase().trim();
+    watch: {
+        'form.search'() {
+            clearTimeout(this.searchTimeout);
 
-            if (!filtered) {
-                return this.subscribes;
-            }
-
-            return {
-                ...this.subscribes,
-                data: this.subscribes.data.filter(subscribe => {
-                        if (subscribe.first_name?.toLowerCase().includes(filtered))
-                            return true
-                        if (subscribe.last_name?.toLowerCase().includes(filtered))
-                            return true
-                        if (subscribe.middle_name?.toLowerCase().includes(filtered))
-                            return true
-                    }
-                ),
-            };
-        },
+            this.searchTimeout = setTimeout(() => {
+                this.applyFilters()
+            }, 500)
+        }
     },
 
     methods: {
@@ -148,7 +138,7 @@ export default {
 
 <template>
     <DivisionTab current="subscribes">
-        <Table :data="filteredSubscribes" :columns="columns" :row-class="getRowColor" header="Список обращений">
+        <Table :data="subscribes" :columns="columns" :row-class="getRowColor" header="Список обращений">
             <template #toolbar-left>
                 <div class="filters-wrapper">
                     <DatePicker
@@ -161,7 +151,7 @@ export default {
                     <!-- HACK select не рос в высоту -->
                     <Select class="filter-item" :options="workers" name="workers" v-model="form.worker_id" :has-search="false" placeholder="Специалист"/>
                     <Select class="filter-item" :options="services" name="services" v-model="form.service_id" :has-search="false" placeholder="Услуга"/>
-                    <StringInput @update:value="(val) => search = val" :value="form.search" name="search" placeholder="ФИО заявителя" />
+                    <StringInput @update:value="(val) => form.search = val" :value="form.search" name="search" placeholder="ФИО заявителя" />
                 </div>
                 <BlueButton :handle-click="applyFilters"> применить </BlueButton>
                 <BlueButton :handle-click="resetData"> сбросить </BlueButton>

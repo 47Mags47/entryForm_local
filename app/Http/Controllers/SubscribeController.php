@@ -26,6 +26,7 @@ class SubscribeController
             'to' => ['nullable', 'date_format:Y-m-d']
         ]);
 
+
         $from = $request->filled('from')
             ? Carbon::parse($request->input('from'))->startOfDay()
             : now()->startOfMonth()->startOfDay();
@@ -44,16 +45,20 @@ class SubscribeController
                 $request->filled('service_id'),
                 fn($query) => $query->where('service_id', $request->input('service_id'))
             )
+            ->when(
+                $request->filled('search'),
+                function ($query) use ($request) {
+                    $search = trim($request->input('search'));
+
+                    $query->where(function ($query) use ($search) {
+                        $query
+                            ->where('first_name', 'like', "%{$search}%")
+                            ->orWhere('last_name', 'like', "%{$search}%")
+                            ->orWhere('middle_name', 'like', "%{$search}%");
+                    });
+                }
+            )
             ->paginate(25);
-        //
-        $services = Subscribe::divisionSubscribes($division)
-            ->whereBetween('start_at', [$from, $to])
-            ->paginate(25)
-            ->getCollection()
-            ->pluck('service')
-            ->filter()
-            ->unique('id')
-            ->values();
 
 
         return Inertia::render('pages/subscribes/index', [
