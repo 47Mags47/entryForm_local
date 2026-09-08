@@ -37,6 +37,7 @@ export default {
         },
         current_user: () => usePage().props.current_user.data,
 
+        // HACK перенести на бэк
         filteredDivisions() {
             const search = this.search.toLowerCase().trim();
 
@@ -75,7 +76,7 @@ export default {
     </Table>
 </template>
 
-<style lang="sass">
+<style lang="sass" scoped>
 .w-full
     width: 100%
 
