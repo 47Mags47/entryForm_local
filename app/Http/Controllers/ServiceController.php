@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreServiceRequest;
 use App\Http\Requests\UpdateServiceRequest;
 use App\Models\Service;
-use App\Http\Resources\ServiceResource;
+use Illuminate\Http\Request;
 
 use Inertia\Inertia;
 
@@ -14,20 +14,32 @@ class ServiceController
     /**
      * Display a listing of the resource.
      */
-    public function index() {
+    public function index(Request $request)
+    {
         if (user()->cannot('viewAny', Service::class)) {
             abort(403);
         }
 
+        $services = Service::query()
+            ->when(
+                $request->filled('filter.service'),
+                fn($query) => $query->where(
+                    'name',
+                    'like',
+                    '%' . $request->input('filter.service') . '%'
+                )
+            );
+
         return Inertia::render('pages/services/index', [
-            'services' => fn() => getResource(Service::class),
+            'services' => fn() => getResource($services),
         ]);
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create() {
+    public function create()
+    {
         if (user()->cannot('create', Service::class)) {
             abort(403);
         }
@@ -38,7 +50,8 @@ class ServiceController
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreServiceRequest $request) {
+    public function store(StoreServiceRequest $request)
+    {
         if (user()->cannot('create', Service::class)) {
             abort(403);
         }
@@ -50,8 +63,9 @@ class ServiceController
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Service $service) {
-        if (user()->cannot('update',  $service)) {
+    public function edit(Service $service)
+    {
+        if (user()->cannot('update', $service)) {
             abort(403);
         }
         return Inertia::render('pages/services/edit', [
@@ -62,8 +76,9 @@ class ServiceController
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateServiceRequest $request, Service $service) {
-        if (user()->cannot('update',  $service)) {
+    public function update(UpdateServiceRequest $request, Service $service)
+    {
+        if (user()->cannot('update', $service)) {
             abort(403);
         }
 
@@ -75,8 +90,9 @@ class ServiceController
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Service $service) {
-        if (user()->cannot('delete',  $service)) {
+    public function destroy(Service $service)
+    {
+        if (user()->cannot('delete', $service)) {
             abort(403);
         }
         $service->delete();

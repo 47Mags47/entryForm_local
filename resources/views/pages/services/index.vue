@@ -1,5 +1,5 @@
 <script>
-import { usePage } from "@inertiajs/vue3";
+import { usePage, router } from "@inertiajs/vue3";
 import { Table, EditButton, DeleteButton, AddButton } from "@components";
 
 export default {
@@ -13,6 +13,7 @@ export default {
     data() {
         return {
             search: '',
+            timeout: null,
             columns: [
                 { key: "name", label: "Наименование" },
                 { key: "duration", label: "Время", width: "100px" },
@@ -21,32 +22,35 @@ export default {
         };
     },
 
+    watch: {
+        search() {
+            clearTimeout(this.timeout)
+
+            this.timeout = setTimeout(() => {
+                router.get(route('services.index'),
+                    {
+                        filter: {
+                            service: this.search
+                        }
+                    },
+                    {
+                        preserveState: true,
+                    }
+                )
+            }, 500)
+        }
+    },
+
     computed: {
         services() {
            return usePage().props.services;
-        },
-
-        // HACK перенести на бэк
-        filteredServices() {
-            const search = this.search.toLowerCase().trim();
-
-            if (!search) {
-                return this.services;
-            }
-
-            return {
-                ...this.divisions,
-                data: this.services.data.filter(service =>
-                    service.name.toLowerCase().includes(search)
-                ),
-            };
         },
     },
 };
 </script>
 
 <template>
-    <Table :data="filteredServices" :columns="columns" header="Услуга">
+    <Table :data="services" :columns="columns" header="Услуга">
         <template #toolbar-left>
             <input v-model="search" type="text" placeholder="поиск.." class="search-input"/>
         </template>

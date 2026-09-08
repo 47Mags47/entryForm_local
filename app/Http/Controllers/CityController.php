@@ -7,19 +7,30 @@ use App\Http\Requests\UpdateCityRequest;
 use App\Models\City;
 use App\Http\Resources\CityResource;
 use Inertia\Inertia;
+use Illuminate\Http\Request;
 
 class CityController
 {
     /**
      * Display a listing of the resource.
      */
-    public function index() {
+    public function index(Request $request) {
         if (user()->cannot('viewAny', City::class)) {
             abort(403);
         }
 
+        $cities = City::query()
+            ->when(
+                $request->filled('filter.city'),
+                fn($query) => $query->where(
+                    'name',
+                    'like',
+                    '%' . $request->input('filter.city') . '%'
+                )
+            );
+
         return Inertia::render('pages/cities/index', [
-            'cities' => fn() => getResource(City::class),
+            'cities' => fn() => getResource($cities),
         ]);
     }
 

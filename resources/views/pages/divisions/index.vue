@@ -1,5 +1,5 @@
 <script>
-import { usePage } from "@inertiajs/vue3";
+import { usePage, router } from "@inertiajs/vue3";
 import {
     Table,
     EditButton,
@@ -20,6 +20,8 @@ export default {
     data() {
         return {
             search: '',
+            timeout: null,
+
             columns: [
                 { key: "name", label: "Наименование", width: "342px" },
                 { key: "address", label: "Адрес" },
@@ -30,34 +32,38 @@ export default {
             ],
         };
     },
+
+    watch: {
+        search() {
+            clearTimeout(this.timeout)
+
+            this.timeout = setTimeout(() => {
+                router.get(route('divisions.index'),
+                    {
+                        filter: {
+                            division: this.search
+                        }
+                    },
+                    {
+                        preserveState: true,
+                    }
+                )
+            }, 500)
+        }
+    },
+
     computed: {
         divisions() {
             const divisions = usePage().props.divisions;
             return divisions;
         },
         current_user: () => usePage().props.current_user.data,
-
-        // HACK перенести на бэк
-        filteredDivisions() {
-            const search = this.search.toLowerCase().trim();
-
-            if (!search) {
-                return this.divisions;
-            }
-
-            return {
-                ...this.divisions,
-                data: this.divisions.data.filter(division =>
-                    division.name.toLowerCase().includes(search)
-                ),
-            };
-        },
     },
 };
 </script>
 
 <template>
-    <Table :data="filteredDivisions" :columns="columns" header="Подразделения">
+    <Table :data="divisions" :columns="columns" header="Подразделения">
         <template #toolbar-left>
             <input v-model="search" type="text" placeholder="поиск.." class="search-input"/>
         </template>

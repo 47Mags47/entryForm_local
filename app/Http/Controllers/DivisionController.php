@@ -9,16 +9,27 @@ use App\Models\DayOfTheWeek;
 use App\Models\Division;
 use App\Models\DivisionGroup;
 use Inertia\Inertia;
+use Illuminate\Http\Request;
 
 class DivisionController
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        $divisions = Division::hasAccess()
+            ->when(
+                $request->filled('filter.division'),
+                fn($query) => $query->where(
+                    'name',
+                    'like',
+                    '%' . $request->input('filter.division') . '%'
+                )
+            );
+
         return Inertia::render('pages/divisions/index', [
-            'divisions' => fn() => Division::hasAccess()->get()->toResourceCollection()
+            'divisions' => fn() => $divisions->get()->toResourceCollection()
         ]);
     }
 
