@@ -12,6 +12,7 @@ export default {
 
     data() {
         return {
+            search: '',
             columns: [
                 { key: "name", label: "Наименовение" },
                 { key: "actions", label: "" },
@@ -24,12 +25,32 @@ export default {
             const cities = usePage().props.cities;
             return cities;
         },
+
+        // HACK перенести на бэк
+        filteredCities() {
+            const search = this.search.toLowerCase().trim();
+
+            if (!search) {
+                return this.cities;
+            }
+
+            return {
+                ...this.divisions,
+                data: this.cities.data.filter(city =>
+                    city.name.toLowerCase().includes(search)
+                ),
+            };
+        },
     },
 };
 </script>
 
 <template>
-    <Table :data="cities" :columns="columns" header="Города">
+    <Table :data="filteredCities" :columns="columns" header="Города">
+        <template #toolbar-left>
+            <input v-model="search" type="text" placeholder="поиск.." class="search-input"/>
+        </template>
+
         <template #toolbar-right>
             <AddButton :href="route('cities.create')" />
         </template>
@@ -40,3 +61,8 @@ export default {
         </template>
     </Table>
 </template>
+
+<style lang="sass" scoped>
+.search-input
+    width: 260px
+</style>
