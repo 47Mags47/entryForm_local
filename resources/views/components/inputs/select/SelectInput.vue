@@ -28,6 +28,14 @@ export default {
     display: flex
     align-items: center
     justify-content: space-between
+    max-height: 32px
+
+    .select-value
+        flex: 1
+        min-width: 0
+        overflow: hidden
+        text-overflow: ellipsis
+        white-space: nowrap
 
     &.is-open
         border-bottom-left-radius: 0
@@ -38,9 +46,6 @@ export default {
         border: 1px solid #ccc
         color: #999
         cursor: not-alloweds
-        .select-value
-            flex: 1
-            text-align: left
 
     .select-arrow
         width: 16px

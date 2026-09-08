@@ -74,8 +74,8 @@ export default {
     </FormItem>
 </template>
 
-<style lang="sass">
+<style lang="sass" scoped>
 input, .input
-    height: 30px
-    @include input
+    height: 100%
+    @include input()
 </style>
