@@ -18,12 +18,12 @@ class SubscribesExportController
         ]);
 
         $from = $request->filled('from')
-            ? Carbon::parse($request->input('from'))
-            : now()->startOfMonth();
+            ? Carbon::parse($request->input('from'))->startOfDay()
+            : now()->startOfMonth()->startOfDay();
 
         $to = $request->filled('to')
-            ? Carbon::parse($request->input('to'))
-            : now()->endOfMonth();
+            ? Carbon::parse($request->input('to'))->endOfDay()
+            : now()->endOfMonth()->endOfDay();
 
         $query = $division->subscribes()
             ->whereHasAccess()
