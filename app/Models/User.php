@@ -106,20 +106,10 @@ class User extends Authenticatable
         return $this->belongsToMany(UserRole::class, 'main__users_roles', null, 'role_id')->withPivot('division_id', 'is_subscribe_available');
     }
 
-    // public function role(): BelongsTo
-    // {
-    //     return $this->belongsTo(UserRole::class, 'role_id');
-    // }
-
     public function divisions(): BelongsToMany
     {
         return $this->belongsToMany(Division::class, 'main__users_roles')->withPivot('role_id', 'is_subscribe_available');
     }
-
-    // public function division(): BelongsTo
-    // {
-    //     return $this->belongsTo(Division::class, 'division_id');
-    // }
 
     public function services(): HasManyThrough
     {
