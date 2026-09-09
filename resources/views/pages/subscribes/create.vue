@@ -11,15 +11,33 @@ export default {
         DatePicker
     },
 
+    data() {
+        return {
+            disabledWeekdays: [],
+            availableTime: [],
+            workers: [],
+            form: useForm({
+                first_name: "",
+                last_name: "",
+                middle_name: "",
+                phone: "",
+                email: "",
+                service_id: "",
+                comment: "",
+                worker_id: "",
+                start_date: '',
+                start_time: ''
+            }),
+            startTime: DateTime.now().startOf('day'),
+            endTime: DateTime.now().plus({'month': 1})
+        };
+    },
+
     computed: {
         division: () => usePage().props.division.data,
         services: () => usePage().props.services.data.map((service) => ({
             label: service.name,
             value: service.id
-        })),
-        workers: () => usePage().props.workers.data.map((worker) => ({
-            label: `${worker.last_name} ${worker.first_name[0]} ${worker.middle_name[0]}`,
-            value: worker.id
         })),
 
         watchedFormFields() {
@@ -69,28 +87,23 @@ export default {
                     console.error('Ошибка в axios-api-запросе api.availableWeekdays.index:', err)
                 })
             }
-        }
-    },
 
-    data() {
-        return {
-            disabledWeekdays: [],
-            availableTime: [],
-            form: useForm({
-                first_name: "",
-                last_name: "",
-                middle_name: "",
-                phone: "",
-                email: "",
-                service_id: "",
-                comment: "",
-                worker_id: "",
-                start_date: '',
-                start_time: ''
-            }),
-            startTime: DateTime.now().startOf('day'),
-            endTime: DateTime.now().plus({'month': 1})
-        };
+            if (newValue.service_id) {
+                axios.get(route('api.availableWorkers.index'), {
+                    params: {
+                        service_id: newValue.service_id,
+                        division_id: this.division.id
+                    }
+                }).then(res => {
+                    this.workers = [...res.data.data].map((worker) => ({
+                        label: `${worker.last_name} ${worker.first_name?.charAt(0)} ${worker.middle_name?.charAt(0)}`,
+                        value: worker.id
+                    }))
+                }).catch(err => {
+                    console.error('Ошибка в axios-api-запросе api.availableServices.index:', err)
+                })
+            }
+        }
     },
 
     methods: {
