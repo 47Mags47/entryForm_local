@@ -121,7 +121,14 @@ export default {
         },
 
         subscribesExport() {
-            window.open(route('subscribes.export', { division: this.division.id, from: this.form.from, to: this.form.to }))
+            const params = {
+                ...this.form,
+                division: this.division.id
+            };
+
+            window.open(route('subscribes.export', {
+                ...params
+            }))
         },
 
         getRowColor(row) {

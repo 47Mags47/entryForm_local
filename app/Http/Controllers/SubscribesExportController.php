@@ -11,7 +11,8 @@ use PhpOffice\PhpSpreadsheet\Style\Border;
 
 class SubscribesExportController
 {
-    public function index(Request $request, Division $division){
+    public function index(Request $request, Division $division)
+    {
         $request->validate([
             'from' => ['nullable', 'date_format:Y-m-d'],
             'to' => ['nullable', 'date_format:Y-m-d']
@@ -28,7 +29,20 @@ class SubscribesExportController
         $query = $division->subscribes()
             ->whereHasAccess()
             ->orderBy('start_at')
-            ->whereBetween('start_at', [$from, $to]);
+            ->whereBetween('start_at', [$from, $to])
+            ->when($request->input('worker_id'), function ($query, $workerId) {
+                $query->where('worker_id', $workerId);
+            })
+            ->when($request->input('service_id'), function ($query, $serviceId) {
+                $query->where('service_id', $serviceId);
+            })
+            ->when($request->input('search'), function ($query, $search) {
+                $query->where(function ($query) use ($search) {
+                    $query->where('first_name', 'like', "%{$search}%")
+                        ->orWhere('last_name', 'like', "%{$search}%")
+                        ->orWhere('middle_name', 'like', "%{$search}%");
+                });
+            });
 
         $spreadsheet = $spreadsheet = IOFactory::load(storage_path('app/private/templates/subscribes/subscribesIndex.xlsx'));
         $sheet = $spreadsheet->getActiveSheet();
@@ -49,7 +63,7 @@ class SubscribesExportController
             $row++;
         }
 
-        $sheet->getStyle('A2:E' . $row-1)
+        $sheet->getStyle('A2:E' . $row - 1)
             ->getBorders()
             ->getAllBorders()
             ->setBorderStyle(Border::BORDER_HAIR);
