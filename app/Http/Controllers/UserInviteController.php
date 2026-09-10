@@ -14,9 +14,12 @@ use Inertia\Inertia;
 
 class UserInviteController
 {
-    public function create(Request $request) {
-        if (!(user()->hasRole('admin')
-            or (user()->hasRole('division_admin')))) {
+    public function create(Request $request)
+    {
+        if (
+            !(user()->hasRole('admin')
+                or (user()->hasRole('division_admin')))
+        ) {
             abort(403);
         }
 
@@ -66,8 +69,10 @@ class UserInviteController
 
         $division = $invite->division;
 
-        $user->divisions()->attach($division->id, [
-            'role_id' => UserRole::byCode('division_worker')->id,
+        $user->divisions()->syncWithoutDetaching([
+            $division->id => [
+                'role_id' => UserRole::byCode('division_worker')->id,
+            ],
         ]);
 
         $invite->delete();
