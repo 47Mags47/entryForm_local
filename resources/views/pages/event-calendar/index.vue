@@ -296,13 +296,14 @@ export default {
         .button-move-scroll-container
             display: flex
             justify-content: space-between
+            align-items: center
             padding: 5px 20px
             padding-left: 160px
             margin-bottom: 10px
 
             position: absolute
             width: 100%
-            height: 40px
+            height: 100%
 
             right: 0
             bottom: 0
@@ -313,6 +314,8 @@ export default {
 
             button
                 pointer-events: auto
+                height: 25px
+                background: #63beff
 
             .button-hidden
                 opacity: 0
