@@ -1,7 +1,11 @@
 <script>
 import { usePage, useForm, router } from "@inertiajs/vue3";
 import { DivisionTab } from "@includes";
-import { Table, GoToButton, AddButton, DeleteButton, BlueButton, DatePicker, DownloadIco, Select, StringInput } from "@components";
+import {
+    Table,
+    GoToButton, AddButton, DeleteButton, BlueButton,
+    DatePicker, Select, StringInput,
+    DownloadIco } from "@components";
 import { DateTime } from "luxon";
 
 export default {
@@ -83,7 +87,19 @@ export default {
             this.searchTimeout = setTimeout(() => {
                 this.applyFilters()
             }, 500)
-        }
+        },
+        'form.from'() {
+            this.applyFilters()
+        },
+        'form.to'() {
+            this.applyFilters()
+        },
+        'form.worker_id'() {
+            this.applyFilters()
+        },
+        'form.service_id'() {
+            this.applyFilters()
+        },
     },
 
     methods: {
@@ -155,12 +171,10 @@ export default {
                         :showAvailable="false"
                         @update:value="updateDateBetween"
                     />
-                    <!-- HACK select не рос в высоту -->
                     <Select class="filter-item" :options="workers" name="workers" v-model="form.worker_id" :has-search="false" placeholder="Специалист"/>
                     <Select class="filter-item" :options="services" name="services" v-model="form.service_id" :has-search="false" placeholder="Услуга"/>
                     <StringInput @update:value="(val) => form.search = val" :value="form.search" name="search" placeholder="ФИО заявителя" />
                 </div>
-                <BlueButton :handle-click="applyFilters"> применить </BlueButton>
                 <BlueButton :handle-click="resetData"> сбросить </BlueButton>
             </template>
             <template #toolbar-right>
