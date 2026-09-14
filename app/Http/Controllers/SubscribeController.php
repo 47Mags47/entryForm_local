@@ -60,7 +60,6 @@ class SubscribeController
             )
             ->paginate(25);
 
-
         return Inertia::render('pages/subscribes/index', [
             'subscribes' => fn() => $subscribes->toResourceCollection(),
             'division' => fn() => getResource($division),
