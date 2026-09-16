@@ -1,16 +1,15 @@
 <script setup>
 import { ref } from "vue";
-import { useForm, usePage } from "@inertiajs/vue3";
+import { useForm, usePage, router } from "@inertiajs/vue3";
 import { DivisionTab } from "@includes";
 import {
     HorizontalForm,
     WorkSchedule,
     FormGroup,
     StringInput,
-    Table,
-    CheckBox
+    CheckBox,
+    BlueButton,
 } from "@components";
-import List from "../../components/list/List.vue";
 
 const worker = usePage().props.worker.data;
 const division = usePage().props.current_division.data;
@@ -39,6 +38,13 @@ function onSubmit(e) {
     e.preventDefault();
 
     form.put(route("workers.update", { worker: worker.id, isSubscribeAvailable: isSubscribe.value, division: division.id }));
+}
+
+function routeToWeekendsPage() {
+    router.get(route('weekends.index', {
+        division: division.id,
+        user:     worker.id,
+    }));
 }
 </script>
 
@@ -69,6 +75,9 @@ function onSubmit(e) {
                         @update:modelValue="(val) => isSubscribe = !isSubscribe"
                     />
                 </div>
+                <BlueButton class="mt-10" @click="routeToWeekendsPage">
+                    <span> Отпуска </span>
+                </BlueButton>
             </FormGroup>
 
             <FormGroup name="work" label="График работы">

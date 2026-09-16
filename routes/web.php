@@ -14,6 +14,7 @@ use App\Http\Controllers\StatisticController;
 use App\Http\Controllers\SubscribeController;
 use App\Http\Controllers\SubscribesExportController;
 use App\Http\Controllers\UserInviteController;
+use App\Http\Controllers\WeekendController;
 use App\Http\Controllers\WorkerController;
 use Illuminate\Support\Facades\Route;
 
@@ -35,6 +36,9 @@ Route::middleware('auth')->group(function () {
         Route::prefix('/divisions/{division}')->middleware('hasDivisionAccess')->group(function () {
             Route::resource('/events', EventCalendarController::class)
                 ->only(['index']);
+
+            Route::resource('/users/{user}/weekends', WeekendController::class)
+                ->except(['show']);
 
             Route::get('/subscribes/export', [SubscribesExportController::class, 'index'])
                 ->name('subscribes.export');

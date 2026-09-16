@@ -12,7 +12,7 @@ class DivisionMiddleware extends Middleware
         $shared = parent::share($request);
 
         if($request->division !== null)
-            $shared['current_division'] = $request->division->toResource();
+            $shared['current_division'] = $request->route('division')->toResource();
 
         return $shared;
     }

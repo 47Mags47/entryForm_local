@@ -280,7 +280,9 @@ return [
         'service_id' => 'Услуга',
         'worker_id' => 'Сотрудник',
         'start_date' => 'Дата',
-        'start_time' => 'Время'
+        'start_time' => 'Время',
+        'date_start' => 'Начальная дата',
+        'date_end'   => 'Конечная дата'
     ],
 
 ];

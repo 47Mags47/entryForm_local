@@ -3,7 +3,6 @@ import { DivisionTab } from "@includes";
 import { usePage } from "@inertiajs/vue3";
 import { DateTime, Interval } from "luxon";
 import {
-    DatePicker,
     BlueButton,
     ArrowLeftIco,
     ArrowRightIco,
@@ -14,7 +13,6 @@ import TimeLineTbody from "../../components/calendar/TimeLineTbody.vue";
 export default {
     components: {
         DivisionTab,
-        DatePicker,
         BlueButton,
         ArrowLeftIco,
         ArrowRightIco,
