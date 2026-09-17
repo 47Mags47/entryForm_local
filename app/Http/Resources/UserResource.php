@@ -19,6 +19,9 @@ class UserResource extends JsonResource
             "first_name" => $this->first_name,
             "middle_name" => $this->middle_name,
             "last_name" => $this->last_name,
+            'full_name' => $this->last_name . ' '   .
+                mb_substr($this->first_name, 0, 1)  . '.' .
+                mb_substr($this->middle_name, 0, 1) . '.',
             "email" => $this->email,
             "phone" => $this->phone,
             "office" => $this->office,

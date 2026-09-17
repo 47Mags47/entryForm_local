@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
 
             $table->foreignId('user_id')->constrained(new User()->getTable());
+            $table->foreignId('replacement_id')->constrained(new User()->getTable());
             $table->foreignId('division_id')->constrained(new Division()->getTable());
             $table->date('date_start');
             $table->date('date_end');

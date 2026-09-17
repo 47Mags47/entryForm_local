@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreWeekendRequest;
 use App\Http\Requests\UpdateWeekendRequest;
+use App\Http\Resources\UserWeekendResource;
 use App\Models\User;
 use Inertia\Inertia;
 use App\Models\Division;
@@ -29,13 +30,25 @@ class WeekendController
 
     public function create(Division $division, User $worker)
     {
+        // HACK исключить workers которые в отпуске на выбранный период
         return Inertia::render('pages/weekends/create', [
             'worker' => WorkerResource::make($worker),
+            'workers' => $division->users
+                ->where('id', '!=', $worker->id)
+                ->toResourceCollection()
         ]);
     }
 
     public function store(StoreWeekendRequest $request, Division $division, User $worker)
     {
+        // HACK возвращать исключенные дни (выходные сотрудника и отпуск)
+
+        $replacement = User::find($request->input('replacement_id'));
+        abort_unless($replacement !== null, 404, 'Замещающий сотрудник не найден');
+
+        $isReplacementExist = $replacement->divisions()->whereKey($division->id)->exists();
+        abort_unless($isReplacementExist, 404, 'Замещающий сотрудник в подразделении не найден');
+
         $worker->weekends()->create(array_merge($request->validated(), [
             'user_id' => $worker->id,
             'division_id' => $division->id
@@ -49,14 +62,27 @@ class WeekendController
 
     public function edit(Division $division, User $worker, UserWeekends $weekend)
     {
+        // HACK исключить workers которые в отпуске на выбранный период
+
         return Inertia::render('pages/weekends/edit', [
             'worker' => WorkerResource::make($worker),
-            'weekend' => $weekend
+            'weekend' => UserWeekendResource::make($weekend),
+            'workers' => $division->users
+                ->where('id', '!=', $worker->id)
+                ->toResourceCollection(),
         ]);
     }
 
     public function update(UpdateWeekendRequest $request, Division $division, User $worker, UserWeekends $weekend)
     {
+        // HACK возвращать исключенные дни (выходные сотрудника и отпуск)
+
+        $replacement = User::find($request->input('replacement_id'));
+        abort_unless($replacement !== null, 404, 'Замещающий сотрудник не найден');
+
+        $isReplacementExist = $replacement->divisions()->whereKey($division->id)->exists();
+        abort_unless($isReplacementExist, 404, 'Замещающий сотрудник в подразделении не найден');
+
         $weekend->update(array_merge($request->validated(), [
             'user_id' => $worker->id,
             'division_id' => $division->id

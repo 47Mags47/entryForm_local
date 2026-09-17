@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class UserWeekendsResource extends JsonResource
+class UserWeekendResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -27,8 +27,8 @@ class UserWeekendsResource extends JsonResource
                     mb_substr($this->replacement->middle_name, 0, 1) . '.'
                     : null,
             ],
-            'date_start' => $this->date_start->format('d.m.Y'),
-            'date_end' => $this->date_end->format('d.m.Y'),
+            'date_start' => $this->date_start->format('Y-m-d'),
+            'date_end' => $this->date_end->format('Y-m-d'),
         ];
     }
 }

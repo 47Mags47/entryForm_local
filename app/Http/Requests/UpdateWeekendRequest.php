@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateWeekendRequest extends FormRequest
@@ -14,6 +15,10 @@ class UpdateWeekendRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'replacement_id' => [
+                'required',
+                'exists:' . User::class . ',id'
+            ],
             'date_start' => [
                 'required',
                 'date_format:Y-m-d',

@@ -15,14 +15,18 @@ export default {
         return {
             columns: [
                 {
-                    label: 'Начальная дата',
+                    label: 'Начало',
                     key:   'date_start'
                 },
                 {
-                    label: 'Конечная дата',
+                    label: 'Конец',
                     key:   'date_end'
                 },
-                { key: "actions", label: "" },
+                {
+                    label: 'Замещающий',
+                    key:   ['replacement', 'full_name']
+                },
+                { key: 'actions', label: '' },
             ]
         }
     },

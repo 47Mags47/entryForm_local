@@ -14,6 +14,7 @@ class UserWeekends extends Model
     $table = 'main__user_weekends',
     $fillable = [
         'user_id',
+        'replacement_id',
         'division_id',
         'date_start',
         'date_end'
@@ -32,5 +33,10 @@ class UserWeekends extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function replacement(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'replacement_id');
     }
 }
