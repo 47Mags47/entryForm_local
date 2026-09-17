@@ -10,7 +10,6 @@ use Inertia\Inertia;
 use App\Models\Division;
 use App\Models\UserWeekends;
 use App\Http\Resources\WorkerResource;
-use Carbon\CarbonImmutable;
 
 class WeekendController
 {
@@ -30,8 +29,6 @@ class WeekendController
 
     public function create(Division $division, User $worker)
     {
-        // HACK исключить workers которые в отпуске на выбранный период
-
         return Inertia::render('pages/weekends/create', [
             'worker' => WorkerResource::make($worker),
         ]);
@@ -39,8 +36,6 @@ class WeekendController
 
     public function store(StoreWeekendRequest $request, Division $division, User $worker)
     {
-        // HACK возвращать исключенные дни (выходные сотрудника и отпуск)
-
         $replacement = User::find($request->input('replacement_id'));
         abort_unless($replacement !== null, 404, 'Замещающий сотрудник не найден');
 
@@ -60,8 +55,6 @@ class WeekendController
 
     public function edit(Division $division, User $worker, UserWeekends $weekend)
     {
-        // $free_workers = UserWeekends::getFreeUsers($division, $weekend);
-
         $from     = $weekend->date_start;
         $to       = $weekend->date_end;
 
@@ -87,8 +80,6 @@ class WeekendController
 
     public function update(UpdateWeekendRequest $request, Division $division, User $worker, UserWeekends $weekend)
     {
-        // HACK возвращать исключенные дни (выходные сотрудника и отпуск)
-
         $replacement = User::find($request->input('replacement_id'));
         abort_unless($replacement !== null, 404, 'Замещающий сотрудник не найден');
 
