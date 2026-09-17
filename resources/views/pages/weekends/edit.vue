@@ -10,11 +10,11 @@ export default {
 
     data() {
         return {
-            date_start: null,
-            date_end: null,
-        };
+            replacement: usePage().props.weekend.data.replacement?.id ?? '',
+            date_start: usePage().props.weekend.data.date_start ?? null,
+            date_end: usePage().props.weekend.data.date_end ?? null,
+        }
     },
-
     computed: {
         current_user: () => usePage().props.current_user.data,
         division: () => usePage().props.current_division.data,
@@ -29,10 +29,6 @@ export default {
                 }),
             );
         },
-
-        replacement() {
-            return this.weekend.replacement?.id ?? ''
-        }
     },
 
     methods: {
@@ -73,14 +69,14 @@ export default {
             label="Начало"
             name="date_start"
             :showAvailable="false"
-            :value="weekend.date_start"
+            :value="date_start"
             @update:value="(val) => (date_start = val)"
         />
         <DatePicker
             label="Конец"
             name="date_end"
             :showAvailable="false"
-            :value="weekend.date_end"
+            :value="date_end"
             @update:value="(val) => (date_end = val)"
         />
     </VerticalForm>
