@@ -11,8 +11,7 @@ use Illuminate\Http\Request;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
-// HACK переименовать в ApiWorkersController
-class ApiServiceController
+class ApiWorkersController
 {
     public function shedulesFromWorker(Request $request)
     {

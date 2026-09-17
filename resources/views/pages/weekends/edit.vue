@@ -1,6 +1,7 @@
 <script>
 import { usePage, router } from "@inertiajs/vue3";
 import { VerticalForm, DatePicker, Select } from "@components";
+import axios from "axios";
 
 export default {
     components: {
@@ -13,22 +14,77 @@ export default {
             replacement: usePage().props.weekend.data.replacement?.id ?? '',
             date_start: usePage().props.weekend.data.date_start ?? null,
             date_end: usePage().props.weekend.data.date_end ?? null,
+            workers: Object.entries(usePage().props.workers.data).map(
+                    ([_, workerData]) => ({
+                        value: workerData.id,
+                        label: workerData.full_name,
+                    }),
+                )
         }
     },
+
+    watch: {
+        date_start(newDateStart) {
+            if (!newDateStart || !this.date_end)
+                return
+
+            axios.get(route('api.availableWorkersFromDates.index'), {
+                params: {
+                    division_id: this.division.id,
+                    date_start: newDateStart,
+                    date_end: this.date_end,
+                }
+            })
+            .then(res => {
+                this.workers = Object.entries(res.data).map(
+                    ([_, workerData]) => ({
+                        value: workerData.id,
+                        label: `${workerData.last_name} ${workerData.first_name?.charAt(0).toUpperCase()}.${workerData.middle_name?.charAt(0).toUpperCase()}`,
+                    }),
+                );
+            })
+            .catch(err => {
+                this.availableTime = []
+                console.error(
+                    'Ошибка в axios API-запросе:',
+                    err
+                )
+            })
+        },
+        date_end(newDateEnd) {
+            if (!newDateEnd || !this.date_start)
+                return
+
+            axios.get(route('api.availableWorkersFromDates.index'), {
+                params: {
+                    division_id: this.division.id,
+                    date_start: this.date_start,
+                    date_end: newDateEnd,
+                }
+            })
+            .then(res => {
+                this.workers = Object.entries(res.data).map(
+                    ([_, workerData]) => ({
+                        value: workerData.id,
+                        label: `${workerData.last_name} ${workerData.first_name?.charAt(0).toUpperCase()}.${workerData.middle_name?.charAt(0).toUpperCase()}`,
+                    }),
+                );
+            })
+            .catch(err => {
+                this.availableTime = []
+                console.error(
+                    'Ошибка в axios API-запросе:',
+                    err
+                )
+            })
+        }
+    },
+
     computed: {
         current_user: () => usePage().props.current_user.data,
         division: () => usePage().props.current_division.data,
         worker: () => usePage().props.worker.data,
-        weekend: () => usePage().props.weekend.data,
-
-        workers() {
-            return Object.entries(usePage().props.workers.data).map(
-                ([id, workerData]) => ({
-                    value: workerData.id,
-                    label: workerData.full_name,
-                }),
-            );
-        },
+        weekend: () => usePage().props.weekend.data
     },
 
     methods: {
@@ -58,13 +114,6 @@ export default {
         sbm="сохранить"
         :handleSubmit="onSubmit"
     >
-        <Select
-            label="Замещающий"
-            name="replacement_id"
-            v-model="replacement"
-            :options="workers"
-            placeholder="Выберите сотрудника"
-        />
         <DatePicker
             label="Начало"
             name="date_start"
@@ -78,6 +127,13 @@ export default {
             :showAvailable="false"
             :value="date_end"
             @update:value="(val) => (date_end = val)"
+        />
+        <Select
+            label="Замещающий"
+            name="replacement_id"
+            v-model="replacement"
+            :options="workers"
+            placeholder="Выберите сотрудника"
         />
     </VerticalForm>
 </template>

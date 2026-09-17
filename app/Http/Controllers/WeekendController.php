@@ -31,11 +31,9 @@ class WeekendController
     public function create(Division $division, User $worker)
     {
         // HACK исключить workers которые в отпуске на выбранный период
+
         return Inertia::render('pages/weekends/create', [
             'worker' => WorkerResource::make($worker),
-            'workers' => $division->users
-                ->where('id', '!=', $worker->id)
-                ->toResourceCollection()
         ]);
     }
 
@@ -62,14 +60,28 @@ class WeekendController
 
     public function edit(Division $division, User $worker, UserWeekends $weekend)
     {
-        // HACK исключить workers которые в отпуске на выбранный период
+        // $free_workers = UserWeekends::getFreeUsers($division, $weekend);
+
+        $from     = $weekend->date_start;
+        $to       = $weekend->date_end;
+
+        $free_users = User::query()
+            ->whereHas('divisions', function ($query) use ($division) {
+                $query->whereKey($division->id);
+            })
+            ->whereDoesntHave('weekends', function ($query) use ($division, $from, $to) {
+                $query
+                    ->where('division_id', $division->id)
+                    ->where('date_start', '<=', $to)
+                    ->where('date_end', '>=', $from);
+            })
+            ->get();
+
 
         return Inertia::render('pages/weekends/edit', [
             'worker' => WorkerResource::make($worker),
             'weekend' => UserWeekendResource::make($weekend),
-            'workers' => $division->users
-                ->where('id', '!=', $worker->id)
-                ->toResourceCollection(),
+            'workers' => $free_users->toResourceCollection()
         ]);
     }
 
