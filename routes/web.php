@@ -37,9 +37,6 @@ Route::middleware('auth')->group(function () {
             Route::resource('/events', EventCalendarController::class)
                 ->only(['index']);
 
-            Route::resource('/users/{user}/weekends', WeekendController::class)
-                ->except(['show']);
-
             Route::get('/subscribes/export', [SubscribesExportController::class, 'index'])
                 ->name('subscribes.export');
             Route::Resource('/subscribes', SubscribeController::class)
@@ -49,10 +46,27 @@ Route::middleware('auth')->group(function () {
             Route::resource('/division-admins', DivisionAdminController::class)
                 ->only(['store']);
 
+
+            Route::resource('/workers/{worker}/weekends', WeekendController::class)
+                ->except(['show'])
+                ->middleware('userBelongsToDivision')
+                ->middlewareFor(
+                    ['edit', 'update', 'destroy'],
+                    'weekendBelongsToUser'
+                );
             Route::get('/workers/{worker}/restore', [WorkerController::class, 'restore'])
                 ->name('workers.restore')
-                ->withTrashed();
-            Route::resource('/workers', WorkerController::class);
+                ->withTrashed()
+                ->middleware(
+                    ['create', 'store', 'edit', 'update', 'destroy'],
+                    'userBelongsToDivision'
+                );
+            Route::resource('/workers', WorkerController::class)
+                ->middlewareFor(
+                    ['create', 'store', 'edit', 'update', 'destroy'],
+                    'userBelongsToDivision'
+                );
+
 
             Route::resource('/frame', FrameController::class)
                 ->except(['show', 'create', 'edit']);

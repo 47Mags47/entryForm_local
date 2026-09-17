@@ -28,7 +28,7 @@ export default {
 
             router.put(route('weekends.update', {
                 division:   this.division.id,
-                user:       this.worker.id,
+                worker:       this.worker.id,
                 weekend:    this.weekend.id,
             }),
             {

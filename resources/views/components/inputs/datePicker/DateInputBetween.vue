@@ -3,11 +3,13 @@ import { DateTime } from "luxon";
 import CalendarIco from "../../icons/CalendarIco.vue";
 import DateInputPopup from './DateInputPopup.vue'
 import { Teleport } from "vue";
+import FormItem from './../../FormItem.vue'
 
 export default {
     components: {
         CalendarIco,
-        DateInputPopup
+        DateInputPopup,
+        FormItem,
     },
     props: {
         isRange: {
@@ -139,46 +141,53 @@ export default {
 </script>
 
 <template>
-    <div class="date-input-wrapper" ref="wrapper">
-        <input
-            type="date"
-            class="custom-date-input"
-            ref="inputFromRef"
-            :name="`${name}_from`"
-            :disabled
-            :placeholder
-            :value="selectedDateFrom !== null ? selectedDateFrom.toFormat('yyyy-MM-dd') : null"
-            @blur="inputFromBlurHandler"
-        />
-        <div class="overlay-calendar-from"></div>
-        <input
-            type="date"
-            class="custom-date-input"
-            ref="inputToRef"
-            :name="`${name}_to`"
-            :disabled
-            :placeholder
-            :value="selectedDateTo !== null ? selectedDateTo.toFormat('yyyy-MM-dd') : null"
-            @blur="inputToBlurHandler"
-        />
-        <div class="overlay-calendar-to"></div>
-        <div class="calendar-icon">
-            <CalendarIco @click="popupButtonClickHandler" />
+    <FormItem :name="[`${name}_start`, `${name}_end`]">
+        <div class="date-input-wrapper" ref="wrapper">
+            <div class="custom-date-input-wrapper">
+                <input
+                    type="date"
+                    class="custom-date-input"
+                    ref="inputFromRef"
+                    :name="`${name}_from`"
+                    :disabled
+                    :placeholder
+                    :value="selectedDateFrom !== null ? selectedDateFrom.toFormat('yyyy-MM-dd') : null"
+                    @blur="inputFromBlurHandler"
+                />
+                <div class="overlay-calendar-from"></div>
+            </div>
+
+            <div class="custom-date-input-wrapper">
+                <input
+                    type="date"
+                    class="custom-date-input"
+                    ref="inputToRef"
+                    :name="`${name}_to`"
+                    :disabled
+                    :placeholder
+                    :value="selectedDateTo !== null ? selectedDateTo.toFormat('yyyy-MM-dd') : null"
+                    @blur="inputToBlurHandler"
+                />
+                <div class="overlay-calendar-to"></div>
+            </div>
+            <div class="calendar-icon">
+                <CalendarIco @click="popupButtonClickHandler" />
+            </div>
+            <DateInputPopup v-show="isPopupOpen"
+                ref="dateInputPopup"
+                :isRange
+                :style="popupStyle"
+                :checkValid
+                :disabledWeekdays
+                :onClick="dayClickHandler"
+                :selectedDate="selectedDate?.toFormat('yyyy-MM-dd') ?? null"
+                :selectedDateBetween="{
+                    from: selectedDateFrom?.toFormat('yyyy-MM-dd'),
+                    to:   selectedDateTo?.toFormat('yyyy-MM-dd')
+                }"
+            />
         </div>
-        <DateInputPopup v-show="isPopupOpen"
-            ref="dateInputPopup"
-            :isRange
-            :style="popupStyle"
-            :checkValid
-            :disabledWeekdays
-            :onClick="dayClickHandler"
-            :selectedDate="selectedDate?.toFormat('yyyy-MM-dd') ?? null"
-            :selectedDateBetween="{
-                from: selectedDateFrom?.toFormat('yyyy-MM-dd'),
-                to:   selectedDateTo?.toFormat('yyyy-MM-dd')
-            }"
-        />
-    </div>
+    </FormItem>
 </template>
 
 <style lang="sass">
@@ -190,25 +199,28 @@ export default {
     width: 100%
     padding: 0
 
-    .overlay-calendar-from
-        position: absolute
-        left: 110px
-        top: 50%
-        transform: translateY(-50%)
+    .custom-date-input-wrapper
+        position: relative
+        flex: 1
+        .overlay-calendar-from
+            position: absolute
+            right: 10px
+            top: 50%
+            transform: translateY(-50%)
 
-        width: 28px
-        height: 25px
-        background: white
+            width: 28px
+            height: 25px
+            background: white
 
-    .overlay-calendar-to
-        position: absolute
-        right: 10px
-        top: 50%
-        transform: translateY(-50%)
+        .overlay-calendar-to
+            position: absolute
+            right: 10px
+            top: 50%
+            transform: translateY(-50%)
 
-        width: 25px
-        height: 25px
-        background: white
+            width: 25px
+            height: 25px
+            background: white
 
     .custom-date-input
         border: 0

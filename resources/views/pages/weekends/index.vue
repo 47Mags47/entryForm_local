@@ -42,17 +42,17 @@ export default {
         :header="`Отпуска ${worker.last_name} ${worker.first_name?.charAt(0) + '.'}${worker.middle_name?.charAt(0) + '.'}`"
     >
         <template #toolbar-right>
-            <AddButton :href="route('weekends.create', { division: division.id, user: worker.id })" />
+            <AddButton :href="route('weekends.create', { division: division.id, worker: worker.id })" />
         </template>
 
         <template #actions="{ row }">
             <EditButton
-                :href="route('weekends.edit', { division: division.id, user: worker.id, weekend: row.id })"
+                :href="route('weekends.edit', { division: division.id, worker: worker.id, weekend: row.id })"
                 class="w-full"
             />
 
             <DeleteButton
-                :href="route('weekends.destroy', { division: division.id, user: worker.id, weekend: row.id })"
+                :href="route('weekends.destroy', { division: division.id, worker: worker.id, weekend: row.id })"
                 class="w-full"
             />
         </template>

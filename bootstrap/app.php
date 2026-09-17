@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Middleware\userBelongsToDivisionMiddleware;
+use App\Http\Middleware\weekendBelongsToUserMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -21,8 +23,10 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->alias([
-            'hasDivision' => App\Http\Middleware\DivisionMiddleware::class,
-            'hasDivisionAccess' => App\Http\Middleware\DivisionAccessMiddleware::class,
+            'hasDivision'           => App\Http\Middleware\DivisionMiddleware::class,
+            'hasDivisionAccess'     => App\Http\Middleware\DivisionAccessMiddleware::class,
+            'userBelongsToDivision' => App\Http\Middleware\UserBelongsToDivisionMiddleware::class,
+            'weekendBelongsToUser'  => App\Http\Middleware\WeekendBelongsToUserMiddleware::class
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

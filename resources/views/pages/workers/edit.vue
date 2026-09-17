@@ -42,8 +42,8 @@ function onSubmit(e) {
 
 function routeToWeekendsPage() {
     router.get(route('weekends.index', {
-        division: division.id,
-        user:     worker.id,
+        division:   division.id,
+        worker:     worker.id,
     }));
 }
 </script>

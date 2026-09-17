@@ -13,96 +13,63 @@ use Carbon\CarbonImmutable;
 
 class WeekendController
 {
-    public function index(Division $division, User $user)
+    public function index(Division $division, User $worker)
     {
-        abort_unless(
-            $user->hasDivision($division),
-            404
-        );
-
-        $user_weekends = $user
+        $user_weekends = $worker
             ->weekends()
             ->where('division_id', $division->id)
             ->orderByDesc('date_start')
             ->get();
 
         return Inertia::render('pages/weekends/index', [
-            'worker' => WorkerResource::make($user),
+            'worker' => WorkerResource::make($worker),
             'weekends' => $user_weekends->toResourceCollection(),
         ]);
     }
 
-    public function create(Division $division, User $user)
+    public function create(Division $division, User $worker)
     {
-        abort_unless(
-            $user->hasDivision($division),
-            404
-        );
-
         return Inertia::render('pages/weekends/create', [
-            'worker' => WorkerResource::make($user),
+            'worker' => WorkerResource::make($worker),
         ]);
     }
 
-    public function store(StoreWeekendRequest $request, Division $division, User $user)
+    public function store(StoreWeekendRequest $request, Division $division, User $worker)
     {
-        abort_unless(
-            $user->hasDivision($division),
-            404
-        );
-
-        $user->weekends()->create(array_merge($request->validated(), [
-            'user_id' => $user->id,
+        $worker->weekends()->create(array_merge($request->validated(), [
+            'user_id' => $worker->id,
             'division_id' => $division->id
         ]));
 
         return redirect()->route('weekends.index', [
-            'user' => $user->id,
+            'worker' => $worker->id,
             'division' => $division->id
         ])->with('success', 'Запись успешно добавлена');
     }
 
-    public function edit(Division $division, User $user, UserWeekends $weekend)
+    public function edit(Division $division, User $worker, UserWeekends $weekend)
     {
-        abort_unless(
-            $weekend->user_id === $user->id &&
-            $weekend->division_id === $division->id,
-            404
-        );
-
         return Inertia::render('pages/weekends/edit', [
-            'worker' => WorkerResource::make($user),
+            'worker' => WorkerResource::make($worker),
             'weekend' => $weekend
         ]);
     }
 
-    public function update(UpdateWeekendRequest $request, Division $division, User $user, UserWeekends $weekend)
+    public function update(UpdateWeekendRequest $request, Division $division, User $worker, UserWeekends $weekend)
     {
-        abort_unless(
-            $weekend->user_id === $user->id &&
-            $weekend->division_id === $division->id,
-            404
-        );
-
         $weekend->update(array_merge($request->validated(), [
-            'user_id' => $user->id,
+            'user_id' => $worker->id,
             'division_id' => $division->id
         ]));
 
         return redirect()->route('weekends.index', [
-            'user' => $user->id,
+            'worker' => $worker->id,
             'division' => $division->id
         ])->with('success', 'Запись успешно изменена');
     }
 
-    public function destroy(Division $division, User $user, UserWeekends $weekend)
+    public function destroy(Division $division, User $worker, UserWeekends $weekend)
     {
-        abort_unless(
-            $weekend->user_id === $user->id &&
-            $weekend->division_id === $division->id,
-            404
-        );
-
         $weekend->forceDelete();
 
         return back()->with('success', 'Запись удалена');

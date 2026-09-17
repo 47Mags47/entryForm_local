@@ -27,7 +27,7 @@ export default {
 
             router.post(route('weekends.store', {
                 division:   this.division.id,
-                user:       this.worker.id,
+                worker:       this.worker.id,
             }),
             {
                 date_start: this.date_start,
