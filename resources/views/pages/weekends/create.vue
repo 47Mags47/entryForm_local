@@ -26,6 +26,7 @@ export default {
 
             axios.get(route('api.availableWorkersFromDates.index'), {
                 params: {
+                    worker_id: this.worker.id,
                     division_id: this.division.id,
                     date_start: newDateStart,
                     date_end: this.date_end,
@@ -53,6 +54,7 @@ export default {
 
             axios.get(route('api.availableWorkersFromDates.index'), {
                 params: {
+                    worker_id: this.worker.id,
                     division_id: this.division.id,
                     date_start: this.date_start,
                     date_end: newDateEnd,

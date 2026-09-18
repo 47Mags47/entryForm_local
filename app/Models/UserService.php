@@ -14,6 +14,7 @@ class UserService extends Model
     $fillable = [
         'user_id',
         'service_id',
+        'weekend_id'
     ];
 
     ### Связи

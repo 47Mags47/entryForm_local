@@ -62,6 +62,7 @@ class ApiWorkersController
         $to       = Carbon::parse($request->input('date_end'));
 
         $free_users = User::query()
+            ->whereKeyNot($request->input('worker_id'))
             ->whereHas('divisions', function ($query) use ($division) {
                 $query->whereKey($division->id);
             })

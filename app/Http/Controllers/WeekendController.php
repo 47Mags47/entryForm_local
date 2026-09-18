@@ -6,6 +6,7 @@ use App\Http\Requests\StoreWeekendRequest;
 use App\Http\Requests\UpdateWeekendRequest;
 use App\Http\Resources\UserWeekendResource;
 use App\Models\User;
+use App\Models\UserService;
 use Inertia\Inertia;
 use App\Models\Division;
 use App\Models\UserWeekends;
@@ -36,16 +37,30 @@ class WeekendController
 
     public function store(StoreWeekendRequest $request, Division $division, User $worker)
     {
-        $replacement = User::find($request->input('replacement_id'));
+        $weekend = $worker->weekends()->create(array_merge($request->validated(), [
+            'user_id' => $worker->id,
+            'division_id' => $division->id
+        ]));
+
+        $replacement = User::find($weekend->replacement_id);
         abort_unless($replacement !== null, 404, 'Замещающий сотрудник не найден');
 
         $isReplacementExist = $replacement->divisions()->whereKey($division->id)->exists();
         abort_unless($isReplacementExist, 404, 'Замещающий сотрудник в подразделении не найден');
 
-        $worker->weekends()->create(array_merge($request->validated(), [
-            'user_id' => $worker->id,
-            'division_id' => $division->id
-        ]));
+        $services = UserService::where('user_id', $worker->id)
+            ->whereNull('weekend_id')
+            ->get(['service_id']);
+
+        UserService::insert(
+            $services->map(fn($service) => [
+                'user_id' => $replacement->id,
+                'service_id' => $service->service_id,
+                'weekend_id' => $weekend->id,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ])->toArray()
+        );
 
         return redirect()->route('weekends.index', [
             'worker' => $worker->id,
@@ -55,8 +70,8 @@ class WeekendController
 
     public function edit(Division $division, User $worker, UserWeekends $weekend)
     {
-        $from     = $weekend->date_start;
-        $to       = $weekend->date_end;
+        $from = $weekend->date_start;
+        $to = $weekend->date_end;
 
         $free_users = User::query()
             ->whereHas('divisions', function ($query) use ($division) {
@@ -90,6 +105,22 @@ class WeekendController
             'user_id' => $worker->id,
             'division_id' => $division->id
         ]));
+
+        UserService::where('weekend_id', $weekend->id)->forceDelete();
+
+        $services = UserService::where('user_id', $worker->id)
+            ->whereNull('weekend_id')
+            ->get(['service_id']);
+
+        UserService::insert(
+            $services->map(fn($service) => [
+                'user_id' => $replacement->id,
+                'service_id' => $service->service_id,
+                'weekend_id' => $weekend->id,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ])->toArray()
+        );
 
         return redirect()->route('weekends.index', [
             'worker' => $worker->id,
