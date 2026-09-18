@@ -29,11 +29,6 @@ function toggleCheckbox(row, val) {
     else form.service_ids = form.service_ids.filter((el) => el !== row.id);
 }
 
-const columns = [
-    { key: "name", label: "", width: "200px" },
-    { key: "actions", label: "" },
-];
-
 function onSubmit(e) {
     e.preventDefault();
 
