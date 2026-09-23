@@ -27,7 +27,7 @@ class SubscribeController
 
         $from = $request->filled('from')
             ? Carbon::parse($request->input('from'))->startOfDay()
-            : now()->startOfMonth()->startOfDay();
+            : now()->startOfDay();
 
         $to = $request->filled('to')
             ? Carbon::parse($request->input('to'))->endOfDay()
@@ -56,6 +56,7 @@ class SubscribeController
                     });
                 }
             )
+            ->orderByDesc('start_at')
             ->paginate(25);
 
         return Inertia::render('pages/subscribes/index', [

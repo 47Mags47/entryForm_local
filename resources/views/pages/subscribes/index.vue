@@ -24,11 +24,11 @@ export default {
     data() {
         return {
             selectedDate: null,
-            startDate: { from: DateTime.now().startOf('month'), to: null },
+            startDate: { from: DateTime.now().startOf('day'), to: null },
             searchTimeout: null,
 
             form: useForm({
-                from: DateTime.now().startOf('month').toFormat('yyyy-MM-dd'),
+                from: DateTime.now().startOf('day').toFormat('yyyy-MM-dd'),
                 to: null,
                 worker_id: '',
                 service_id: '',
