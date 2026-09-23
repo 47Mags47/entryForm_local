@@ -7,6 +7,7 @@ import {
     DatePicker, Select, StringInput,
     DownloadIco } from "@components";
 import { DateTime } from "luxon";
+import { h } from 'vue'
 
 export default {
     components: {
@@ -57,6 +58,16 @@ export default {
                 { key: "middle_name", label: "Отчество", width: "150px" },
                 { key: ["service", "name"], label: "Услуга" },
                 {
+                    label: "Заметка",
+                    width: '400px',
+                    class: (row) => {
+                        return 'note-overflow'
+                    },
+                    render: (row) => {
+                        return row.note
+                    }
+                },
+                {
                     key: "start_at",
                     label: "Дата записи",
                     splitDateTime: false,
@@ -75,7 +86,7 @@ export default {
                         return row.worker.name
                     }
                 },
-                { key: "actions", label: "", width: "60px" },
+                { key: "actions", label: "" },
             ];
         },
     },
@@ -206,6 +217,10 @@ export default {
     .date-picker-button
         background: blue
 
+.note-overflow
+    overflow: auto
+    max-width: 100px
+    @include scroll()
 
 .deleted-row
     background: #ffe3e3
