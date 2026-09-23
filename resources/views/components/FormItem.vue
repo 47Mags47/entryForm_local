@@ -7,7 +7,7 @@ export default {
     },
 
     props: {
-        name: String,
+        name: [String, Array],
     },
 };
 </script>

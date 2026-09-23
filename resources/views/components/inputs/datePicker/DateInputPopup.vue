@@ -34,7 +34,7 @@ export default {
             type: [Object, String],
             default: null
         },
-        disabledWeekdays: {
+        availableDates: {
             type: Array,
             default: []
         },
@@ -113,7 +113,9 @@ export default {
                     return this.startInterval
 
             return DateTime.now()
-        }
+        },
+
+
     },
     data() {
         let inintialDate = DateTime.now()
@@ -139,6 +141,9 @@ export default {
         },
 
         dayClickHandler(date){
+            if (this.isDisabled(date))
+                return
+
             this.onClick(date)
         },
 
@@ -181,10 +186,13 @@ export default {
                 date < DateTime.fromISO(this.selectedDateBetween?.to)
         },
 
-        isDisabled(day) {
-            return this.checkValid(day.start)    ||
-                !this.checkSelectable(day.start) ||
-                this.disabledWeekdays.includes(day.weekday)
+        isDisabled(date) {
+            if (this.availableDates === null || this.availableDates === undefined)
+                return true
+
+            const isDateAvailable = this.availableDates.some(dateIso => DateTime.fromISO(dateIso).toFormat('dd-MM-yyyy') === date.toFormat('dd-MM-yyyy'))
+
+            return !this.checkDateInMonth(date) || !this.checkSelectable(date) || !isDateAvailable && this.availableDates.length !== 0
         }
     },
     watch: {
@@ -241,7 +249,6 @@ export default {
                     <tr v-for="weekInterval in interval.splitBy({ week: 1 })" >
                         <td v-for="dayInterval in weekInterval.splitBy({ day: 1 })">
                             <div
-                                v-if="checkValid(dayInterval.start) && checkDateInMonth(dayInterval.start) && checkSelectable(dayInterval.start) && !this.disabledWeekdays.includes(dayInterval.start.weekday)"
                                 class="day-cell-container available"
                                 :class="{
                                     'current-day'   : dayInterval.start.toMillis()   == now.startOf('day').toMillis(),
@@ -249,19 +256,9 @@ export default {
                                         dayInterval.start.toFormat('yyyy-MM-dd')     === selectedDateBetween?.from ||
                                         dayInterval.start.toFormat('yyyy-MM-dd')     === selectedDateBetween?.to   ||
                                         dayInterval.start.toFormat('yyyy-MM-dd')     === selectedDate,
-                                    'in-range'      : !(dayInterval.start.toMillis() == now.startOf('day').toMillis()) &&inRange(dayInterval.start),
+                                    'disabled': isDisabled(dayInterval.start),
                                 }"
                                 @click="() => dayClickHandler(dayInterval.start)"
-                            >
-                                {{ dayInterval.start.day }}
-                            </div>
-                            <div
-                                v-else
-                                class="day-cell-container"
-                                :class="{
-                                    'disabled': isDisabled(dayInterval.start.day),
-                                    'other-month': !checkDateInMonth(dayInterval.start)
-                                }"
                             >
                                 {{ dayInterval.start.day }}
                             </div>
@@ -342,4 +339,6 @@ export default {
                 &.disabled, &.other-month
                     cursor: not-allowed
                     color: #ddd
+                    &:hover
+                        background: white
 </style>

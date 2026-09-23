@@ -15,6 +15,7 @@ class UserWeekends extends Model
         'user_id',
         'replacement_id',
         'division_id',
+        'allow_meeting',
         'date_start',
         'date_end'
     ];
@@ -24,6 +25,7 @@ class UserWeekends extends Model
         return [
             'date_start' => 'date',
             'date_end' => 'date',
+            'allow_meeting' => 'boolean'
         ];
     }
 

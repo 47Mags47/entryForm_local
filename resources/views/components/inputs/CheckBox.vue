@@ -50,10 +50,13 @@ export default {
     align-items: center
     user-select: none
     gap: 8px
+    padding-top: 10px
 
     &.disabled
-        cursor: not-allowed
         opacity: 0.6
+
+        .checkbox-box
+            cursor: not-allowed
 
 .checkbox-box
     width: 20px

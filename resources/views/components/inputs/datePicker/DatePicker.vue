@@ -45,7 +45,7 @@ export default {
             type: Boolean,
             default: true,
         },
-        disabledWeekdays: {
+        availableDates: {
             type: Array,
             default: []
         }
@@ -101,7 +101,7 @@ export default {
             :name
             :isRange
             :disabled
-            :disabledWeekdays
+            :availableDates
             :value="getValue"
             :onFromUpdate="updateDateFrom"
             :onToUpdate="updateDateTo"
@@ -110,7 +110,7 @@ export default {
             :name
             :isRange
             :disabled
-            :disabledWeekdays
+            :availableDates
             :value="getValue"
             :onUpdate="(val) => $emit('update:value', val)"
             :startInterval="start"

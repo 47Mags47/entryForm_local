@@ -6,7 +6,7 @@ use App\Http\Requests\StoreWeekendRequest;
 use App\Http\Requests\UpdateWeekendRequest;
 use App\Http\Resources\UserWeekendResource;
 use App\Models\User;
-use App\Models\UserService;
+use Illuminate\Support\Carbon;
 use Inertia\Inertia;
 use App\Models\Division;
 use App\Models\UserWeekends;
@@ -39,7 +39,8 @@ class WeekendController
     {
         $weekend = $worker->weekends()->create(array_merge($request->validated(), [
             'user_id' => $worker->id,
-            'division_id' => $division->id
+            'division_id' => $division->id,
+            'allow_meeting' => $request->boolean('allowMeeting') // HACK вынести в request
         ]));
 
         $replacement = User::find($weekend->replacement_id);
@@ -48,19 +49,12 @@ class WeekendController
         $isReplacementExist = $replacement->divisions()->whereKey($division->id)->exists();
         abort_unless($isReplacementExist, 404, 'Замещающий сотрудник в подразделении не найден');
 
-        $services = UserService::where('user_id', $worker->id)
-            ->whereNull('weekend_id')
-            ->get(['service_id']);
+        $from = Carbon::parse($weekend->date_start)->startOfDay();
+        $to = Carbon::parse($weekend->date_end)->endOfDay();
 
-        UserService::insert(
-            $services->map(fn($service) => [
-                'user_id' => $replacement->id,
-                'service_id' => $service->service_id,
-                'weekend_id' => $weekend->id,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ])->toArray()
-        );
+        $weekend->user->subscribes()->whereBetween('start_at', [$from, $to])->update([
+                'replacement_id' => $weekend->replacement_id,
+            ]);
 
         return redirect()->route('weekends.index', [
             'worker' => $worker->id,
@@ -103,24 +97,26 @@ class WeekendController
 
         $weekend->update(array_merge($request->validated(), [
             'user_id' => $worker->id,
-            'division_id' => $division->id
+            'division_id' => $division->id,
+            'allow_meeting' => $request->boolean('allowMeeting') // HACK вынести в request
         ]));
+        $weekend = $weekend->fresh();
 
-        UserService::where('weekend_id', $weekend->id)->forceDelete();
+        $from = Carbon::parse($weekend->date_start)->startOfDay();
+        $to = Carbon::parse($weekend->date_end)->endOfDay();
 
-        $services = UserService::where('user_id', $worker->id)
-            ->whereNull('weekend_id')
-            ->get(['service_id']);
+        // if (!$weekend->allow_meeting)
+        //     $weekend->user->subscribes()->whereBetween('start_at', [$from, $to])->update([
+        //         'replacement_id' => $weekend->replacement_id,
+        //     ]);
+        // else
+        //     $weekend->user->subscribes()->whereBetween('start_at', [$from, $to])->update([
+        //         'replacement_id' => null,
+        //     ]);
 
-        UserService::insert(
-            $services->map(fn($service) => [
-                'user_id' => $replacement->id,
-                'service_id' => $service->service_id,
-                'weekend_id' => $weekend->id,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ])->toArray()
-        );
+        $weekend->user->subscribes()->whereBetween('start_at', [$from, $to])->update([
+                'replacement_id' => $weekend->replacement_id
+            ]);
 
         return redirect()->route('weekends.index', [
             'worker' => $worker->id,

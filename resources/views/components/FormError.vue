@@ -5,7 +5,7 @@ import { computed } from "vue";
 export default {
     props: {
         name: {
-            type: String,
+            type: [String, Array],
             default: "",
         },
     },

@@ -27,6 +27,7 @@ class UserWeekendResource extends JsonResource
                     mb_substr($this->replacement->middle_name, 0, 1) . '.'
                     : null,
             ],
+            'allow_meeting' => $this->allow_meeting,
             'date_start' => $this->date_start->format('Y-m-d'),
             'date_end' => $this->date_end->format('Y-m-d'),
         ];

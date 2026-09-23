@@ -13,7 +13,7 @@ export default {
 
     data() {
         return {
-            disabledWeekdays: [],
+            availableDates: [],
             availableTime: [],
             workers: [],
             form: useForm({
@@ -51,7 +51,7 @@ export default {
             if (this.availableTime.length === 0)
                 return 'Нет доступного времени'
             return 'Выберите время'
-        }
+        },
     },
 
     watch: {
@@ -81,7 +81,7 @@ export default {
                         worker_id: newValue.worker_id,
                     }
                 }).then(res => {
-                    this.disabledWeekdays = [1, 2, 3, 4, 5, 6, 7].filter(day => !res.data.includes(day))
+                    this.availableDates = [...res.data]
                 }).catch(err => {
                     this.availableTime = []
                     console.error('Ошибка в axios-api-запросе api.availableWeekdays.index:', err)
@@ -97,7 +97,7 @@ export default {
                 }).then(res => {
                     this.workers = [...res.data.data].map((worker) => ({
                         label: `${worker.last_name} ${worker.first_name?.charAt(0)} ${worker.middle_name?.charAt(0)}`,
-                        value: worker.id
+                        value: worker.id,
                     }))
                 }).catch(err => {
                     console.error('Ошибка в axios-api-запросе api.availableServices.index:', err)
@@ -178,7 +178,7 @@ export default {
             name="start_date"
             :start="startTime"
             :end="endTime"
-            :disabled-weekdays="disabledWeekdays"
+            :available-dates="availableDates"
             :showAvailable="false"
             @update:value="(val) => form.start_date = val"
         />

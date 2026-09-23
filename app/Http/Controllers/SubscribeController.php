@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 
 use App\Http\Requests\StoreSubscribeRequest;
@@ -16,7 +17,6 @@ use Illuminate\Support\Facades\DB;
 
 class SubscribeController
 {
-    // HACK fullTextSearch https://laravel.com/framework/docs/13.x/search#full-text-search
     public function index(Request $request, Division $division)
     {
         $request->validate([
@@ -70,22 +70,11 @@ class SubscribeController
         ]);
     }
 
-    public function create(Division $division)
+    public function create(Request $request, Division $division)
     {
         return Inertia::render('pages/subscribes/create', [
             'division' => getResource($division),
             'services' => Service::all()->toResourceCollection(),
-            'workers' => $division->admins()
-                ->wherePivot('is_subscribe_available', true)
-                ->whereHas('shedules')
-                ->get()
-                ->merge(
-                    $division->workers()
-                        ->wherePivot('is_subscribe_available', true)
-                        ->whereHas('shedules')
-                        ->get()
-                )
-                ->toResourceCollection(),
         ]);
     }
 
@@ -100,11 +89,25 @@ class SubscribeController
 
         $data['start_at'] = $start_date . ' ' . $start_time;
 
-        $subscribe = Subscribe::create($data);
+        $worker = User::find($data['worker_id']);
+        $date = CarbonImmutable::parse($request->input('start_date'));
+        $weekend = $worker->weekends->first(function ($weekend) use ($date) {
+            return $date->between(
+                $weekend->date_start->copy()->startOfDay(),
+                $weekend->date_end->copy()->endOfDay()
+            );
+        });
+
+        $subscribe = Subscribe::create([
+            ...$data,
+            'replacement_id' => $weekend?->replacement_id
+        ]);
 
         if ($subscribe->worker->receiveMail) {
             SendSubscribeWorkerAlertJob::dispatch($subscribe);
         }
+
+
 
         return redirect()->route('subscribes.index', ['division' => $division->id]);
     }

@@ -16,11 +16,13 @@ return new class extends Migration
         Schema::create('main__user_weekends', function (Blueprint $table) {
             $table->id();
 
+            $table->boolean('allow_meeting')->default(true);
+            $table->date('date_start');
+            $table->date('date_end');
+
             $table->foreignId('user_id')->constrained(new User()->getTable());
             $table->foreignId('replacement_id')->constrained(new User()->getTable());
             $table->foreignId('division_id')->constrained(new Division()->getTable());
-            $table->date('date_start');
-            $table->date('date_end');
 
             $table->timestamps();
         });

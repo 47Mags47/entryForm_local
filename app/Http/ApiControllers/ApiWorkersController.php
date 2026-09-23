@@ -2,6 +2,7 @@
 
 namespace App\Http\ApiControllers;
 
+use App\Http\Resources\WorkerResource;
 use App\Models\User;
 use App\Models\Service;
 use App\Models\WorkSchedule;
@@ -33,11 +34,43 @@ class ApiWorkersController
 
     public function getAvailableWeekdays(Request $request): array
     {
-        return WorkSchedule::where('user_id', $request->input('worker_id'))
+        $worker = User::find(($request->input('worker_id')));
+        $schedule = WorkSchedule::where('user_id', $worker->id)
             ->pluck('day_of_the_week_id')
             ->unique()
             ->values()
             ->toArray();
+
+        $today = Carbon::now();
+        $endDate = Carbon::now()->addMonth()->endOfDay();
+        $availableDates = [];
+
+        // Доступные дни на месяц вперёд, учитывая отпуска работника
+        $weekends = $worker->weekends()->get();
+
+        while ($today <= $endDate) {
+            // Есть ли вообще отпуск в интервале месяца
+            $weekend = $weekends->first(function ($weekend) use ($today) {
+                return $today->between(
+                    $weekend->date_start->startOfDay(),
+                    $weekend->date_end->endOfDay()
+                );
+            });
+
+            if ($weekend) {
+                if (!$weekend->allow_meeting) {
+                    $today->addDay();
+                    continue;
+                }
+            }
+
+            if (in_array($today->dayOfWeekIso, $schedule))
+                $availableDates[] = $today->copy();
+
+            $today->addDay();
+        }
+
+        return $availableDates;
     }
 
     public function workersFromService(Request $request): ResourceCollection
@@ -51,15 +84,14 @@ class ApiWorkersController
             })
             ->get();
 
-        return $workers->toResourceCollection();
+        return WorkerResource::collection($workers);
     }
 
-    // Возвращаем сотрудников, у которых нет отпуска и отпуски которых не пересекается с переданным отпуском (weekend)
     public static function workersFromDates(Request $request)
     {
         $division = Division::findOrFail($request->input('division_id'));
-        $from     = Carbon::parse($request->input('date_start'));
-        $to       = Carbon::parse($request->input('date_end'));
+        $from = Carbon::parse($request->input('date_start'));
+        $to = Carbon::parse($request->input('date_end'));
 
         $free_users = User::query()
             ->whereKeyNot($request->input('worker_id'))

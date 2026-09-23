@@ -17,6 +17,9 @@ class UserService extends Model
         'weekend_id'
     ];
 
+    ### Методы
+    ##################################################
+
     ### Связи
     ##################################################
     public function user(): BelongsTo
@@ -27,5 +30,10 @@ class UserService extends Model
     public function service(): BelongsTo
     {
         return $this->belongsTo(Service::class, 'service_id');
+    }
+
+    public function weekend(): BelongsTo
+    {
+        return $this->belongsTo(UserWeekends::class, 'weekend_id');
     }
 }

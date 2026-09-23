@@ -131,6 +131,12 @@ class User extends Authenticatable
         return $this->hasMany(UserWeekends::class, 'user_id', 'id');
     }
 
+    public function replacement(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, UserWeekends::class, 'user_id', 'replacement_id', 'id', 'id');
+    }
+
+
     public function changeEmailTokens()
     {
         return $this->hasMany(ChangeEmailToken::class, 'user_id');

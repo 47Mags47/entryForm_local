@@ -13,6 +13,7 @@ import {
 
 const worker = usePage().props.worker.data;
 const division = usePage().props.current_division.data;
+const filters = usePage().props.filters;
 const services = usePage().props.services;
 const isSubscribe = ref(worker.is_subscribe_available);
 
@@ -25,6 +26,8 @@ const form = useForm({
 });
 
 function toggleCheckbox(row, val) {
+    if (filters.isOnWeekend)
+        return
     if (val) form.service_ids.push(row.id);
     else form.service_ids = form.service_ids.filter((el) => el !== row.id);
 }
@@ -83,19 +86,23 @@ function routeToWeekendsPage() {
                 />
             </FormGroup>
             <FormGroup id="services" name="services" label="Услуги">
-                    <div
+                <div
                     class="services-row"
+                    :class="{ disabled: filters.isOnWeekend }"
                     v-for="(service, index) in services"
                     :key="service.id"
                     @click="toggleCheckbox( service, !form.service_ids.includes(service.id))"
-                    >
+                    @mouseenter="showTooltipAt"
+                    @mousemove="showTooltipAt"
+                    @mouseleave="hideTooltip"
+                >
                     <div class="service-row-checkbox">
-                        <CheckBox :modelValue="form.service_ids.includes(service.id)" />
+                        <CheckBox :modelValue="form.service_ids.includes(service.id)" :disabled="filters.isOnWeekend"/>
                     </div>
                     <div class="service-row-name">
                         <span> {{ service.name }} </span>
                     </div>
-                    </div>
+                </div>
             </FormGroup>
         </HorizontalForm>
     </DivisionTab>
@@ -120,6 +127,9 @@ function routeToWeekendsPage() {
         padding: 10px
         &:hover
             background: #ddd
+
+        &.disabled
+            cursor: not-allowed
 
 .mt-10
     margin-top: 10px

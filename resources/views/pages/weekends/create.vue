@@ -1,13 +1,15 @@
 <script>
 import { usePage, router } from "@inertiajs/vue3";
-import { VerticalForm, DatePicker, Select } from "@components";
+import {
+    VerticalForm,
+    DatePicker, Select, CheckBox
+} from "@components";
 import axios from "axios";
 
 export default {
     components: {
         VerticalForm,
-        DatePicker,
-        Select,
+        DatePicker, Select, CheckBox
     },
 
     data() {
@@ -16,6 +18,7 @@ export default {
             workers: [],
             date_start: null,
             date_end: null,
+            allowMeeting: true,
         };
     },
 
@@ -90,13 +93,14 @@ export default {
 
             router.post(
                 route("weekends.store", {
-                    division: this.division.id,
-                    worker: this.worker.id,
+                    division:   this.division.id,
+                    worker:     this.worker.id,
                 }),
                 {
                     replacement_id: this.replacement,
-                    date_start: this.date_start,
-                    date_end: this.date_end,
+                    date_start:     this.date_start,
+                    date_end:       this.date_end,
+                    allowMeeting:   this.allowMeeting
                 },
             );
         },
@@ -129,6 +133,12 @@ export default {
             v-model="replacement"
             :options="workers"
             placeholder="Выберите сотрудника"
+        />
+        <CheckBox
+            label="Разрешить запись"
+            :modelValue="allowMeeting"
+            name="allowMeeting"
+            @update:modelValue="(val) => allowMeeting = val"
         />
     </VerticalForm>
 </template>

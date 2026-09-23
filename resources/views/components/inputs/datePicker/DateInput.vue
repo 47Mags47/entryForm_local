@@ -44,7 +44,7 @@ export default {
             type: [Object, String],
             default: null
         },
-        disabledWeekdays: {
+        availableDates: {
             type: Array,
             default: []
         },
@@ -131,7 +131,7 @@ export default {
             ref="dateInputPopup"
             :isRange
             :checkValid
-            :disabledWeekdays
+            :availableDates
             :startInterval
             :endInterval
             :onClick="dayClickHandler"

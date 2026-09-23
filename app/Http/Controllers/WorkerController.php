@@ -14,6 +14,7 @@ use App\Models\UserRole;
 use App\Models\UserService;
 use Hash;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
@@ -24,20 +25,22 @@ class WorkerController
      */
     public function index(Request $request, Division $division)
     {
-        if (!(user()->hasRole('admin')
-            or (user()->hasRole('division_admin') and user()->divisions()->where('id', $division->id)->exists())
-        )) {
+        if (
+            !(user()->hasRole('admin')
+                or (user()->hasRole('division_admin') and user()->divisions()->where('id', $division->id)->exists())
+            )
+        ) {
             abort(403);
         }
 
         if ($request->boolean('trashed'))
             return Inertia::render("pages/workers/index", [
-                'users' => fn() =>  WorkerResource::collection($division->users()->withTrashed()->get()),
+                'users' => fn() => WorkerResource::collection($division->users()->withTrashed()->get()),
                 'trashed' => $request->boolean('trashed') === null ? false : $request->boolean('trashed')
             ]);
         else
             return Inertia::render("pages/workers/index", [
-                'users' => fn() =>  WorkerResource::collection($division->users()->get()),
+                'users' => fn() => WorkerResource::collection($division->users()->get()),
                 'trashed' => $request->boolean('trashed') === null ? false : $request->boolean('trashed')
             ]);
     }
@@ -51,7 +54,6 @@ class WorkerController
 
         if ($invite === null)
             return abort(404);
-
 
         return Inertia::render("pages/workers/create", [
             "invite" => fn() => getResource($invite),
@@ -93,13 +95,24 @@ class WorkerController
      */
     public function edit(Division $division, User $worker, Request $request)
     {
-        if (user()->hasRole('admin') || user()->hasRole('division_admin', $division))
-            return Inertia::render("pages/workers/edit", [
-                "worker"   => fn() => WorkerResource::make($worker),
-                'services' => fn() => Service::get(['id', 'name']),
-            ]);
+        if (user()->hasRole('admin') || user()->hasRole('division_admin', $division)) {
+            $today = Carbon::today();
 
-        else
+            $weekend = $worker->weekends()
+                ->where('division_id', $division->id)
+                ->whereDate('date_start', '<=', $today)
+                ->whereDate('date_end', '>=', $today);
+
+            return Inertia::render("pages/workers/edit", [
+                "worker" => fn() => WorkerResource::make($worker),
+                'services' => fn() => Service::get(['id', 'name']),
+                'filters' => [
+                    'isOnWeekend' => $weekend->exists(),
+                    'date_start' => $weekend->first()?->date_start->format('m.d.Y'),
+                    'date_end'  => $weekend->first()?->date_end->format('m.d.Y')
+                ]
+            ]);
+        } else
             return abort(403);
     }
 
@@ -128,7 +141,7 @@ class WorkerController
                 ]);
             }
 
-            if($worker->hasRole('admin'))
+            if ($worker->hasRole('admin'))
                 return abort(403);
 
             $worker->divisions()->updateExistingPivot(
