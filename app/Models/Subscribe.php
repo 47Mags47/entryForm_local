@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Subscribe extends Model
@@ -94,5 +96,10 @@ class Subscribe extends Model
     public function worker(): BelongsTo
     {
         return $this->belongsTo(User::class, 'worker_id', 'id')->withTrashed();
+    }
+
+    public function notes(): HasMany
+    {
+        return $this->HasMany(SubscribeNote::class, 'subscribe_id', 'id');
     }
 }

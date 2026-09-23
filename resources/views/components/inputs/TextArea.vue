@@ -46,7 +46,7 @@ export default {
 
 <template>
     <FormItem :name="name">
-        <Label :labelText="label" />
+        <Label v-if="label" :labelText="label" />
         <textarea
             :rows="rows"
             :id="inputId"

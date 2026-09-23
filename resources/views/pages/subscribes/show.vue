@@ -1,10 +1,18 @@
 <script>
-import { usePage } from "@inertiajs/vue3";
+import { usePage, router } from "@inertiajs/vue3";
 import { DivisionTab } from "@includes";
+import { TextArea, BlueButton } from "@components";
 
 export default {
     components: {
         DivisionTab,
+        TextArea, BlueButton
+    },
+
+    data() {
+        return {
+            note: usePage().props.subscribe.data.note
+        }
     },
 
     computed: {
@@ -16,6 +24,15 @@ export default {
     methods: {
         getUserRole(user) {
             return user.roles.find(role => role.division.id === this.division.id)?.role ?? user.roles[0].role
+        },
+        noteSaveHandler() {
+            router.post(route('subscribes.note.store', {
+                division: this.division.id,
+                subscribe: this.subscribe.id
+            }),
+            {
+                note: this.note
+            })
         }
     }
 };
@@ -33,7 +50,9 @@ export default {
                             {{ subscribe.first_name }}
                             {{ subscribe.middle_name }}
                         </p>
-                        <p><strong>Email:</strong> {{ subscribe.email }}</p>
+                        <p>
+                            <strong>Email:</strong> {{ subscribe.email }}
+                        </p>
                         <p>
                             <strong>Телефон:</strong> {{ subscribe.phone }}
                         </p>
@@ -65,6 +84,22 @@ export default {
                         </p>
                     </div>
                 </div>
+
+                <div class="note-wrapper">
+                    <TextArea
+                        name="name"
+                        label="Заметка"
+                        :value="note"
+                        @update:value="(val) => (note = val)"
+                        :rows="4"
+                    />
+
+                    <div class="button-wrapper">
+                        <BlueButton @click="noteSaveHandler">
+                            <span> сохранить </span>
+                        </BlueButton>
+                    </div>
+                </div>
             </div>
         </div>
     </DivisionTab>
@@ -78,6 +113,17 @@ export default {
     padding: 20px;
     background: #f9f9fb;
     min-height: 100vh;
+}
+
+.note-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.button-wrapper {
+    display: flex;
+    justify-content: end;
 }
 
 .cards-container {

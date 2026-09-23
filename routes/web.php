@@ -12,6 +12,7 @@ use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\StatisticController;
 use App\Http\Controllers\SubscribeController;
+use App\Http\Controllers\SubscribeNoteController;
 use App\Http\Controllers\SubscribesExportController;
 use App\Http\Controllers\UserInviteController;
 use App\Http\Controllers\WeekendController;
@@ -42,6 +43,7 @@ Route::middleware('auth')->group(function () {
             Route::Resource('/subscribes', SubscribeController::class)
                 ->except(['edit', 'update'])
                 ->withTrashed(['show', 'destroy']);
+            Route::post('/subscribes/{subscribe}/note', [SubscribeNoteController::class, 'store'])->name('subscribes.note.store');
 
             Route::resource('/division-admins', DivisionAdminController::class)
                 ->only(['store']);
