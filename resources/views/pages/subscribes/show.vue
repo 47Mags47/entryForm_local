@@ -1,12 +1,12 @@
 <script>
 import { usePage, router } from "@inertiajs/vue3";
 import { DivisionTab } from "@includes";
-import { TextArea, BlueButton } from "@components";
+import { TextArea, BlueButton, FormError } from "@components";
 
 export default {
     components: {
         DivisionTab,
-        TextArea, BlueButton
+        TextArea, BlueButton, FormError
     },
 
     data() {
@@ -87,7 +87,7 @@ export default {
 
                 <div class="note-wrapper">
                     <TextArea
-                        name="name"
+                        name="note"
                         label="Заметка"
                         :value="note"
                         @update:value="(val) => (note = val)"

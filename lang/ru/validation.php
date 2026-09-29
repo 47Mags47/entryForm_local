@@ -283,7 +283,8 @@ return [
         'start_time' => 'Время',
         'date_start' => 'Начальная дата',
         'date_end'   => 'Конечная дата',
-        'replacement_id' => 'Замещающий'
+        'replacement_id' => 'Замещающий',
+        'note'  => 'Заметка'
     ],
 
 ];

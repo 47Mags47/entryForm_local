@@ -7,7 +7,6 @@ import {
     DatePicker, Select, StringInput,
     DownloadIco } from "@components";
 import { DateTime } from "luxon";
-import { h } from 'vue'
 
 export default {
     components: {
@@ -27,6 +26,7 @@ export default {
             selectedDate: null,
             startDate: { from: DateTime.now().startOf('day'), to: null },
             searchTimeout: null,
+            hovered_note: '',
 
             form: useForm({
                 from: DateTime.now().startOf('day').toFormat('yyyy-MM-dd'),
@@ -61,10 +61,16 @@ export default {
                     label: "Заметка",
                     width: '400px',
                     class: (row) => {
-                        return 'note-overflow'
+                        return 'note'
                     },
                     render: (row) => {
                         return row.note
+                    },
+                    onMouseenter: (row) => {
+                        this.hovered_note = row.note ?? ''
+                    },
+                    onMouseleave: (row) => {
+                        this.hovered_note = ''
                     }
                 },
                 {
@@ -206,10 +212,15 @@ export default {
                     " />
             </template>
         </Table>
+        <div class="note-popup-wrapper" :class="{ 'hover': hovered_note !== '' }">
+            <div class="note-popup">
+                {{ hovered_note }}
+            </div>
+        </div>
     </DivisionTab>
 </template>
 
-<style lang="sass">
+<style lang="sass" scoped>
 .toolbar-left
     gap: 10px
     flex-wrap: wrap
@@ -217,10 +228,43 @@ export default {
     .date-picker-button
         background: blue
 
-.note-overflow
-    overflow: auto
+.note-popup-wrapper
+    position: fixed
+    bottom: 0
+    left: 0
+    display: none
+    width: 100%
+    height: fit-content
+    justify-content: center
+    padding: 30px 60px
+    z-index: 100
+    pointer-events: none
+
+    &.hover
+        display: flex
+
+        .note-popup
+            width: fit-content
+            max-width: 800px
+            height: fit-content
+            padding: 14px 20px
+            background: white
+            color: var(--text-color)
+
+            border: 1px solid #88a2ff81
+            border-radius: 8px
+            box-shadow: 0 4px 15px rgba(0, 0, 0, .15)
+
+            font-size: 14px
+            overflow-wrap: anywhere
+
+:deep(.note)
+    width: 100px
     max-width: 100px
-    @include scroll()
+    white-space: nowrap
+    div
+        overflow: hidden
+        text-overflow: ellipsis
 
 .deleted-row
     background: #ffe3e3

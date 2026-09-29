@@ -31,6 +31,12 @@ export default {
         label: String,
     },
 
+    methods: {
+        inputHandler(event) {
+            this.$emit('update:value', event.target.value)
+        }
+    },
+
     emits: ["click", "update:value"],
 
     computed: {
@@ -52,16 +58,29 @@ export default {
             :id="inputId"
             :name="name"
             :value="value ?? ''"
-            @input="$emit('update:value', $event.target.value)"
+            @input="inputHandler"
             :placeholder="placeholderText"
             :disabled="disabled"
             @click="$emit('click', $event)"
             v-bind="$attrs"
+            maxlength="255"
         />
+
+        <span class="words-count"> {{ value?.length ?? 0 }}/255 </span>
     </FormItem>
 </template>
 
 <style lang="sass" scoped>
 textarea
     @include input()
+
+.form-item
+    position: relative
+
+.words-count
+    position: absolute
+    color: #aaa
+    bottom: 3px
+    right: 4px
+    font-size: 14px
 </style>

@@ -9,7 +9,7 @@ class StoreSubscribeNoteRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'note' => ['nullable', 'string'],
+            'note' => ['nullable', 'string', 'min:0', 'max:255'],
         ];
     }
 }
