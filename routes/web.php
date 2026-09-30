@@ -59,10 +59,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/workers/{worker}/restore', [WorkerController::class, 'restore'])
                 ->name('workers.restore')
                 ->withTrashed()
-                ->middleware(
-                    ['create', 'store', 'edit', 'update', 'destroy'],
-                    'userBelongsToDivision'
-                );
+                ->middleware('userBelongsToDivision');
             Route::resource('/workers', WorkerController::class)
                 ->middlewareFor(
                     ['create', 'store', 'edit', 'update', 'destroy'],
