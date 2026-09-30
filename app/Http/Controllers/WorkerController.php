@@ -10,6 +10,7 @@ use App\Models\Division;
 use App\Models\Service;
 use App\Models\User;
 use App\Models\UserInvite;
+use App\Models\UserPivotRole;
 use App\Models\UserRole;
 use App\Models\UserService;
 use Hash;
@@ -35,12 +36,12 @@ class WorkerController
 
         if ($request->boolean('trashed'))
             return Inertia::render("pages/workers/index", [
-                'users' => fn() => WorkerResource::collection($division->users()->withTrashed()->get()),
+                'users' => fn() => WorkerResource::collection($division->users()->wherePivotNotNull('deleted_at')->get()),
                 'trashed' => $request->boolean('trashed') === null ? false : $request->boolean('trashed')
             ]);
         else
             return Inertia::render("pages/workers/index", [
-                'users' => fn() => WorkerResource::collection($division->users()->get()),
+                'users' => fn() => WorkerResource::collection($division->users()->wherePivotNull('deleted_at')->get()),
                 'trashed' => $request->boolean('trashed') === null ? false : $request->boolean('trashed')
             ]);
     }
@@ -109,7 +110,7 @@ class WorkerController
                 'filters' => [
                     'isOnWeekend' => $weekend->exists(),
                     'date_start' => $weekend->first()?->date_start->format('m.d.Y'),
-                    'date_end'  => $weekend->first()?->date_end->format('m.d.Y')
+                    'date_end' => $weekend->first()?->date_end->format('m.d.Y')
                 ]
             ]);
         } else
@@ -162,7 +163,11 @@ class WorkerController
     public function destroy(Division $division, User $worker)
     {
         if (user()->hasRole('admin') || user()->hasRole('division_admin', $division)) {
-            $worker->delete();
+
+            $division->users()->updateExistingPivot(
+                $worker->id,
+                ['deleted_at' => now()]
+            );
 
             return redirect()->route('workers.index', ['division' => $division->id])->with('success', value: 'Пользователь удален');
         } else
@@ -172,7 +177,11 @@ class WorkerController
     public function restore(Division $division, User $worker)
     {
         if (user()->hasRole('admin') || user()->hasRole('division_admin', $division)) {
-            $worker->restore();
+
+            $division->users()->updateExistingPivot(
+                $worker->id,
+                ['deleted_at' => null]
+            );
 
             return redirect()->route('workers.index', ['division' => $division->id])->with('success', value: 'Пользователь восстановлен');
         } else

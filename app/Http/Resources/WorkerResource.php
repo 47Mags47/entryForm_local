@@ -30,7 +30,9 @@ class WorkerResource extends JsonResource
             "email" => $this->email,
             "phone" => $this->phone,
             "office" => $this->office,
-            'deleted_at' => $this->deleted_at,
+            'deleted_at' => $this->divisions()
+                ->wherePivot('division_id', $request->division?->id)
+                ->first()?->pivot?->deleted_at,
             'is_subscribe_available' => (bool) $this->divisions()
                 ->wherePivot('division_id', $request->division?->id)
                 ->first()?->pivot?->is_subscribe_available,

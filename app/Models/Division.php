@@ -70,7 +70,7 @@ class Division extends Model
 
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'main__users_roles')->withPivot('role_id');
+        return $this->belongsToMany(User::class, 'main__users_roles')->withPivot('role_id', 'is_subscribe_available', 'deleted_at');
     }
 
     public function admins(): BelongsToMany
