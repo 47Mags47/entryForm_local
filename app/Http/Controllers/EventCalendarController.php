@@ -22,7 +22,6 @@ class EventCalendarController
 
         $subscribes = Subscribe::divisionSubscribes($division)->whereBetween('start_at', [$day->startOfDay(), $day->endOfDay()])->get();
 
-
         return Inertia::render('pages/event-calendar/index', [
             'subscribes' => fn() => $subscribes,
             'division' => fn() => $division->toResource(),

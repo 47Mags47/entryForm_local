@@ -51,7 +51,11 @@ export default {
             if (!worker)
                 return
 
-            return `${worker.last_name} ${worker.first_name[0].toUpperCase()}.${worker.middle_name[0].toUpperCase()}`
+            return `
+                ${worker.last_name ?? ''}
+                ${worker.first_name?.charAt(0).toUpperCase() ? worker.first_name?.charAt(0).toUpperCase() + '.' : ''}
+                ${worker.middle_name?.charAt(0).toUpperCase() ? worker.middle_name?.charAt(0).toUpperCase() + '.' : ''}
+            `
         },
         getClientFullName(worker_id, time) {
             const subscribe = this.subscribes.find(
