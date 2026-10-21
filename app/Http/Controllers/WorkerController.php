@@ -152,7 +152,7 @@ class WorkerController
 
             return redirect()
                 ->route('workers.index', ['division' => $division->id])
-                ->with('success', 'Рассписание обновлено');
+                ->with('success', 'Расписание обновлено');
         } else
             return abort(403);
     }
