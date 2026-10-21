@@ -58,7 +58,7 @@ export default {
             <template #info>
                 <div class="reset-password-link">
                     <Link :href="route('password.request')" class="reset">
-                        Востановить пароль
+                        Восстановить пароль
                     </Link>
                 </div>
             </template>
