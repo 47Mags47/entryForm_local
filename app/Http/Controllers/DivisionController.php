@@ -26,6 +26,14 @@ class DivisionController
                     'like',
                     '%' . $request->input('filter.division') . '%'
                 )
+            )
+            ->when(
+                user()->hasRole('admin'),
+                fn($query) => $query->withTrashed(),
+                fn($query) => $query->whereHas('users', function ($query) {
+                    $query->where('user_id', user()->id)
+                        ->whereNull('main__users_roles.deleted_at');
+                })
             );
 
         return Inertia::render('pages/divisions/index', [
@@ -75,7 +83,6 @@ class DivisionController
     {
         if (user()->hasRole('division_worker', $division))
             return redirect()->route('subscribes.index', ['division' => $division->id]);
-
         elseif (user()->cannot('view', $division)) {
             abort(403);
         }
@@ -142,5 +149,16 @@ class DivisionController
         $division->delete();
 
         return back()->with('success', 'Запись удалена');
+    }
+
+    public function restore(Division $division)
+    {
+        if (user()->cannot('restore', $division)) {
+            abort(403);
+        }
+
+        $division->restore();
+
+        return back()->with('success', 'Запись восстановлена');
     }
 }

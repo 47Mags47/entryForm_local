@@ -51,4 +51,9 @@ class DivisionPolicy
     {
         return $user->hasRole('admin');
     }
+
+    public function restore(User $user, Division $division): bool
+    {
+        return $user->hasRole('admin');
+    }
 }

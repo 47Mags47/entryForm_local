@@ -33,8 +33,11 @@ class Division extends Model
         parent::boot();
 
         self::deleting(function ($model) {
-            if ($model->users()->count() > 0)
-                return abort(403, 'Невозможно удалить подразделение, пока в нем есть пользователи');
+            $model->subscribes()->delete();
+        });
+
+        self::restored(function ($model) {
+            $model->subscribes()->restore();
         });
     }
 

@@ -35,6 +35,10 @@ Route::middleware('auth')->group(function () {
         Route::resource('/divisions', DivisionController::class);
 
         Route::prefix('/divisions/{division}')->middleware('hasDivisionAccess')->group(function () {
+            Route::get('/restore', [DivisionController::class, 'restore'])
+                ->withTrashed()
+                ->name('divisions.restore');
+
             Route::resource('/events', EventCalendarController::class)
                 ->only(['index']);
 

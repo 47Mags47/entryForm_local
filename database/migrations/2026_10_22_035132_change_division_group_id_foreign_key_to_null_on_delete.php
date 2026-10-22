@@ -25,7 +25,7 @@ return new class extends Migration
     {
         Schema::table('main__divisions', function (Blueprint $table) {
             $table->dropForeign(['group_id']);
-            $table->foreign('group_id')->references('id')->on(new Subscribe()->getTable());
+            $table->foreign('group_id')->references('id')->on(new DivisionGroup()->getTable());
         });
     }
 };

@@ -5,20 +5,22 @@ import {
     EditButton,
     DeleteButton,
     AddButton,
-    GoToButton,
+    GoToButton, BlueButton,
+    CheckBox,
+    RestoreIco
 } from "@components";
 
 export default {
     components: {
         Table,
-        EditButton,
-        DeleteButton,
-        AddButton,
-        GoToButton,
+        EditButton, DeleteButton, BlueButton, AddButton, GoToButton,
+        CheckBox,
+        RestoreIco
     },
 
     data() {
         return {
+            router,
             search: '',
             timeout: null,
 
@@ -59,11 +61,18 @@ export default {
         },
         current_user: () => usePage().props.current_user.data,
     },
+
+    methods: {
+        getRowColor(row) {
+            if (row.deleted_at !== null)
+                return 'deleted-row'
+        },
+    }
 };
 </script>
 
 <template>
-    <Table :data="divisions" :columns="columns" header="Подразделения">
+    <Table :data="divisions" :row-class="getRowColor" :columns="columns" header="Подразделения">
         <template #toolbar-left>
             <input v-model="search" type="text" placeholder="поиск.." class="search-input"/>
         </template>
@@ -73,11 +82,18 @@ export default {
         </template>
 
         <template #actions="{ row }">
-            <EditButton v-if="current_user.roles[0]?.role.code === 'admin'" :href="route('divisions.edit', row)" class="w-full"/>
+            <EditButton v-if="current_user.roles[0]?.role.code === 'admin' && row.deleted_at === null" :href="route('divisions.edit', row)" class="w-full"/>
 
-            <GoToButton :href="route('divisions.show', row.id)" class="w-full"/>
+            <GoToButton v-if="row.deleted_at === null" :href="route('divisions.show', row.id)" class="w-full"/>
 
-            <DeleteButton v-if="row.userCount === 0" :href="route('divisions.destroy', row)" class="w-full" />
+            <DeleteButton
+                v-if="row.deleted_at === null && current_user.roles[0]?.role.code === 'admin' && row.userCount === 0"
+                :href="route('divisions.destroy', row)" class="w-full"
+            />
+            <BlueButton class="w-full" v-else-if="row.deleted_at !== null"
+                @click="router.get(route('divisions.restore', row.id ))">
+                <RestoreIco />
+            </BlueButton>
         </template>
     </Table>
 </template>
@@ -85,6 +101,9 @@ export default {
 <style lang="sass" scoped>
 .w-full
     width: 100%
+
+:deep(.deleted-row)
+    background: #ffe3e3
 
 .search-input
     width: 260px

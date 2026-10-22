@@ -12,7 +12,10 @@ class DivisionAccessMiddleware extends Middleware
         $division = $request->route('division');
         abort_unless($division instanceof \App\Models\Division, 404, 'Подразделение в url не найдено');
 
-        $hasAccess = user()->divisions()->whereKey($division->id)->exists() || user()->hasRole('admin');
+        $hasAccess = (
+            user()->divisions()->whereKey($division->id)->exists() &&
+            user()->divisions()->wherePivot('division_id', $division->id)->wherePivotNull('deleted_at')->exists()
+        ) || user()->hasRole('admin');
         abort_unless($hasAccess, 403);
 
         return $next($request);

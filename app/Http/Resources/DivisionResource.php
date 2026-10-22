@@ -33,7 +33,8 @@ class DivisionResource extends JsonResource
                     ],
                 ];
             })->collapse(),
-            'userCount' => $this->users()->count(),
+            'userCount' => $this->users()->wherePivotNull('deleted_at')->get()->count(),
+            'deleted_at' => $this->deleted_at,
             'group' => [
                 'id' => $this->group?->id,
                 'name' => $this->group?->name,
