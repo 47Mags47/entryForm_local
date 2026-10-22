@@ -14,7 +14,6 @@ return new class extends Migration
     {
         Schema::table('main__subscribe_notes', function (Blueprint $table) {
             $table->dropForeign(['subscribe_id']);
-
             $table->foreign('subscribe_id')->references('id')->on(new Subscribe()->getTable())->cascadeOnDelete();
         });
     }
