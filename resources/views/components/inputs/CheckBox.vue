@@ -50,7 +50,6 @@ export default {
     align-items: center
     user-select: none
     gap: 8px
-    padding-top: 10px
 
     &.disabled
         opacity: 0.6

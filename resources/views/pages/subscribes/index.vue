@@ -191,8 +191,8 @@ export default {
                     <Select class="filter-item" :options="workers" name="workers" v-model="form.worker_id" :has-search="false" placeholder="Специалист"/>
                     <Select class="filter-item" :options="services" name="services" v-model="form.service_id" :has-search="false" placeholder="Услуга"/>
                     <StringInput @update:value="(val) => form.search = val" :value="form.search" name="search" placeholder="ФИО заявителя" />
+                    <BlueButton :handle-click="resetData"> сбросить </BlueButton>
                 </div>
-                <BlueButton :handle-click="resetData"> сбросить </BlueButton>
             </template>
             <template #toolbar-right>
                 <BlueButton :handle-click="subscribesExport">
@@ -278,6 +278,4 @@ export default {
     gap: 10px
     .filter-item
         width: 300px
-
-
 </style>

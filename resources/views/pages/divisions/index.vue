@@ -2,10 +2,7 @@
 import { usePage, router } from "@inertiajs/vue3";
 import {
     Table,
-    EditButton,
-    DeleteButton,
-    AddButton,
-    GoToButton, BlueButton,
+    EditButton, DeleteButton, AddButton, GoToButton, BlueButton,
     CheckBox,
     RestoreIco
 } from "@components";
@@ -21,6 +18,7 @@ export default {
     data() {
         return {
             router,
+            isShowDivisionsDeleted: usePage().props.trashed,
             search: '',
             timeout: null,
 
@@ -67,6 +65,14 @@ export default {
             if (row.deleted_at !== null)
                 return 'deleted-row'
         },
+
+        checkboxHandler(flag) {
+            this.isShowDivisionsDeleted = flag
+
+            router.get(route('divisions.index', {
+                trashed: this.isShowDivisionsDeleted
+            }))
+        }
     }
 };
 </script>
@@ -74,7 +80,14 @@ export default {
 <template>
     <Table :data="divisions" :row-class="getRowColor" :columns="columns" header="Подразделения">
         <template #toolbar-left>
-            <input v-model="search" type="text" placeholder="поиск.." class="search-input"/>
+            <div class="divisions-toolbar-left-wrapper">
+                <input v-model="search" type="text" placeholder="поиск.." class="search-input"/>
+                <CheckBox
+                    label="показать удалённые"
+                    :modelValue="isShowDivisionsDeleted"
+                    @update:modelValue="checkboxHandler"
+                />
+            </div>
         </template>
 
         <template #toolbar-right v-if="current_user.roles[0]?.role.code === 'admin'">
@@ -104,6 +117,14 @@ export default {
 
 :deep(.deleted-row)
     background: #ffe3e3
+
+.divisions-toolbar-left-wrapper
+    display: flex
+    gap: 5px
+    align-items: center
+
+    width: 100%
+
 
 .search-input
     width: 260px

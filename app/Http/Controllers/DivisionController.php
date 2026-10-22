@@ -29,15 +29,20 @@ class DivisionController
             )
             ->when(
                 user()->hasRole('admin'),
-                fn($query) => $query->withTrashed(),
+                fn($query) => $query->when(
+                    $request->boolean('trashed'),
+                    fn($query) => $query->onlyTrashed()
+                ),
                 fn($query) => $query->whereHas('users', function ($query) {
                     $query->where('user_id', user()->id)
                         ->whereNull('main__users_roles.deleted_at');
                 })
             );
 
+
         return Inertia::render('pages/divisions/index', [
-            'divisions' => fn() => $divisions->get()->toResourceCollection()
+            'divisions' => fn() => $divisions->get()->toResourceCollection(),
+            'trashed' => $request->boolean('trashed') === null ? false : $request->boolean('trashed')
         ]);
     }
 

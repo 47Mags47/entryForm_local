@@ -27,7 +27,7 @@ export default {
 
 <style lang="sass">
 button, .button
-    min-height: 30px
+    min-height: 32px
     padding: 5px 15px
 
     border: none

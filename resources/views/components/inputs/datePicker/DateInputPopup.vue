@@ -251,12 +251,15 @@ export default {
                             <div
                                 class="day-cell-container available"
                                 :class="{
-                                    'current-day'   : dayInterval.start.toMillis()   == now.startOf('day').toMillis(),
-                                    'selected-day'  : !(dayInterval.start.toMillis() == now.startOf('day').toMillis()) &&
-                                        dayInterval.start.toFormat('yyyy-MM-dd')     === selectedDateBetween?.from ||
-                                        dayInterval.start.toFormat('yyyy-MM-dd')     === selectedDateBetween?.to   ||
-                                        dayInterval.start.toFormat('yyyy-MM-dd')     === selectedDate,
+                                    'current-day'   : dayInterval.start.hasSame(now, 'day'),
+                                    'selected-day'  : !dayInterval.start.hasSame(now, 'day') &&
+                                        (dayInterval.start.toFormat('yyyy-MM-dd')     === selectedDateBetween?.from    ||
+                                        dayInterval.start.toFormat('yyyy-MM-dd')     === selectedDateBetween?.to      ||
+                                        dayInterval.start.toFormat('yyyy-MM-dd')     === selectedDate),
                                     'disabled': isDisabled(dayInterval.start),
+                                    'in-range': !dayInterval.start.hasSame(now, 'day') &&
+                                        dayInterval.start.toFormat('yyyy-MM-dd') > selectedDateBetween?.from &&
+                                        dayInterval.start.toFormat('yyyy-MM-dd') < selectedDateBetween?.to
                                 }"
                                 @click="() => dayClickHandler(dayInterval.start)"
                             >
