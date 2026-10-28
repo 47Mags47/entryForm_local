@@ -17,7 +17,7 @@ class FrameResource extends JsonResource
 
         return [
             'id' => $this->id,
-            'frame' => '<iframe src="' . config('app.frame_server.url') . '/frames/' . $this->token . '/subscribes/create' .'"/>',
+            'frame' => '<iframe width="100%" height="900px" frameborder="0" src="' . config('app.frame_server.url') . '/frames/' . $this->token . '/subscribes/create' .'"/>',
             'status' => [
                 'id' => $this->status?->id,
                 'code' => $this->status?->code,

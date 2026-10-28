@@ -60,5 +60,4 @@ export default {
             </template>
         </Table>
     </DivisionTab>
-    <iframe width="1800" height="900" src="http://entry-form.local/frames/RiUGgrF1zY4OzbgXykMoi8limHXXv37J3J0K6Q2a/subscribes/create"/>
 </template>

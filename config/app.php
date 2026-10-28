@@ -139,7 +139,4 @@ return [
     'frame_server'=>[
         'url' => env('FRAME_SERVER_URL', default: 'http://localhost'),
     ]
-
-
-
 ];
