@@ -79,6 +79,7 @@ export default {
                 axios.get(route('api.availableWeekdays.index'), {
                     params: {
                         worker_id: newValue.worker_id,
+                        division_id: this.division.id
                     }
                 }).then(res => {
                     this.availableDates = [...res.data]

@@ -105,15 +105,6 @@ class WeekendController
         $from = Carbon::parse($weekend->date_start)->startOfDay();
         $to = Carbon::parse($weekend->date_end)->endOfDay();
 
-        // if (!$weekend->allow_meeting)
-        //     $weekend->user->subscribes()->whereBetween('start_at', [$from, $to])->update([
-        //         'replacement_id' => $weekend->replacement_id,
-        //     ]);
-        // else
-        //     $weekend->user->subscribes()->whereBetween('start_at', [$from, $to])->update([
-        //         'replacement_id' => null,
-        //     ]);
-
         $weekend->user->subscribes()->whereBetween('start_at', [$from, $to])->update([
                 'replacement_id' => $weekend->replacement_id
             ]);
@@ -126,7 +117,7 @@ class WeekendController
 
     public function destroy(Division $division, User $worker, UserWeekends $weekend)
     {
-        $weekend->forceDelete();
+        $weekend->delete();
 
         return back()->with('success', 'Запись удалена');
     }

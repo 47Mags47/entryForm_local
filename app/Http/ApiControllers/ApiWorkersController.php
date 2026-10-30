@@ -34,6 +34,7 @@ class ApiWorkersController
 
     public function getAvailableWeekdays(Request $request): array
     {
+        $division = Division::find($request->input('division_id'));
         $worker = User::find(($request->input('worker_id')));
         $schedule = WorkSchedule::where('user_id', $worker->id)
             ->pluck('day_of_the_week_id')
@@ -45,27 +46,41 @@ class ApiWorkersController
         $endDate = Carbon::now()->addMonth()->endOfDay();
         $availableDates = [];
 
-        // Доступные дни на месяц вперёд, учитывая отпуска работника
+        // Доступные дни на месяц вперёд, учитывая отпуска работника и нерабочие дни организации
         $weekends = $worker->weekends()->get();
+        $division_unavailable_periods = $division->unavailable_periods()->get();
 
         while ($today <= $endDate) {
-            // Есть ли вообще отпуск в интервале месяца
+
+            // Отпуск работника
             $weekend = $weekends->first(function ($weekend) use ($today) {
                 return $today->between(
-                    $weekend->date_start->startOfDay(),
-                    $weekend->date_end->endOfDay()
+                    $weekend->date_start->copy()->startOfDay(),
+                    $weekend->date_end->copy()->endOfDay()
                 );
             });
 
-            if ($weekend) {
-                if (!$weekend->allow_meeting) {
-                    $today->addDay();
-                    continue;
-                }
+            if ($weekend && !$weekend->allow_meeting) {
+                $today->addDay();
+                continue;
             }
 
-            if (in_array($today->dayOfWeekIso, $schedule))
+            // Нерабочий период организации
+            $unavailable_period = $division_unavailable_periods->first(function ($period) use ($today) {
+                return $today->between(
+                    $period->date_start->copy()->startOfDay(),
+                    $period->date_end->copy()->endOfDay()
+                );
+            });
+
+            if ($unavailable_period) {
+                $today->addDay();
+                continue;
+            }
+
+            if (in_array($today->dayOfWeekIso, $schedule)) {
                 $availableDates[] = $today->copy();
+            }
 
             $today->addDay();
         }

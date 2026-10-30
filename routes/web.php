@@ -3,6 +3,7 @@
 use App\Http\Controllers\CityController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DivisionGroupController;
+use App\Http\Controllers\DivisionUnavailablePeriodController;
 use App\Http\Controllers\EventCalendarController;
 use App\Http\Controllers\DivisionAdminController;
 use App\Http\Controllers\DivisionController;
@@ -39,6 +40,9 @@ Route::middleware('auth')->group(function () {
                 ->withTrashed()
                 ->name('divisions.restore');
 
+            Route::resource('/unavailable-periods', DivisionUnavailablePeriodController::class)
+                ->except(['show']);
+
             Route::resource('/events', EventCalendarController::class)
                 ->only(['index']);
 
@@ -51,7 +55,6 @@ Route::middleware('auth')->group(function () {
 
             Route::resource('/division-admins', DivisionAdminController::class)
                 ->only(['store']);
-
 
             Route::resource('/workers/{worker}/weekends', WeekendController::class)
                 ->except(['show'])
@@ -69,7 +72,6 @@ Route::middleware('auth')->group(function () {
                     ['create', 'store', 'edit', 'update', 'destroy'],
                     'userBelongsToDivision'
                 );
-
 
             Route::resource('/frame', FrameController::class)
                 ->except(['show', 'create', 'edit']);

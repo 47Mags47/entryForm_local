@@ -281,8 +281,8 @@ return [
         'worker_id' => 'Сотрудник',
         'start_date' => 'Дата',
         'start_time' => 'Время',
-        'date_start' => 'Начальная дата',
-        'date_end'   => 'Конечная дата',
+        'date_start' => 'Начало',
+        'date_end'   => 'Конец',
         'replacement_id' => 'Замещающий',
         'note'  => 'Заметка'
     ],

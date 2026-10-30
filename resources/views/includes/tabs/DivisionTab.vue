@@ -38,6 +38,14 @@ export default {
                     hasAccess: current_role.code === 'admin' || current_role.code === 'division_admin',
                 },
                 {
+                    title: "Нерабочие дни",
+                    href: route("unavailable-periods.index", {
+                        division: division.id,
+                    }),
+                    isActive: this.current === "unavailable-periods",
+                    hasAccess: current_role.code === 'admin' || current_role.code === 'division_admin',
+                },
+                {
                     title: "Общая информация",
                     href: route("divisions.show", {
                         division: division.id,

@@ -95,4 +95,9 @@ class Division extends Model
     {
         return $this->belongsTo(DivisionGroup::class, 'group_id');
     }
+
+    public function unavailable_periods(): hasMany
+    {
+        return $this->hasMany(DivisionUnavailablePeriod::class, 'division_id');
+    }
 }

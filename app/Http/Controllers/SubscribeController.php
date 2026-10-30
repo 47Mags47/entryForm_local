@@ -24,7 +24,6 @@ class SubscribeController
             'to' => ['nullable', 'date_format:Y-m-d']
         ]);
 
-
         $from = $request->filled('from')
             ? Carbon::parse($request->input('from'))->startOfDay()
             : now()->startOfDay();

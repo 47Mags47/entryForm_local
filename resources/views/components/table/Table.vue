@@ -1,6 +1,7 @@
 <script>
 import { getObjectValue } from "../../../js/helpers/index";
 import { default as Pagination } from "../Pagination.vue";
+import { DateTime } from "luxon";
 
 export default {
     components: {
@@ -26,8 +27,13 @@ export default {
     },
 
     methods: {
-        getObjectValue(key, row) {
-            return getObjectValue(key, row);
+        getObjectValue(key, row, type) {
+            let value = getObjectValue(key, row)
+
+            if (type === 'date')
+                value = DateTime.fromISO(getObjectValue(key, row)).toFormat('d.M.y')
+
+            return value
         },
         getRowClass(row) {
             return typeof this.rowClass === 'function' ? this.rowClass(row) : this.rowClass
@@ -94,18 +100,18 @@ export default {
                             <div v-else-if="cell.splitDateTime">
                                 <div>
                                     {{
-                                        getObjectValue(cell.key, row)?.split(" ")[0] || "-"
+                                        getObjectValue(cell.key, row, cell.type)?.split(" ")[0] || "-"
                                     }}
                                 </div>
                                 <div>
                                     {{
-                                        getObjectValue(cell.key, row)?.split(" ")[1] || "-"
+                                        getObjectValue(cell.key, row, cell.type)?.split(" ")[1] || "-"
                                     }}
                                 </div>
                             </div>
 
                             <div v-else>
-                                {{ getObjectValue(cell.key, row) ?? "" }}
+                                {{ getObjectValue(cell.key, row, cell.type) ?? "" }}
                             </div>
                         </td>
                     </tr>
@@ -161,11 +167,13 @@ export default {
         border-spacing: 0
         table-layout: auto
 
-        .no-data
-            position: absolute
-            left: 50%
-            transform: translate(-50%, 64px)
-            font-size: 24px
+        tbody
+            position: relative
+            .no-data
+                position: absolute
+                left: 50%
+                transform: translate(-50%, 64px)
+                font-size: 24px
         td
             padding: 5px 10px
             border-right: 1px solid #ece9e7

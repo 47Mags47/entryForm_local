@@ -29,12 +29,26 @@ export default {
         hasRole(code){
             return this.current_user?.roles.filter((role) => role.role.code === code).length > 0
         }
-    }
+    },
+
+    computed: {
+        isChristmas() {
+            const now = new Date()
+            const month = now.getMonth()
+            const day = now.getDate()
+
+            return month >= 11 || (month === 0 && day <= 10)
+        },
+    },
 };
 </script>
 
 <template>
     <nav class="sidebar">
+        <div v-if="isChristmas" class="christmas-garland">
+            <span v-for="n in 20" :key="n" :style="{ '--i': n }"></span>
+        </div>
+
         <ul class="sidebar-menu">
             <ItemMenu :href="route('divisions.index')" label="Подразделения">
                 <HomeIco />
@@ -67,6 +81,7 @@ export default {
 
 <style lang="sass" scoped>
 .sidebar
+    position: relative
     width: 50px
     background: var(--palette-color-4)
     color: #FFF
@@ -84,4 +99,60 @@ export default {
     &-footer
         margin-top: auto
         padding-bottom: 8px
+
+    .christmas-garland
+        position: absolute
+        top: 0
+        right: -5px
+        bottom: 0
+        width: 10px
+        z-index: 11
+        pointer-events: none
+
+        &::before
+            content: ''
+            position: absolute
+            top: 0
+            bottom: 0
+            left: 4px
+            width: 2px
+            background: #263b2c
+
+        span
+            position: absolute
+            top: calc((var(--i) - 1) * 100% / 19)
+            left: 1px
+            width: 7px
+            height: 7px
+            border-radius: 50%
+            animation: garland-twinkle 1.4s ease-in-out infinite alternate
+            animation-delay: calc(var(--i) * -.19s)
+            box-shadow: 0 0 5px 2px currentColor, 0 0 10px currentColor
+
+            &:nth-child(4n + 1)
+                background: #ff4242
+                color: #ff4242
+
+            &:nth-child(4n + 2)
+                background: #ffd966
+                color: #ffd966
+
+            &:nth-child(4n + 3)
+                background: #4dff9a
+                color: #4dff9a
+
+            &:nth-child(4n)
+                background: #72baff
+                color: #72baff
+
+@keyframes garland-twinkle
+    from
+        opacity: .4
+        transform: scale(.8)
+        filter: brightness(.8)
+
+    to
+        opacity: 1
+        transform: scale(1.1)
+        filter: brightness(1.5)
 </style>
