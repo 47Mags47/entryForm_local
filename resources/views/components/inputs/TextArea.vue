@@ -60,7 +60,6 @@ export default {
             immediate: true,
             handler(val) {
                 this.localValue = val
-                console.log(val)
             }
         }
     }
