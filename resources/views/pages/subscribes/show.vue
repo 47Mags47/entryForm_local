@@ -1,12 +1,12 @@
 <script>
 import { usePage, router } from "@inertiajs/vue3";
 import { DivisionTab } from "@includes";
-import { TextArea, BlueButton, FormError } from "@components";
+import { BlueButton, FormError } from "@components";
 
 export default {
     components: {
         DivisionTab,
-        TextArea, BlueButton, FormError
+        BlueButton, FormError
     },
 
     data() {
@@ -25,15 +25,6 @@ export default {
         getUserRole(user) {
             return user.roles.find(role => role.division.id === this.division.id)?.role ?? user.roles[0].role
         },
-        noteSaveHandler() {
-            router.post(route('subscribes.note.store', {
-                division: this.division.id,
-                subscribe: this.subscribe.id
-            }),
-            {
-                note: this.note
-            })
-        }
     }
 };
 </script>
@@ -86,14 +77,6 @@ export default {
                 </div>
 
                 <div class="note-wrapper">
-                    <TextArea
-                        name="note"
-                        label="Заметка"
-                        :value="note"
-                        @update:value="(val) => (note = val)"
-                        :rows="4"
-                    />
-
                     <div class="button-wrapper">
                         <BlueButton @click="noteSaveHandler">
                             <span> сохранить </span>

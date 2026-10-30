@@ -1,11 +1,12 @@
 <script>
+import { h } from "vue";
 import { usePage, useForm, router } from "@inertiajs/vue3";
 import { DivisionTab } from "@includes";
 import {
     Table,
     GoToButton, AddButton, DeleteButton, BlueButton,
     DatePicker, Select, StringInput,
-    DownloadIco } from "@components";
+    DownloadIco, TextArea } from "@components";
 import { DateTime } from "luxon";
 
 export default {
@@ -18,14 +19,18 @@ export default {
         BlueButton,
         DatePicker,
         DownloadIco,
-        Select, StringInput
+        Select, StringInput, TextArea
     },
 
     data() {
         return {
             selectedDate: null,
             startDate: { from: DateTime.now().startOf('day'), to: null },
+
             searchTimeout: null,
+            noteTimeout: null,
+            isAddNote: [],
+
             hovered_note: '',
 
             form: useForm({
@@ -60,11 +65,21 @@ export default {
                 {
                     label: "Заметка",
                     width: '400px',
+                    component: (row) => {
+                        return row.note || this.isAddNote[row.id]
+                            ? h(TextArea, {
+                                name: 'subscribe-note',
+                                value: row.note,
+                            'onUpdate:value': (val) => this.noteInputHandler(row, val)
+                            })
+                            : h(BlueButton, {
+                                'onClick': () => this.isAddNote[row.id] = true,
+                            }, {
+                                default: () => 'добавить'
+                            })
+                    },
                     class: (row) => {
                         return 'note'
-                    },
-                    render: (row) => {
-                        return row.note
                     },
                     onMouseenter: (row) => {
                         this.hovered_note = row.note ?? ''
@@ -151,6 +166,26 @@ export default {
         },
         resetData() {
             router.get(route('subscribes.index', {division: this.division.id}))
+        },
+
+        noteInputHandler(subscribe, val) {
+            clearTimeout(this.noteTimeout)
+
+            this.noteTimeout = setTimeout(() => {
+                router.post(route('subscribes.note.store', {
+                    division: this.division.id,
+                    subscribe: subscribe.id
+                }),
+                {
+                    note: val
+                },
+                {
+                    onFinish: () => {
+                        this.isAddNote[subscribe.id] = null
+                    }
+                })
+
+            }, 1000)
         },
 
         subscribesExport() {
@@ -262,9 +297,11 @@ export default {
     width: 100px
     max-width: 100px
     white-space: nowrap
-    div
+    text-align: center
+    div, button
         overflow: hidden
         text-overflow: ellipsis
+        width: 100%
 
 .deleted-row
     background: #ffe3e3

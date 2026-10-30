@@ -33,7 +33,14 @@ export default {
 
     methods: {
         inputHandler(event) {
-            this.$emit('update:value', event.target.value)
+            this.localValue = event.target.value
+            this.$emit('update:value', this.localValue)
+        }
+    },
+
+    data() {
+        return {
+            localValue: ''
         }
     },
 
@@ -47,6 +54,16 @@ export default {
             this.placeholder ?? "";
         },
     },
+
+    watch: {
+        value: {
+            immediate: true,
+            handler(val) {
+                this.localValue = val
+                console.log(val)
+            }
+        }
+    }
 };
 </script>
 
@@ -57,7 +74,7 @@ export default {
             :rows="rows"
             :id="inputId"
             :name="name"
-            :value="value ?? ''"
+            :value="localValue ?? ''"
             @input="inputHandler"
             :placeholder="placeholderText"
             :disabled="disabled"
@@ -66,7 +83,7 @@ export default {
             maxlength="255"
         />
 
-        <span class="words-count"> {{ value?.length ?? 0 }}/255 </span>
+        <span class="words-count"> {{ localValue?.length ?? 0 }}/255 </span>
     </FormItem>
 </template>
 
