@@ -9,12 +9,6 @@ export default {
         BlueButton, FormError
     },
 
-    data() {
-        return {
-            note: usePage().props.subscribe.data.note
-        }
-    },
-
     computed: {
         subscribe:      () => usePage().props.subscribe.data,
         current_user:   () => usePage().props.current_user.data,
@@ -75,14 +69,6 @@ export default {
                         </p>
                     </div>
                 </div>
-
-                <div class="note-wrapper">
-                    <div class="button-wrapper">
-                        <BlueButton @click="noteSaveHandler">
-                            <span> сохранить </span>
-                        </BlueButton>
-                    </div>
-                </div>
             </div>
         </div>
     </DivisionTab>
@@ -96,17 +82,6 @@ export default {
     padding: 20px;
     background: #f9f9fb;
     min-height: 100vh;
-}
-
-.note-wrapper {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.button-wrapper {
-    display: flex;
-    justify-content: end;
 }
 
 .cards-container {
