@@ -104,7 +104,7 @@ class SubscribeController
         ]);
 
         if ($subscribe->worker->receiveMail) {
-            SendSubscribeWorkerAlertJob::dispatch($subscribe);
+            // SendSubscribeWorkerAlertJob::dispatch($subscribe);
         }
 
 
