@@ -26,6 +26,10 @@ export default {
             type: Boolean,
             default: true,
         },
+        hasClear: {
+            type: Boolean,
+            default: false,
+        },
         label: {
             type: String,
             default: null,
@@ -84,6 +88,10 @@ export default {
                 this.closeDropdown();
             }
         },
+
+        clickClearHandler() {
+            this.$emit("update:modelValue", null)
+        }
     },
 
     mounted() {
@@ -110,6 +118,8 @@ export default {
                 :placeholder="placeholder"
                 :is-open="isOpen"
                 :disabled="disabled"
+                :on-clear="clickClearHandler"
+                :has-clear
             />
             <SelectList
                 v-show="isOpen"
@@ -119,7 +129,6 @@ export default {
                 @select="selectOption"
             />
         </div>
-
         <input v-if="name" type="hidden" :name="name" :value="modelValue" />
     </FormItem>
 </template>

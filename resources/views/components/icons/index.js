@@ -22,3 +22,5 @@ export { default as ChevronUpIco }      from './ChevronUpIco.vue'
 
 export { default as ArrowLeftIco }      from './ArrowLeftIco.vue'
 export { default as ArrowRightIco }     from './ArrowRightIco.vue'
+
+export { default as CrossIco }          from './CrossIco.vue'

@@ -188,8 +188,8 @@ export default {
                         :showAvailable="false"
                         @update:value="updateDateBetween"
                     />
-                    <Select class="filter-item" :options="workers" name="workers" v-model="form.worker_id" :has-search="false" placeholder="Специалист"/>
-                    <Select class="filter-item" :options="services" name="services" v-model="form.service_id" :has-search="false" placeholder="Услуга"/>
+                    <Select class="filter-item" :options="workers" name="workers" v-model="form.worker_id" :has-search="true" :has-clear="true" placeholder="Специалист"/>
+                    <Select class="filter-item" :options="services" name="services" v-model="form.service_id" :has-search="true" :has-clear="true" placeholder="Услуга"/>
                     <StringInput @update:value="(val) => form.search = val" :value="form.search" name="search" placeholder="ФИО заявителя" />
                     <BlueButton :handle-click="resetData"> сбросить </BlueButton>
                 </div>
