@@ -29,7 +29,6 @@ export default {
 
             searchTimeout: null,
             noteTimeout: null,
-            isAddNote: [],
 
             hovered_note: '',
 
@@ -66,16 +65,10 @@ export default {
                     label: "Заметка",
                     width: '400px',
                     component: (row) => {
-                        return row.note || this.isAddNote[row.id]
-                            ? h(TextArea, {
+                        return h(TextArea, {
                                 name: 'subscribe-note',
                                 value: row.note,
                             'onUpdate:value': (val) => this.noteInputHandler(row, val)
-                            })
-                            : h(BlueButton, {
-                                'onClick': () => this.isAddNote[row.id] = true,
-                            }, {
-                                default: () => 'добавить'
                             })
                     },
                     class: (row) => {
@@ -178,13 +171,7 @@ export default {
                 }),
                 {
                     note: val
-                },
-                {
-                    onFinish: () => {
-                        this.isAddNote[subscribe.id] = null
-                    }
                 })
-
             }, 1000)
         },
 
