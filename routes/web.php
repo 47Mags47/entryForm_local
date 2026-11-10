@@ -46,12 +46,22 @@ Route::middleware('auth')->group(function () {
             Route::resource('/events', EventCalendarController::class)
                 ->only(['index']);
 
-            Route::get('/subscribes/export', [SubscribesExportController::class, 'index'])
-                ->name('subscribes.export');
-            Route::Resource('/subscribes', SubscribeController::class)
-                ->except(['edit', 'update'])
-                ->withTrashed(['show', 'destroy']);
-            Route::post('/subscribes/{subscribe}/note', [SubscribeNoteController::class, 'store'])->name('subscribes.note.store');
+            Route::prefix('subscribes')->name('subscribes.')->group(function () {
+                Route::get('/export', [SubscribesExportController::class, 'index'])
+                    ->name('export');
+
+                Route::resource('/', SubscribeController::class)
+                    ->except(['edit', 'update'])
+                    ->withTrashed(['show', 'destroy'])
+                    ->parameters(['' => 'subscribe']);
+
+                Route::resource('/{subscribe}/note', SubscribeNoteController::class)
+                    ->only(['create', 'store'])
+                    ->names([
+                        'create' => 'note.create',
+                        'store' => 'note.store',
+                    ]);
+            });
 
             Route::resource('/division-admins', DivisionAdminController::class)
                 ->only(['store']);

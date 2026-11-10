@@ -23,6 +23,16 @@ export default {
         rowClass: {
             type: [String, Function],
             default: null
+        },
+
+        // HANDLERS
+        onRowMouseEnter: {
+            type: Function,
+            default: () => {}
+        },
+        onRowMouseLeave: {
+            type: Function,
+            default: () => {}
         }
     },
 
@@ -73,7 +83,14 @@ export default {
                     <div v-if="data?.data.length === 0" class="no-data">
                         <span>данных нет :(</span>
                     </div>
-                    <tr v-else v-for="(row, r_index) in data?.data" :key="r_index" :class="getRowClass(row)">
+                    <tr
+                        v-else
+                        v-for="(row, r_index) in data?.data"
+                        :key="r_index"
+                        :class="getRowClass(row)"
+                        @mouseenter="onRowMouseEnter(row)"
+                        @mouseleave="onRowMouseLeave(row)"
+                    >
                         <td
                             v-for="(cell, c_index) in columns"
                             :key="c_index"

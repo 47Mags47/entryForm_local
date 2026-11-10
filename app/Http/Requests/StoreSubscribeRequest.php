@@ -34,7 +34,8 @@ class StoreSubscribeRequest extends FormRequest
             'service_id' => ['required', 'exists:' . Service::class . ',id'],
             'start_date' => ['required', 'date_format:Y-m-d'],
             'start_time' => ['required', 'date_format:H:i'],
-            'comment' => ['nullable', 'string', 'max:255']
+            'comment' => ['nullable', 'string', 'max:255'],
+            'note'    => ['nullable', 'string', 'min:1', 'max:255']
         ];
     }
 

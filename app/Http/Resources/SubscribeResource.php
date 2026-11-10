@@ -29,6 +29,22 @@ class SubscribeResource extends JsonResource
             "division" => [
                 'name' => $this->division?->name,
             ],
+            "notes" => $this->notes
+                ->sortByDesc('created_at')
+                ->take(5)
+                ->map(fn($note) => [
+                    'id' => $note->id,
+                    'note' => $note->note,
+                    'worker' => [
+                        'id' => $note->worker?->id,
+                        'name' => implode(' ', array_filter([
+                            $note->worker?->last_name,
+                            $note->worker?->first_name ? mb_substr($note->worker->first_name, 0, 1) . '.' : null,
+                            $note->worker?->middle_name ? mb_substr($note->worker->middle_name, 0, 1) . '.' : null,
+                        ])),
+                    ],
+                ])
+                ->values(),
             "worker" => [
                 'id' => $this->worker?->id,
                 "name" => implode(' ', array_filter([
@@ -39,9 +55,6 @@ class SubscribeResource extends JsonResource
                 'office' => $this->worker?->office,
                 'deleted_at' => $this->worker?->deleted_at,
             ],
-            'note' => $this->notes
-                ->where('worker_id', user()->id)
-                ->first()?->note,
             "comment" => $this->comment,
         ];
     }

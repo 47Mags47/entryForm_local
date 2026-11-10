@@ -103,25 +103,33 @@ class SubscribeController
             'replacement_id' => $weekend?->replacement_id
         ]);
 
+        if (!blank($data['note']))
+            $subscribe->notes()->create([
+                'worker_id' => user()->id,
+                'note' => $data['note'],
+            ]);
+
         if ($subscribe->worker->receiveMail) {
             // SendSubscribeWorkerAlertJob::dispatch($subscribe);
         }
-
-
 
         return redirect()->route('subscribes.index', ['division' => $division->id]);
     }
 
     public function show(Division $division, Subscribe $subscribe)
     {
-        if (
-            $subscribe->division_id === $division->id ||
-            user()->hasRole('division_admin', $division) ||
-            user()->hasRole('admin') ||
-            (user()->hasRole('division_worker', $division) && $subscribe->worker_id === user()->id)
-        ) {
+        $isSubscribeAvailable = Subscribe::divisionSubscribes($division)
+            ->whereKey($subscribe->id)
+            ->exists();
+
+        if ($isSubscribeAvailable) {
             return Inertia::render('pages/subscribes/show', [
                 'subscribe' => fn() => getResource($subscribe),
+                'notes' => fn() => $subscribe->notes()
+                    ->latest()
+                    ->limit(5)
+                    ->get()
+                    ->toResourceCollection(),
             ]);
         } else
             return abort(403);

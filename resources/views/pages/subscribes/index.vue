@@ -28,9 +28,8 @@ export default {
             startDate: { from: DateTime.now().startOf('day'), to: null },
 
             searchTimeout: null,
-            noteTimeout: null,
 
-            hovered_note: '',
+            hovered_row_notes: null,
 
             form: useForm({
                 from: DateTime.now().startOf('day').toFormat('yyyy-MM-dd'),
@@ -61,26 +60,7 @@ export default {
                 { key: "first_name", label: "Имя", width: "150px" },
                 { key: "middle_name", label: "Отчество", width: "150px" },
                 { key: ["service", "name"], label: "Услуга" },
-                {
-                    label: "Заметка",
-                    width: '400px',
-                    component: (row) => {
-                        return h(TextArea, {
-                                name: 'subscribe-note',
-                                value: row.note,
-                            'onUpdate:value': (val) => this.noteInputHandler(row, val)
-                            })
-                    },
-                    class: (row) => {
-                        return 'note'
-                    },
-                    onMouseenter: (row) => {
-                        this.hovered_note = row.note ?? ''
-                    },
-                    onMouseleave: (row) => {
-                        this.hovered_note = ''
-                    }
-                },
+                { key: 'comment', label: 'Комментарий гражданина', width: "300px" },
                 {
                     key: "start_at",
                     label: "Дата записи",
@@ -161,20 +141,6 @@ export default {
             router.get(route('subscribes.index', {division: this.division.id}))
         },
 
-        noteInputHandler(subscribe, val) {
-            clearTimeout(this.noteTimeout)
-
-            this.noteTimeout = setTimeout(() => {
-                router.post(route('subscribes.note.store', {
-                    division: this.division.id,
-                    subscribe: subscribe.id
-                }),
-                {
-                    note: val
-                })
-            }, 1000)
-        },
-
         subscribesExport() {
             const params = {
                 ...this.form,
@@ -193,6 +159,13 @@ export default {
 
         getUserRole(user) {
             return user.roles.find(role => role.division.id === this.division.id)?.role ?? user.roles[0].role
+        },
+
+        rowMouseEnterHandler(row){
+            this.hovered_row_notes = row?.notes.length > 0 ? row.notes : null
+        },
+        rowMouseLeaveHandler(row){
+            this.hovered_row_notes = null
         }
     },
 };
@@ -200,7 +173,14 @@ export default {
 
 <template>
     <DivisionTab current="subscribes">
-        <Table :data="subscribes" :columns="columns" :row-class="getRowColor" header="Список обращений">
+        <Table
+            :data="subscribes"
+            :columns="columns"
+            :row-class="getRowColor"
+            :on-row-mouse-enter="rowMouseEnterHandler"
+            :on-row-mouse-leave="rowMouseLeaveHandler"
+            header="Список обращений"
+        >
             <template #toolbar-left>
                 <div class="filters-wrapper">
                     <DatePicker
@@ -234,9 +214,27 @@ export default {
                     " />
             </template>
         </Table>
-        <div class="note-popup-wrapper" :class="{ 'hover': hovered_note !== '' }">
+
+        <div v-show="hovered_row_notes" class="note-popup-wrapper">
             <div class="note-popup">
-                {{ hovered_note }}
+                <table>
+                    <thead>
+                        <th> Заметка </th>
+                        <th> Сотрудник </th>
+                    </thead>
+
+                    <tbody>
+                        <tr v-for="noteObj in hovered_row_notes">
+                            <td>
+                                {{ noteObj.note }}
+                            </td>
+
+                            <td>
+                                {{ noteObj.worker?.name }}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </DivisionTab>
@@ -254,7 +252,7 @@ export default {
     position: fixed
     bottom: 0
     left: 0
-    display: none
+    display: flex
     width: 100%
     height: fit-content
     justify-content: center
@@ -262,34 +260,35 @@ export default {
     z-index: 100
     pointer-events: none
 
-    &.hover
-        display: flex
+    .note-popup
+        width: fit-content
+        max-width: 1000px
+        height: fit-content
+        padding: 14px 20px
+        background: white
+        color: var(--text-color)
 
-        .note-popup
-            width: fit-content
-            max-width: 800px
-            height: fit-content
-            padding: 14px 20px
-            background: white
-            color: var(--text-color)
+        border: 1px solid #88a2ff81
+        border-radius: 8px
+        box-shadow: 0 4px 15px rgba(0, 0, 0, .15)
 
-            border: 1px solid #88a2ff81
-            border-radius: 8px
-            box-shadow: 0 4px 15px rgba(0, 0, 0, .15)
+        font-size: 14px
+        overflow-wrap: anywhere
 
-            font-size: 14px
-            overflow-wrap: anywhere
-
-:deep(.note)
-    width: 100px
-    max-width: 100px
-    white-space: nowrap
-    text-align: center
-    div, button
-        overflow: hidden
-        text-overflow: ellipsis
-        width: 100%
-
+        table
+            border-collapse: collapse
+            thead
+                th:nth-child(2)
+                    min-width: 150px
+                    padding: 10px
+                th
+                    text-align: left
+                    padding: 10px
+            tbody
+                tr
+                    td
+                        padding: 10px
+                        border: 1px solid #ece9e7
 .deleted-row
     background: #ffe3e3
 

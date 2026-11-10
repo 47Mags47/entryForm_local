@@ -1,18 +1,23 @@
 <script>
 import { usePage, router } from "@inertiajs/vue3";
 import { DivisionTab } from "@includes";
-import { BlueButton, FormError } from "@components";
+import { BlueButton, AddButton,
+     FormError, Table
+    } from "@components";
 
 export default {
     components: {
         DivisionTab,
-        BlueButton, FormError
+        BlueButton, AddButton,
+        FormError,
+        Table
     },
 
     computed: {
         subscribe:      () => usePage().props.subscribe.data,
         current_user:   () => usePage().props.current_user.data,
         division:       () => usePage().props.current_division.data,
+        notes:          () => usePage().props.notes
     },
 
     methods: {
@@ -70,65 +75,98 @@ export default {
                     </div>
                 </div>
             </div>
+
+            <Table
+                header="Заметки"
+                :data="notes"
+                :columns="[
+                    {
+                        key: 'note',
+                        label: 'Заметка',
+                        class: (row) => {
+                            return 'note'
+                        },
+                    },
+                    {
+                        key: ['worker', 'name'],
+                        label: 'Сотрудник',
+                    },
+                ]">
+                <template #toolbar-right>
+                    <AddButton :href="route('subscribes.note.create', { division: division.id, subscribe: subscribe.id })" />
+                </template>
+            </Table>
         </div>
     </DivisionTab>
 </template>
 
-<style scoped>
-.subscribe-show {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-    padding: 20px;
-    background: #f9f9fb;
-    min-height: 100vh;
-}
+<style lang="sass" scoped>
+:deep(td)
+    max-width: 600px
+    overflow: hidden
 
-.cards-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
-    width: 100%;
-}
+    > div
+        display: block
+        width: 100%
+        overflow: hidden
+        text-overflow: ellipsis
+        white-space: nowrap
+        text-align: left
 
-.card {
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-    overflow: hidden;
-    transition: all 0.2s ease;
-    border: 1px solid #eaeaea;
-    display: flex;
-    flex-direction: column;
-}
+.subscribe-show
+    display: flex
+    flex-direction: column
+    gap: 24px
+    padding: 20px
+    background: #f9f9fb
+    min-height: 100vh
 
-.card-title {
-    margin: 0;
-    padding: 18px 24px;
-    background: var(--palette-color-4);
-    color: white;
-    font-size: 1.25rem;
-    font-weight: 600;
-    border-bottom: 1px solid #e0e0e0;
-}
 
-.card-content {
-    padding: 20px 24px;
-    color: #333;
-    line-height: 1.6;
-    flex: 1;
-}
+.cards-container
+    display: grid
+    grid-template-columns: 1fr 1fr
+    gap: 24px
+    width: 100%
 
-.card-content p {
-    margin: 8px 0;
-    display: flex;
-    align-items: baseline;
-    gap: 8px;
-}
 
-.card-content strong {
-    min-width: 140px;
-    color: #2c3e50;
-    font-weight: 600;
-}
+.card
+    background: white
+    border-radius: 12px
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05)
+    overflow: hidden
+    transition: all 0.2s ease
+    border: 1px solid #eaeaea
+    display: flex
+    flex-direction: column
+
+
+.card-title
+    margin: 0
+    padding: 18px 24px
+    background: var(--palette-color-4)
+    color: white
+    font-size: 1.25rem
+    font-weight: 600
+    border-bottom: 1px solid #e0e0e0
+
+
+.card-content
+    padding: 20px 24px
+    color: #333
+    line-height: 1.6
+    flex: 1
+
+
+.card-content p
+    margin: 8px 0
+    display: flex
+    align-items: baseline
+    gap: 8px
+
+
+.card-content strong
+    min-width: 140px
+    color: #2c3e50
+    font-weight: 600
+
 </style>

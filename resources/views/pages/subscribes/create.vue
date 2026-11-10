@@ -24,6 +24,7 @@ export default {
                 email: "",
                 service_id: "",
                 comment: "",
+                note: "",
                 worker_id: "",
                 start_date: '',
                 start_time: ''
@@ -193,8 +194,14 @@ export default {
         <TextArea
             name="comment"
             :value="form.comment"
-            label="Комментарий"
+            label="Комментарий гражданина"
             @update:value="(val) => form.comment = val"
+        />
+        <TextArea
+            name="note"
+            :value="form.note"
+            label="Заметка сотрудника"
+            @update:value="(val) => form.note = val"
         />
     </VerticalForm>
 </template>
