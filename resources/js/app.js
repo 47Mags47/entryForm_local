@@ -15,7 +15,7 @@ createInertiaApp({
 
         const page = await pages[`../views/${name}.vue`]();
 
-        const exceptions = ['pages/session/login', 'pages/security/forgot-password', 'pages/workers/create']
+        const exceptions = ['pages/session/login', 'pages/security/forgot-password', 'pages/security/reset-password', 'pages/workers/create']
         if (!exceptions.includes(name)) {
             page.default.layout ??= AuthenticatedLayout;
         }
