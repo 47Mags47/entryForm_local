@@ -2,10 +2,11 @@
 import { h } from "vue";
 import { usePage, useForm, router } from "@inertiajs/vue3";
 import { DivisionTab } from "@includes";
+import Select from "../../components/inputs/multiSelect/Select.vue";
 import {
     Table,
     GoToButton, AddButton, DeleteButton, BlueButton,
-    DatePicker, Select, StringInput,
+    DatePicker, StringInput,
     DownloadIco, TextArea } from "@components";
 import { DateTime } from "luxon";
 
