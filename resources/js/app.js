@@ -2,6 +2,7 @@ import { createApp, h } from "vue";
 import { createInertiaApp } from "@inertiajs/vue3";
 import { fixOverflow } from './helpers';
 import { AuthenticatedLayout } from '@layouts';
+import * as derectives from "./directives";
 
 createInertiaApp({
     progress: {
@@ -25,6 +26,7 @@ createInertiaApp({
     setup({ el, App, props, plugin }) {
         createApp({ render: () => h(App, props) })
             .use(plugin)
+            .directive("outsideClick", derectives.outsideClick)
             .mixin({ methods: { route } })
             .mount(el);
     },

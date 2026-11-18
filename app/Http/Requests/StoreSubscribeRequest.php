@@ -25,9 +25,9 @@ class StoreSubscribeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'first_name' => ['nullable', 'string', 'min:3', 'max:255'],
-            'last_name' => ['required', 'string', 'min:3', 'max:255'],
-            'middle_name' => ['nullable', 'string', 'min:3', 'max:255'],
+            'first_name' => ['nullable', 'string', 'min:2', 'max:255'],
+            'last_name' => ['required', 'string', 'min:2', 'max:255'],
+            'middle_name' => ['nullable', 'string', 'min:2', 'max:255'],
             'phone' => ['required', 'regex:/^((8|\+7|7)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d\- ]{7,10}$/'],
             'email' => ['nullable', 'email', 'regex:/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/'],
             'worker_id' => ['required', 'exists:' . User::class . ',id'],

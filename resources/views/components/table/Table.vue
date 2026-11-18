@@ -157,6 +157,7 @@ export default {
         margin-bottom: 0.5rem
 
     .table-toolbar
+        position: relative
         display: flex
         justify-content: space-between
         align-items: center

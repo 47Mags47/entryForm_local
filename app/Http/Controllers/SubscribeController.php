@@ -35,12 +35,12 @@ class SubscribeController
         $subscribes = Subscribe::divisionSubscribes($division)
             ->whereBetween('start_at', [$from, $to])
             ->when(
-                $request->filled('worker_id'),
-                fn($query) => $query->where('worker_id', $request->input('worker_id'))
+                $request->filled('worker_ids'),
+                fn($query) => $query->whereIn('worker_id', $request->input('worker_ids'))
             )
             ->when(
-                $request->filled('service_id'),
-                fn($query) => $query->where('service_id', $request->input('service_id'))
+                $request->filled('service_ids'),
+                fn($query) => $query->whereIn('service_id', $request->input('service_ids'))
             )
             ->when(
                 $request->filled('search'),

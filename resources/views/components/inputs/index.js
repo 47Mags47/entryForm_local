@@ -5,5 +5,5 @@ export { default as TextArea     } from './TextArea.vue'
 export { default as CheckBox     } from './CheckBox.vue'
 export { default as WorkSchedule } from './WorkSchedule.vue'
 
-export * from './select'
+export * from './multiSelect'
 export * from "./datePicker";

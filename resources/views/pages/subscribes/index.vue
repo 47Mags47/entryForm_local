@@ -34,8 +34,8 @@ export default {
             form: useForm({
                 from: DateTime.now().startOf('day').toFormat('yyyy-MM-dd'),
                 to: null,
-                worker_id: '',
-                service_id: '',
+                worker_ids: [],
+                service_ids: [],
                 search: ''
             }),
         }
@@ -99,10 +99,10 @@ export default {
         'form.to'() {
             this.applyFilters()
         },
-        'form.worker_id'() {
+        'form.worker_ids'() {
             this.applyFilters()
         },
-        'form.service_id'() {
+        'form.service_ids'() {
             this.applyFilters()
         },
     },
@@ -190,8 +190,30 @@ export default {
                         :showAvailable="false"
                         @update:value="updateDateBetween"
                     />
-                    <Select class="filter-item" :options="workers" name="workers" v-model="form.worker_id" :has-search="true" :has-clear="true" placeholder="Специалист"/>
-                    <Select class="filter-item" :options="services" name="services" v-model="form.service_id" :has-search="true" :has-clear="true" placeholder="Услуга"/>
+                    <Select
+                        type="multi"
+                        class="filter-item"
+                        :options="workers"
+                        name="workers"
+                        :on-change="(e, v) => form.worker_ids = v"
+                        labelKey="label"
+                        valueKey="value"
+                        :has-search="true"
+                        :has-clear="true"
+                        placeholder="Специалистов выбрано:"
+                    />
+                    <Select
+                        type="multi"
+                        class="filter-item"
+                        :options="services"
+                        name="services"
+                        :on-change="(e, v) => form.service_ids = v"
+                        labelKey="label"
+                        valueKey="value"
+                        :has-search="true"
+                        :has-clear="true"
+                        placeholder="Услуг выбрано:"
+                    />
                     <StringInput @update:value="(val) => form.search = val" :value="form.search" name="search" placeholder="ФИО заявителя" />
                     <BlueButton :handle-click="resetData"> сбросить </BlueButton>
                 </div>
@@ -299,6 +321,6 @@ export default {
     display: flex
     flex-wrap: wrap
     gap: 10px
-    .filter-item
+    :deep(.filter-item)
         width: 300px
 </style>
