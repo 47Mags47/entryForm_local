@@ -377,8 +377,6 @@ export default {
         .select-list
             width: 100%
 
-            bakcground: black
-
             z-index: 100
 
             display: flex
