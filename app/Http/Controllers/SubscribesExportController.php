@@ -30,12 +30,14 @@ class SubscribesExportController
             ->whereHasAccess()
             ->orderBy('start_at')
             ->whereBetween('start_at', [$from, $to])
-            ->when($request->input('worker_id'), function ($query, $workerId) {
-                $query->where('worker_id', $workerId);
-            })
-            ->when($request->input('service_id'), function ($query, $serviceId) {
-                $query->where('service_id', $serviceId);
-            })
+            ->when(
+                $request->filled('worker_ids'),
+                fn($query) => $query->whereIn('worker_id', $request->input('worker_ids'))
+            )
+            ->when(
+                $request->filled('service_ids'),
+                fn($query) => $query->whereIn('service_id', $request->input('service_ids'))
+            )
             ->when($request->input('search'), function ($query, $search) {
                 $query->where(function ($query) use ($search) {
                     $query->where('first_name', 'like', "%{$search}%")
