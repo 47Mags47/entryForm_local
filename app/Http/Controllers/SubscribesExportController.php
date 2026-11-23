@@ -15,7 +15,7 @@ class SubscribesExportController
     {
         $request->validate([
             'from' => ['nullable', 'date_format:Y-m-d'],
-            'to' => ['nullable', 'date_format:Y-m-d']
+            'to' => ['nullable', 'date_format:Y-m-d'],
         ]);
 
         $from = $request->filled('from')
@@ -26,9 +26,9 @@ class SubscribesExportController
             ? Carbon::parse($request->input('to'))->endOfDay()
             : now()->endOfMonth()->endOfDay();
 
+        // Общий запрос обращений
         $query = $division->subscribes()
             ->whereHasAccess()
-            ->orderBy('start_at')
             ->whereBetween('start_at', [$from, $to])
             ->when(
                 $request->filled('worker_ids'),
@@ -44,47 +44,90 @@ class SubscribesExportController
                         ->orWhere('last_name', 'like', "%{$search}%")
                         ->orWhere('middle_name', 'like', "%{$search}%");
                 });
-            });
+            })
+            ->orderBy('start_at');
 
-        $spreadsheet = $spreadsheet = IOFactory::load(storage_path('app/private/templates/subscribes/subscribesIndex.xlsx'));
-        $sheet = $spreadsheet->getActiveSheet();
+        $spreadsheet = IOFactory::load(
+            storage_path('app/private/templates/subscribes/subscribesIndex.xlsx')
+        );
 
-        // настройки
-        $sheet->getPageSetup()->setFitToWidth(true);
+        $appealsSheet = $spreadsheet->getSheetByName('Обращения');
+        $notesSheet = $spreadsheet->getSheetByName('Заметки');
 
+        // Настройки листов
+
+        // Обращения
         $row = 2;
 
-        // Данные
-        foreach ($query->cursor() as $subscribe) {
-            $sheet->setCellValue("A{$row}", $subscribe->last_name . ' ' . $subscribe->first_name . ' ' . $subscribe->middle_name);
-            $sheet->setCellValue("B{$row}", $subscribe->service->name);
-            $sheet->setCellValue("C{$row}", $subscribe->worker->last_name . ' ' . $subscribe->worker->first_name . ' ' . $subscribe->worker->middle_name);
-            $sheet->setCellValue("D{$row}", $subscribe->worker->office);
-            $sheet->setCellValue("E{$row}", $subscribe->start_at->format('d.m.Y H:i'));
+        foreach ((clone $query)->with(['service', 'worker'])->cursor() as $subscribe) {
+            $appealsSheet->setCellValue("A{$row}", $subscribe->id);
+
+            $appealsSheet->setCellValue(
+                "B{$row}",
+                $subscribe->last_name . ' ' .
+                $subscribe->first_name . ' ' .
+                $subscribe->middle_name
+            );
+
+            $appealsSheet->setCellValue("C{$row}", $subscribe->service->name);
+
+            $appealsSheet->setCellValue(
+                "D{$row}",
+                $subscribe->worker->last_name . ' ' .
+                $subscribe->worker->first_name . ' ' .
+                $subscribe->worker->middle_name
+            );
+
+            $appealsSheet->setCellValue("E{$row}", $subscribe->worker->office);
+
+            $appealsSheet->setCellValue(
+                "F{$row}",
+                $subscribe->start_at->format('d.m.Y H:i')
+            );
 
             $row++;
         }
 
-        $sheet->getStyle('A2:E' . $row - 1)
-            ->getBorders()
-            ->getAllBorders()
-            ->setBorderStyle(Border::BORDER_HAIR);
+        if ($row > 2) {
+            $appealsSheet->getStyle("A2:F" . ($row - 1))
+                ->getBorders()
+                ->getAllBorders()
+                ->setBorderStyle(Border::BORDER_HAIR);
+        }
 
+        // Заметки всех обращений
+        $row = 2;
 
-        // Результат
+        foreach ((clone $query)->with('notes')->cursor() as $subscribe) {
+            foreach ($subscribe->notes as $note) {
+                $notesSheet->setCellValue("A{$row}", $note->id);
+                $notesSheet->setCellValue("B{$row}", $subscribe->id);
+                $notesSheet->setCellValue("C{$row}",
+                    $note->worker->last_name . ' ' . $note->worker->first_name . ' ' .$note->worker->middle_name);
+                $notesSheet->setCellValue("D{$row}", $note->note);
+
+                $row++;
+            }
+        }
+
+        if ($row > 2) {
+            $notesSheet->getStyle("A2:D" . ($row - 1))
+                ->getBorders()
+                ->getAllBorders()
+                ->setBorderStyle(Border::BORDER_HAIR);
+        }
+
+        // Формирование файла
         $writer = new Xlsx($spreadsheet);
+
         $exportFileName = sprintf(
             'обращения_за_%s-%s.xlsx',
             $from->format('d.m.Y'),
             $to->format('d.m.Y')
         );
-        $response = response()->streamDownload(function () use ($writer) {
+
+        return response()->streamDownload(function () use ($writer) {
             $writer->save('php://output');
         }, $exportFileName);
-
-        unset($writer);
-        unset($spreadsheet);
-
-        return $response;
     }
 }
