@@ -16,27 +16,26 @@ class SubscribesExportController
         $request->validate([
             'from' => ['nullable', 'date_format:Y-m-d'],
             'to' => ['nullable', 'date_format:Y-m-d'],
+            'worker_ids' => ['nullable', 'array'],
+            'worker_ids.*' => ['integer'],
+            'service_ids' => ['nullable', 'array'],
+            'service_ids.*' => ['integer'],
+            'search' => ['nullable', 'string'],
         ]);
 
-        $from = $request->filled('from')
-            ? Carbon::parse($request->input('from'))->startOfDay()
-            : now()->startOfMonth()->startOfDay();
+        $from = Carbon::parse($request->input('from', now()->startOfMonth()->toDateString()))->startOfDay();
+        $to = Carbon::parse($request->input('to', now()->endOfMonth()->toDateString()))->endOfDay();
 
-        $to = $request->filled('to')
-            ? Carbon::parse($request->input('to'))->endOfDay()
-            : now()->endOfMonth()->endOfDay();
-
-        // Общий запрос обращений
         $query = $division->subscribes()
             ->whereHasAccess()
             ->whereBetween('start_at', [$from, $to])
             ->when(
                 $request->filled('worker_ids'),
-                fn($query) => $query->whereIn('worker_id', $request->input('worker_ids'))
+                fn ($query) => $query->whereIn('worker_id', $request->input('worker_ids'))
             )
             ->when(
                 $request->filled('service_ids'),
-                fn($query) => $query->whereIn('service_id', $request->input('service_ids'))
+                fn ($query) => $query->whereIn('service_id', $request->input('service_ids'))
             )
             ->when($request->input('search'), function ($query, $search) {
                 $query->where(function ($query) use ($search) {
@@ -54,35 +53,46 @@ class SubscribesExportController
         $appealsSheet = $spreadsheet->getSheetByName('Обращения');
         $notesSheet = $spreadsheet->getSheetByName('Заметки');
 
-        // Настройки листов
+        if (!$appealsSheet || !$notesSheet) {
+            abort(500, 'В шаблоне отсутствуют листы «Обращения» или «Заметки».');
+        }
 
         // Обращения
+        $subscribeRows = [];
         $row = 2;
 
-        foreach ((clone $query)->with(['service', 'worker'])->cursor() as $subscribe) {
+        foreach ((clone $query)->with(['service', 'worker'])->lazy() as $subscribe) {
+            $subscribeRows[$subscribe->id] = $row;
+
             $appealsSheet->setCellValue("A{$row}", $subscribe->id);
 
             $appealsSheet->setCellValue(
                 "B{$row}",
-                $subscribe->last_name . ' ' .
-                $subscribe->first_name . ' ' .
-                $subscribe->middle_name
+                trim("{$subscribe->last_name} {$subscribe->first_name} {$subscribe->middle_name}")
             );
 
-            $appealsSheet->setCellValue("C{$row}", $subscribe->service->name);
+            $appealsSheet->setCellValue(
+                "C{$row}",
+                $subscribe->service?->name
+            );
 
             $appealsSheet->setCellValue(
                 "D{$row}",
-                $subscribe->worker->last_name . ' ' .
-                $subscribe->worker->first_name . ' ' .
-                $subscribe->worker->middle_name
+                trim(
+                    ($subscribe->worker?->last_name ?? '') . ' ' .
+                    ($subscribe->worker?->first_name ?? '') . ' ' .
+                    ($subscribe->worker?->middle_name ?? '')
+                )
             );
 
-            $appealsSheet->setCellValue("E{$row}", $subscribe->worker->office);
+            $appealsSheet->setCellValue(
+                "E{$row}",
+                $subscribe->worker?->office
+            );
 
             $appealsSheet->setCellValue(
                 "F{$row}",
-                $subscribe->start_at->format('d.m.Y H:i')
+                $subscribe->start_at?->format('d.m.Y H:i')
             );
 
             $row++;
@@ -95,15 +105,32 @@ class SubscribesExportController
                 ->setBorderStyle(Border::BORDER_HAIR);
         }
 
-        // Заметки всех обращений
+        // Заметки
         $row = 2;
 
-        foreach ((clone $query)->with('notes')->cursor() as $subscribe) {
+        foreach ((clone $query)->with('notes.worker')->lazy() as $subscribe) {
             foreach ($subscribe->notes as $note) {
                 $notesSheet->setCellValue("A{$row}", $note->id);
                 $notesSheet->setCellValue("B{$row}", $subscribe->id);
-                $notesSheet->setCellValue("C{$row}",
-                    $note->worker->last_name . ' ' . $note->worker->first_name . ' ' .$note->worker->middle_name);
+
+                // Ссылка на строку обращения, а не на ID записи в БД
+                if (isset($subscribeRows[$subscribe->id])) {
+                    $targetRow = $subscribeRows[$subscribe->id];
+
+                    $notesSheet->getCell("B{$row}")
+                        ->getHyperlink()
+                        ->setUrl("sheet://'Обращения'!A{$targetRow}");
+                }
+
+                $notesSheet->setCellValue(
+                    "C{$row}",
+                    trim(
+                        ($note->worker?->last_name ?? '') . ' ' .
+                        ($note->worker?->first_name ?? '') . ' ' .
+                        ($note->worker?->middle_name ?? '')
+                    )
+                );
+
                 $notesSheet->setCellValue("D{$row}", $note->note);
 
                 $row++;
@@ -117,7 +144,6 @@ class SubscribesExportController
                 ->setBorderStyle(Border::BORDER_HAIR);
         }
 
-        // Формирование файла
         $writer = new Xlsx($spreadsheet);
 
         $exportFileName = sprintf(
