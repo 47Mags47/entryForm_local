@@ -95,7 +95,9 @@ class ApiWorkersController
 
         $workers = $service->workers()
             ->whereHas('divisions', function ($query) use ($division) {
-                $query->whereKey($division->id);
+                $query
+                    ->whereKey($division->id)
+                    ->whereNull('main__users_roles.deleted_at');
             })
             ->get();
 
